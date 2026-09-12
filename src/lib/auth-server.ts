@@ -20,7 +20,9 @@ export function googleConfig() {
 }
 
 function sessionSecret() {
-  return process.env["SESSION_SECRET"] || process.env["GOOGLE_CLIENT_SECRET"] || "nomory-dev-secret";
+  return (
+    process.env["SESSION_SECRET"] || process.env["GOOGLE_CLIENT_SECRET"] || "nomory-dev-secret"
+  );
 }
 
 function bytesToB64url(bytes: Uint8Array) {
