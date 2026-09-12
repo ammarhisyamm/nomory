@@ -224,7 +224,7 @@ function AddMealPage() {
           <div className="space-y-8">
             <PageHeader
               title="Looks good?"
-              subtitle="Add a few details and save this memory."
+              subtitle="Add a few details, then save this memory."
               right={
                 <button
                   type="button"
@@ -284,7 +284,7 @@ function AddMealPage() {
                 className="press flex h-14 w-full items-center justify-center gap-2 rounded-full bg-accent text-[16px] font-semibold text-accent-foreground disabled:opacity-60"
               >
                 {saving ? <Loader2 className="size-5 animate-spin" strokeWidth={2.2} /> : null}
-                Save meal
+                Save memory
               </button>
             </section>
           </div>

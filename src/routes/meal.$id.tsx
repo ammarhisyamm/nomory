@@ -17,6 +17,16 @@ import {
   type Meal,
 } from "@/lib/meals";
 import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/meal/$id")({
   head: () => ({
@@ -43,6 +53,7 @@ function MealDetailPage() {
   const [values, setValues] = useState<MealFormValues | null>(null);
   const [saving, setSaving] = useState(false);
   const [replacing, setReplacing] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   if (!ready) {
@@ -95,7 +106,7 @@ function MealDetailPage() {
       };
       await saveMeal(updated);
       setEditing(false);
-      toast.success("Meal updated");
+      toast.success("Memory updated");
     } catch {
       toast.error("Couldn't save changes. Try again.");
     } finally {
@@ -130,10 +141,13 @@ function MealDetailPage() {
 
   const destroy = async () => {
     if (!meal) return;
-    if (!confirm("Delete this meal? This can't be undone.")) return;
-    await removeMeal(meal.id);
-    toast("Meal deleted");
-    navigate({ to: "/" });
+    try {
+      await removeMeal(meal.id);
+      toast.success("Memory deleted");
+      navigate({ to: "/" });
+    } catch {
+      toast.error("Couldn’t delete this memory. Try again.");
+    }
   };
 
   if (editing && values) {
@@ -141,8 +155,8 @@ function MealDetailPage() {
       <AppShell>
         <Page>
           <PageHeader
-            title="Edit meal"
-            subtitle="Update the details of this memory."
+            title="Edit memory"
+            subtitle="Update the details you want to remember."
             right={
               <button
                 type="button"
@@ -269,11 +283,11 @@ function MealDetailPage() {
           </button>
           <button
             type="button"
-            onClick={destroy}
+            onClick={() => setDeleteOpen(true)}
             className="surface-card press flex h-14 items-center justify-center gap-2 rounded-[20px] text-[15px] font-semibold text-destructive"
           >
             <Trash2 className="size-[18px]" strokeWidth={1.9} />
-            Delete
+            Delete memory
           </button>
         </div>
 
@@ -281,6 +295,30 @@ function MealDetailPage() {
           <CalendarDays className="size-4" strokeWidth={1.9} />
           Saved {formatDateLabel(meal.mealDate)} at {formatTimeLabel(meal.mealTime)}
         </p>
+
+        <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+          <AlertDialogContent className="w-[calc(100%-2rem)] rounded-[26px] border-border bg-background p-5 sm:p-6">
+            <AlertDialogHeader className="text-left">
+              <div className="mb-1 grid size-11 place-items-center rounded-full bg-destructive/10 text-destructive">
+                <Trash2 className="size-5" strokeWidth={2} />
+              </div>
+              <AlertDialogTitle>Delete this memory?</AlertDialogTitle>
+              <AlertDialogDescription>
+                “{meal.mealName || typeLabel}” will be removed from your diary. This action can’t be
+                undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="mt-2 gap-2 sm:gap-2">
+              <AlertDialogCancel className="mt-0 rounded-full">Keep memory</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={destroy}
+                className="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Delete memory
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </Page>
     </AppShell>
   );

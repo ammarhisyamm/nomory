@@ -23,7 +23,7 @@ export function mealToForm(meal: Meal): MealFormValues {
 }
 
 const fieldClass =
-  "h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent";
+  "h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none transition-[border-color,box-shadow] placeholder:text-subtle focus:border-accent focus:ring-4 focus:ring-accent/10";
 
 export function MealForm({
   values,
@@ -36,7 +36,7 @@ export function MealForm({
     onChange({ ...values, [key]: value });
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <Field label="Meal name">
         <input
           className={fieldClass}
@@ -47,7 +47,7 @@ export function MealForm({
       </Field>
 
       <Field label="Meal type">
-        <div className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-5">
           {MEAL_TYPES.map((type) => (
             <button
               key={type.value}
@@ -88,7 +88,7 @@ export function MealForm({
       <Field label="Note">
         <textarea
           rows={3}
-          className="w-full resize-none rounded-[14px] border border-input bg-card px-4 py-3 text-[15px] leading-[1.45] outline-none placeholder:text-subtle focus:border-accent"
+          className="min-h-24 w-full resize-y rounded-[14px] border border-input bg-card px-4 py-3 text-[15px] leading-[1.45] outline-none transition-[border-color,box-shadow] placeholder:text-subtle focus:border-accent focus:ring-4 focus:ring-accent/10"
           placeholder="Add a note to remember."
           value={values.note}
           onChange={(e) => set("note", e.target.value)}
@@ -117,7 +117,7 @@ export function MealForm({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="mb-2 text-[13px] font-semibold text-muted-foreground">{label}</p>
+      <p className="mb-2 text-[13px] font-bold text-foreground">{label}</p>
       {children}
     </div>
   );
