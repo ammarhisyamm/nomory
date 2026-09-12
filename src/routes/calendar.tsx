@@ -58,8 +58,15 @@ function CalendarPage() {
   }, [meals]);
 
   const dayMeals = mealsByDate(selected);
-  const shift = (delta: number) =>
-    setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + delta, 1));
+  const shift = (delta: number) => {
+    const next = new Date(cursor.getFullYear(), cursor.getMonth() + delta, 1);
+    setCursor(next);
+    setSelected(toDateKey(next));
+  };
+  const goToday = () => {
+    setCursor(new Date(today.getFullYear(), today.getMonth(), 1));
+    setSelected(toDateKey(today));
+  };
 
   return (
     <AppShell>
@@ -67,11 +74,14 @@ function CalendarPage() {
         <PageHeader title="Calendar" subtitle="Your meals, day by day." />
 
         <div className="surface-card p-5">
-          <div className="mb-5 flex items-center justify-between">
+          <div className="mb-5 flex items-center justify-between gap-3">
             <h2 className="text-[19px] font-bold">
               {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
             </h2>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={goToday} className="press hidden h-11 rounded-full bg-muted px-4 text-[13px] font-semibold text-muted-foreground sm:block">
+                Today
+              </button>
               <button
                 type="button"
                 aria-label="Previous month"
@@ -139,9 +149,10 @@ function CalendarPage() {
           <h2 className="mb-4 text-[22px] font-bold">{formatDateLabel(selected)}</h2>
           {dayMeals.length === 0 ? (
             <EmptyState
-              title="No meals here yet"
-              description="Meals you save will appear on this date."
-              cta="Add Meal"
+              compact
+              title="Nothing saved on this day"
+              description="Add a meal for this date, or pick another day with a photo in the calendar."
+              cta="Add a meal"
             />
           ) : (
             <div className="space-y-3">

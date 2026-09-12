@@ -124,31 +124,32 @@ function ProfilePage() {
           }
         />
 
-        <div className="surface-card flex items-center gap-4 p-5">
-          <span
-            className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-bold ${
-              cloudEnabled ? "bg-leaf-soft text-[#15803d]" : "bg-muted text-muted-foreground"
-            }`}
-          >
-            {cloudEnabled ? (
-              <Cloud className="size-4" strokeWidth={2} />
-            ) : (
-              <CloudOff className="size-4" strokeWidth={2} />
-            )}
-            {cloudEnabled ? "Cloud sync on" : user ? "Cloud not set up yet" : "On this device"}
-          </span>
-          {user ? (
-            <button
-              type="button"
-              onClick={sync}
-              disabled={syncing}
-              className="press ml-auto inline-flex h-10 items-center gap-2 rounded-full bg-muted px-4 text-[13px] font-semibold text-muted-foreground disabled:opacity-60"
+        <section className="grid gap-3" aria-label="Account and sync status">
+          <div className="surface-card flex items-center gap-4 p-5">
+            <span
+              className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-bold ${
+                cloudEnabled ? "bg-leaf-soft text-[#15803d]" : "bg-muted text-muted-foreground"
+              }`}
             >
-              <RefreshCw className={`size-4 ${syncing ? "animate-spin" : ""}`} strokeWidth={2} />
-              {syncing ? "Syncing…" : "Sync now"}
-            </button>
-          ) : null}
-        </div>
+              {cloudEnabled ? (
+                <Cloud className="size-4" strokeWidth={2} />
+              ) : (
+                <CloudOff className="size-4" strokeWidth={2} />
+              )}
+              {cloudEnabled ? "Cloud sync on" : user ? "Cloud not set up yet" : "On this device"}
+            </span>
+            {user ? (
+              <button
+                type="button"
+                onClick={sync}
+                disabled={syncing}
+                className="press ml-auto inline-flex h-10 items-center gap-2 rounded-full bg-muted px-4 text-[13px] font-semibold text-muted-foreground disabled:opacity-60"
+              >
+                <RefreshCw className={`size-4 ${syncing ? "animate-spin" : ""}`} strokeWidth={2} />
+                {syncing ? "Syncing…" : "Sync now"}
+              </button>
+            ) : null}
+          </div>
 
         {user ? (
           <div className="surface-card flex items-center gap-4 p-5">
@@ -189,7 +190,8 @@ function ProfilePage() {
               </p>
             </div>
           </div>
-        )}
+          )}
+        </section>
 
         {!user ? (
           <Link
@@ -197,7 +199,7 @@ function ProfilePage() {
             className="press mt-4 flex h-14 w-full items-center justify-center gap-3 rounded-[20px] bg-accent text-[15px] font-semibold text-accent-foreground"
           >
             <LogIn className="size-5" strokeWidth={2} />
-            Masuk / Daftar dengan username
+            Sign in or create an account
           </Link>
         ) : null}
 
@@ -270,12 +272,15 @@ function ProfilePage() {
           </section>
           {user?.username ? (
             <form onSubmit={changePw} className="surface-card space-y-3 p-5">
-              <p className="text-[16px] font-bold">Ganti password</p>
+              <div>
+                <p className="text-[16px] font-bold">Change password</p>
+                <p className="mt-1 text-[14px] text-muted-foreground">Use at least 8 characters.</p>
+              </div>
               <input
                 type="password"
                 value={currentPw}
                 onChange={(e) => setCurrentPw(e.target.value)}
-                placeholder="Password lama"
+                placeholder="Current password"
                 autoComplete="current-password"
                 className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
               />
@@ -283,7 +288,7 @@ function ProfilePage() {
                 type="password"
                 value={nextPw}
                 onChange={(e) => setNextPw(e.target.value)}
-                placeholder="Password baru (min. 8 karakter)"
+                placeholder="New password"
                 autoComplete="new-password"
                 className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
               />
@@ -293,25 +298,28 @@ function ProfilePage() {
                 className="press flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground text-[15px] font-semibold text-background disabled:opacity-60"
               >
                 {changingPw ? <Loader2 className="size-4 animate-spin" strokeWidth={2.2} /> : null}
-                Simpan password baru
+                Save new password
               </button>
             </form>
           ) : null}
-          <button
-            type="button"
-            onClick={reset}
-            className="surface-card press mt-2 flex w-full items-center gap-4 p-5 text-left"
-          >
-            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-muted">
-              <Trash2 className="size-[19px] text-destructive" strokeWidth={1.9} />
-            </span>
-            <span>
-              <span className="block text-[16px] font-bold">Clear my diary</span>
-              <span className="mt-1 block text-[14px] text-muted-foreground">
-                Removes every saved meal and photo from this device.
+          <div className="mt-8">
+            <p className="section-label mb-3 text-destructive/80">Danger zone</p>
+            <button
+              type="button"
+              onClick={reset}
+              className="surface-card press flex w-full items-center gap-4 border-destructive/15 p-5 text-left"
+            >
+              <span className="grid size-11 shrink-0 place-items-center rounded-full bg-muted">
+                <Trash2 className="size-[19px] text-destructive" strokeWidth={1.9} />
               </span>
-            </span>
-          </button>
+              <span>
+                <span className="block text-[16px] font-bold">Clear my diary</span>
+                <span className="mt-1 block text-[14px] text-muted-foreground">
+                  Removes every saved meal and photo from this device.
+                </span>
+              </span>
+            </button>
+          </div>
         </section>
 
         {auth === undefined ? (

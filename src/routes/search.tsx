@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { FoodSticker } from "@/components/food-sticker";
+import { EmptyState } from "@/components/empty-state";
 import { formatDateLabel, formatTimeLabel, mealImage, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/search")({
@@ -36,20 +37,47 @@ function SearchPage() {
       <Page>
         <PageHeader title="Search" subtitle="Find a meal by name, note or tag." />
 
-        <div className="surface-card flex h-14 items-center gap-3 px-5">
+        <label htmlFor="meal-search" className="sr-only">Search meals</label>
+        <div className="surface-card flex h-14 items-center gap-3 px-5 focus-within:border-accent">
           <SearchIcon className="size-[19px] text-subtle" strokeWidth={1.9} />
           <input
+            id="meal-search"
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Ramen, coffee, homemade…"
             className="h-full w-full bg-transparent text-[15px] outline-none placeholder:text-subtle"
           />
+          {query ? (
+            <button type="button" onClick={() => setQuery("")} className="press rounded-full px-3 py-2 text-[13px] font-semibold text-muted-foreground">
+              Clear
+            </button>
+          ) : null}
         </div>
 
-        <div className="mt-6 space-y-3">
+        <div className="mt-6 space-y-3" aria-live="polite">
+          {!q ? (
+            <EmptyState
+              kind="search"
+              compact
+              title="What are you looking for?"
+              description="Try a meal name, note, or tag—like ramen, coffee, or homemade."
+            />
+          ) : null}
           {q && results.length === 0 ? (
-            <p className="text-[14.5px] text-muted-foreground">Nothing matches “{query}” yet.</p>
+            <EmptyState
+              kind="search"
+              compact
+              title={`No matches for “${query.trim()}”`}
+              description="Try a shorter word, another tag, or browse all your memories."
+              cta="Browse memories"
+              to="/memories"
+              secondaryCta="Clear search"
+              onSecondary={() => setQuery("")}
+            />
+          ) : null}
+          {q && results.length > 0 ? (
+            <p className="section-label pb-1">{results.length} {results.length === 1 ? "memory" : "memories"} found</p>
           ) : null}
           {results.map((meal) => (
             <Link

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { FoodSticker } from "@/components/food-sticker";
+import { PageLoadingState } from "@/components/loading-state";
 import { MealForm, mealToForm, type MealFormValues } from "@/components/meal-form";
 import { TagPill } from "@/components/pills";
 import { processPhoto } from "@/lib/image";
@@ -49,9 +50,7 @@ function MealDetailPage() {
     return (
       <AppShell>
         <Page>
-          <div className="py-24 text-center text-[14.5px] text-muted-foreground">
-            Loading your meal…
-          </div>
+          <PageLoadingState label="Loading your meal…" rows={1} />
         </Page>
       </AppShell>
     );
@@ -64,7 +63,9 @@ function MealDetailPage() {
           <PageHeader title="Meal" />
           <EmptyState
             title="Meal not found"
-            description="This meal may have been deleted from this device."
+            description="This memory may have been deleted or isn’t available on this device."
+            cta="Back to today"
+            to="/"
           />
         </Page>
       </AppShell>

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   CalendarDays,
-  ChevronRight,
   Flame,
   Images,
   Plus,
@@ -16,6 +15,7 @@ import { EmptyState } from "@/components/empty-state";
 import { MealCard } from "@/components/meal-card";
 import { StatPill } from "@/components/pills";
 import { FoodSticker } from "@/components/food-sticker";
+import { PageLoadingState } from "@/components/loading-state";
 import { getAuthStatus } from "@/lib/auth";
 import { getDailyGoal, getWeeklyInsight } from "@/lib/meal-insights";
 import { formatDateLabel, mealImage, toDateKey, useMeals } from "@/lib/meals";
@@ -103,7 +103,7 @@ function TodayPage() {
           }
         />
 
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           <StatPill
             icon={CalendarDays}
             label={formatDateLabel(todayKey, { month: "short", day: "numeric" })}
@@ -123,27 +123,23 @@ function TodayPage() {
           <section>
             <h2 className="mb-4 text-[22px] font-bold">Today</h2>
             <div className="space-y-4">
+              {!ready ? <PageLoadingState label="Loading today's meals…" rows={2} /> : null}
               {todayMeals.map((meal) => (
                 <MealCard key={meal.id} meal={meal} />
               ))}
 
-              <Link to="/add" className="surface-card press flex items-center gap-4 p-5">
-                <span className="grid size-12 shrink-0 place-items-center rounded-full bg-accent text-accent-foreground">
-                  <Plus className="size-6" strokeWidth={2.2} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-[17px] font-bold">Add Meal</span>
-                  <span className="mt-1 block text-[14.5px] text-muted-foreground">
-                    Take a photo or upload one from your gallery.
-                  </span>
-                </span>
-                <ChevronRight className="size-[18px] text-subtle" strokeWidth={2} />
-              </Link>
+              {ready && todayMeals.length > 0 ? (
+                <Link to="/add" className="press flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-dashed border-accent/35 bg-accent-soft/55 px-5 text-[15px] font-bold text-accent">
+                  <Plus className="size-5" strokeWidth={2.2} />
+                  Add another meal
+                </Link>
+              ) : null}
 
               {ready && todayMeals.length === 0 ? (
                 <EmptyState
-                  title="Nothing logged yet"
-                  description="Take a photo of your first meal today."
+                  title="Ready for your first bite?"
+                  description="Capture your next meal. We’ll remember the date and time for you."
+                  cta="Add your first meal"
                 />
               ) : null}
             </div>
@@ -200,8 +196,12 @@ function TodayPage() {
             </section>
 
             <h2 className="text-[22px] font-bold">Recent memories</h2>
-            {recent.length === 0 ? (
-              <p className="text-[14.5px] text-muted-foreground">Your food diary starts here.</p>
+            {!ready ? null : recent.length === 0 ? (
+              <div className="rounded-[20px] border border-dashed border-border bg-card/45 p-5">
+                <p className="text-[14px] leading-6 text-muted-foreground">
+                  Older meals will appear here as your diary grows.
+                </p>
+              </div>
             ) : (
               <div className="surface-card grid grid-cols-3 gap-3 p-4">
                 {recent.map((meal) => (

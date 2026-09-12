@@ -78,18 +78,23 @@ function Onboarding() {
     <div className="flex min-h-screen flex-col px-6 pt-16 pb-10">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
         <NomoryLogo className="text-[38px]" />
-        <span className="pop-in mt-8 inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-[13px] font-bold">
+        <div className="relative mt-7 overflow-hidden rounded-[32px] bg-card px-5 pt-5 shadow-[var(--shadow-card)]">
+          <span aria-hidden className="absolute -top-8 -right-8 size-32 rounded-full bg-blush-soft blur-2xl" />
+          <img src="/illustrations/empty-meals.png" alt="" className="relative mx-auto h-44 w-auto object-contain" />
+        </div>
+        <span className="pop-in mt-6 inline-flex w-fit items-center gap-2 rounded-full text-[13px] font-bold">
           <span className={cn("rounded-full px-3 py-1", step.pillClass)}>{step.pill}</span>
         </span>
-        <span className="pop-in mt-4 grid size-20 place-items-center rounded-[28px] bg-accent-soft">
-          <Icon className="size-9 text-accent" strokeWidth={1.8} />
+        <span className="pop-in mt-4 flex w-fit items-center gap-2 rounded-full bg-accent-soft px-4 py-2 text-[14px] font-semibold text-accent">
+          <Icon className="size-4" strokeWidth={2} />
+          Step {index + 1} of {steps.length}
         </span>
-        <h1 className="font-display mt-6 text-[34px] leading-[1.05] font-extrabold tracking-tight">
+        <h1 className="font-display mt-5 text-[34px] leading-[1.05] font-extrabold tracking-tight">
           {step.title}
         </h1>
         <p className="mt-4 text-[16px] leading-[1.45] text-muted-foreground">{step.body}</p>
 
-        <div className="mt-10 flex gap-2">
+        <div className="mt-7 flex gap-2">
           {steps.map((s, i) => (
             <span
               key={s.title}

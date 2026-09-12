@@ -17,18 +17,20 @@ import { Toaster } from "../components/ui/sonner";
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+      <div className="surface-card relative w-full max-w-md overflow-hidden px-6 py-10 text-center">
+        <span aria-hidden className="absolute -top-16 -left-12 size-36 rounded-full bg-sunny-soft blur-2xl" />
+        <img src="/illustrations/search-meals.png" alt="" className="relative mx-auto h-40 w-auto object-contain" />
+        <p className="section-label mt-2">404 · Lost bite</p>
+        <h1 className="mt-2 text-[26px] font-extrabold text-foreground">This page wandered off</h1>
+        <p className="mx-auto mt-2 max-w-xs text-[15px] leading-6 text-muted-foreground">
+          Let’s get you back to today’s meals.
         </p>
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="press inline-flex h-12 items-center justify-center rounded-full bg-primary px-6 text-[15px] font-bold text-primary-foreground"
           >
-            Go home
+            Back to today
           </Link>
         </div>
       </div>
@@ -45,12 +47,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+      <div className="surface-card w-full max-w-md px-6 py-10 text-center">
+        <img src="/illustrations/empty-meals.png" alt="" className="mx-auto h-36 w-auto object-contain" />
+        <h1 className="mt-3 text-[24px] font-extrabold tracking-tight text-foreground">
+          We dropped this one
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+        <p className="mx-auto mt-2 max-w-xs text-[15px] leading-6 text-muted-foreground">
+          Your saved meals are safe. Try loading the page again.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -58,13 +61,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="press inline-flex h-12 items-center justify-center rounded-full bg-primary px-5 text-[15px] font-bold text-primary-foreground"
           >
             Try again
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="press inline-flex h-12 items-center justify-center rounded-full bg-muted px-5 text-[15px] font-semibold text-foreground"
           >
             Go home
           </a>
