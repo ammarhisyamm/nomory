@@ -76,24 +76,21 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Mobile bottom nav */}
       <nav
         aria-label="Primary navigation"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 shadow-[0_-8px_24px_oklch(0.32_0.05_55/0.06)] backdrop-blur-xl lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(10px,env(safe-area-inset-bottom))] lg:hidden"
       >
-        <div className="mx-auto grid max-w-md grid-cols-5 items-center px-3 pt-2 pb-[max(10px,env(safe-area-inset-bottom))]">
-          {destinations.slice(0, 2).map((d) => (
-            <NavItem key={d.to} {...d} active={isActive(d.to)} />
-          ))}
-          <div className="flex justify-center">
-            <Link
-              to="/add"
-              aria-label="Add meal"
-              className="press grid size-14 -translate-y-4 place-items-center rounded-full bg-accent text-accent-foreground shadow-[var(--shadow-sticker)]"
-            >
-              <Plus className="size-6" strokeWidth={2.2} />
-            </Link>
+        <div className="mx-auto flex max-w-md items-center gap-2 rounded-[28px] border border-white/75 bg-card/80 p-2 shadow-[0_-6px_30px_oklch(0.32_0.05_55/0.09),0_6px_18px_oklch(0.32_0.05_55/0.08)] backdrop-blur-2xl">
+          <div className="grid min-w-0 flex-1 grid-cols-4">
+            {destinations.map((d) => (
+              <NavItem key={d.to} {...d} active={isActive(d.to)} />
+            ))}
           </div>
-          {destinations.slice(2).map((d) => (
-            <NavItem key={d.to} {...d} active={isActive(d.to)} />
-          ))}
+          <Link
+            to="/add"
+            aria-label="Add meal"
+            className="press grid size-12 shrink-0 place-items-center rounded-full bg-accent text-accent-foreground shadow-[var(--shadow-sticker)] ring-2 ring-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            <Plus className="size-6" strokeWidth={2.2} />
+          </Link>
         </div>
       </nav>
     </div>
@@ -115,12 +112,11 @@ function NavItem({
     <Link
       to={to}
       className={cn(
-        "relative flex min-h-11 flex-col items-center justify-center gap-1 text-[11px] font-semibold",
-        active ? "text-foreground" : "text-subtle",
+        "relative flex min-h-12 flex-col items-center justify-center gap-1 rounded-[20px] text-[10px] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+        active ? "bg-accent-soft text-foreground" : "text-muted-foreground",
       )}
     >
-      {active ? <span className="absolute top-0 h-1 w-6 rounded-full bg-accent" /> : null}
-      <Icon className={cn("size-[21px]", active && "text-accent")} strokeWidth={1.9} />
+      <Icon className={cn("size-[21px]", active && "text-accent")} strokeWidth={2} />
       {label}
     </Link>
   );

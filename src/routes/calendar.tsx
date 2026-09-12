@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { FoodSticker } from "@/components/food-sticker";
@@ -73,9 +73,9 @@ function CalendarPage() {
       <Page>
         <PageHeader title="Calendar" subtitle="Your meals, day by day." />
 
-        <div className="surface-card min-w-0 max-w-full p-3 sm:p-5">
-          <div className="mb-5 flex items-center justify-between gap-3">
-            <h2 className="text-[19px] font-bold">
+        <div className="surface-card min-w-0 max-w-full rounded-[28px] p-4 sm:p-6">
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <h2 className="font-display text-[22px] font-extrabold capitalize">
               {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
             </h2>
             <div className="flex items-center gap-2">
@@ -90,7 +90,7 @@ function CalendarPage() {
                 type="button"
                 aria-label="Previous month"
                 onClick={() => shift(-1)}
-                className="press grid size-11 place-items-center rounded-full bg-muted"
+                className="press grid size-10 place-items-center rounded-full bg-background shadow-[var(--shadow-pill)]"
               >
                 <ChevronLeft className="size-[18px]" strokeWidth={2} />
               </button>
@@ -98,20 +98,20 @@ function CalendarPage() {
                 type="button"
                 aria-label="Next month"
                 onClick={() => shift(1)}
-                className="press grid size-11 place-items-center rounded-full bg-muted"
+                className="press grid size-10 place-items-center rounded-full bg-background shadow-[var(--shadow-pill)]"
               >
                 <ChevronRight className="size-[18px]" strokeWidth={2} />
               </button>
             </div>
           </div>
 
-          <div className="mb-2 grid grid-cols-7 text-center text-[12px] font-semibold text-subtle">
+          <div className="mb-3 grid grid-cols-7 text-center text-[11px] font-bold text-muted-foreground sm:text-[12px]">
             {WEEKDAYS.map((d, i) => (
               <span key={`${d}-${i}`}>{d}</span>
             ))}
           </div>
 
-          <div className="grid min-w-0 grid-cols-7 gap-0.5 sm:gap-1.5">
+          <div className="grid min-w-0 grid-cols-7 gap-1 sm:gap-2">
             {cells.map((key, i) => {
               if (!key) return <span key={`empty-${i}`} />;
               const items = byDate.get(key) ?? [];
@@ -123,8 +123,10 @@ function CalendarPage() {
                   type="button"
                   onClick={() => setSelected(key)}
                   className={cn(
-                    "press relative flex min-w-0 aspect-square flex-col items-center justify-start gap-0.5 rounded-xl p-1 text-[11px] font-semibold transition-colors sm:gap-1 sm:rounded-[16px] sm:p-1.5 sm:text-[12px]",
-                    isSelected ? "bg-accent-soft text-accent" : "hover:bg-muted",
+                    "press relative flex min-w-0 aspect-square flex-col items-center justify-start gap-0.5 rounded-[15px] p-1 text-[10px] font-bold transition-colors sm:gap-1 sm:rounded-[18px] sm:p-1.5 sm:text-[12px]",
+                    isSelected
+                      ? "bg-accent-soft text-accent shadow-[var(--shadow-pill)]"
+                      : "hover:bg-muted",
                   )}
                 >
                   <span>{Number(key.slice(-2))}</span>
@@ -134,7 +136,7 @@ function CalendarPage() {
                         src={mealImage(first)}
                         alt=""
                         loading="lazy"
-                        className="size-5 rounded-[7px] object-cover shadow-[var(--shadow-pill)] sm:size-7 sm:rounded-[9px]"
+                        className="size-7 rounded-[9px] object-cover shadow-[var(--shadow-pill)] sm:size-9 sm:rounded-[11px]"
                       />
                       {items.length > 1 ? (
                         <span className="absolute -right-1.5 -bottom-1 grid size-4 place-items-center rounded-full bg-accent text-[9px] text-accent-foreground">
@@ -147,6 +149,14 @@ function CalendarPage() {
               );
             })}
           </div>
+
+          <Link
+            to="/add"
+            className="press mt-5 flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-accent px-5 text-[15px] font-bold text-accent-foreground shadow-[var(--shadow-pill)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            <Plus className="size-5" strokeWidth={2.2} />
+            Add a meal
+          </Link>
         </div>
 
         <section className="mt-8">
