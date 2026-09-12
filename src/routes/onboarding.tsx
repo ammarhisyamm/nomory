@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarDays, Camera, Images } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAuthStatus } from "@/lib/auth";
 import { NomoryLogo, NomoryMark } from "@/components/nomory-logo";
@@ -10,15 +9,9 @@ export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
       { title: "Welcome to Nomory — Your meals, remembered" },
-      {
-        name: "description",
-        content: "Nomory helps you remember what you eat, one photo at a time.",
-      },
+      { name: "description", content: "Nomory helps you remember what you eat, one photo at a time." },
       { property: "og:title", content: "Welcome to Nomory" },
-      {
-        property: "og:description",
-        content: "Capture meals. Remember what you ate. Look back anytime.",
-      },
+      { property: "og:description", content: "Capture meals. Remember what you ate. Look back anytime." },
     ],
   }),
   component: Onboarding,
@@ -26,25 +19,34 @@ export const Route = createFileRoute("/onboarding")({
 
 const steps = [
   {
-    icon: Camera,
     pill: "Capture",
     pillClass: "bg-blush-soft text-[#c2437b]",
-    title: "Capture what you eat.",
-    body: "Save meals with a quick photo and build your own visual food diary.",
+    image: "/illustrations/onboarding/capture-mascot-optimized.gif",
+    imageAlt: "Nomory tomato mascot holding a meal memory",
+    visualClass: "onboarding-visual-capture",
+    title: "A photo is all it takes.",
+    body: "Snap a meal in the moment. No calorie counting, no long forms—just your food diary, starting with a bite.",
+    detail: "Photo first · zero pressure",
   },
   {
-    icon: CalendarDays,
     pill: "Remember",
     pillClass: "bg-sunny-soft text-[#8a6100]",
-    title: "Remember, automatically.",
-    body: "Every photo is saved by date and time so you can revisit it later.",
+    image: "/illustrations/onboarding/remember-mascots-optimized.png",
+    imageAlt: "Nomory toast and clover mascots arranging memory cards",
+    visualClass: "onboarding-visual-remember",
+    title: "Remember without trying.",
+    body: "Each meal finds its place by date and time, so the little things are there whenever you want them.",
+    detail: "Saved by day · easy to find",
   },
   {
-    icon: Images,
     pill: "Look Back",
     pillClass: "bg-sky-soft text-sky",
-    title: "Look back on big memories.",
-    body: "Browse little bites by day, month, or craving. Good food, brighter days.",
+    image: "/illustrations/onboarding/lookback-mascot-optimized.png",
+    imageAlt: "Nomory flower mascot looking at a collage of meal memories",
+    visualClass: "onboarding-visual-lookback",
+    title: "Little bites. Brighter days.",
+    body: "Look back by day, month, or craving—and notice the food moments that made your days feel good.",
+    detail: "Your visual diary · yours to keep",
   },
 ];
 
@@ -66,60 +68,58 @@ function Onboarding() {
   }
 
   const step = steps[index]!;
-  const Icon = step.icon;
   const last = index === steps.length - 1;
-
   const finish = () => {
     localStorage.setItem("nomory.onboarded", "1");
     navigate({ to: "/" });
   };
 
   return (
-    <div className="flex min-h-screen flex-col px-6 pt-16 pb-10">
+    <div className="onboarding-page flex min-h-[100dvh] flex-col px-5 pt-[max(2rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-6 sm:pt-12 sm:pb-10">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
-        <NomoryLogo className="text-[38px]" />
-        <div className="relative mt-7 overflow-hidden rounded-[32px] bg-card px-5 pt-5 shadow-[var(--shadow-card)]">
-          <span aria-hidden className="absolute -top-8 -right-8 size-32 rounded-full bg-blush-soft blur-2xl" />
-          <img src="/illustrations/empty-meals.png" alt="" className="relative mx-auto h-40 max-w-full object-contain sm:h-44" />
+        <div className="flex items-center justify-between gap-4">
+          <NomoryLogo className="text-[35px] sm:text-[38px]" />
+          <span className="rounded-full bg-card px-3 py-1.5 text-[12px] font-bold text-muted-foreground shadow-[var(--shadow-pill)]">
+            {index + 1} / {steps.length}
+          </span>
         </div>
-        <span className="pop-in mt-6 inline-flex w-fit items-center gap-2 rounded-full text-[13px] font-bold">
-          <span className={cn("rounded-full px-3 py-1", step.pillClass)}>{step.pill}</span>
-        </span>
-        <span className="pop-in mt-4 flex w-fit items-center gap-2 rounded-full bg-accent-soft px-4 py-2 text-[14px] font-semibold text-accent">
-          <Icon className="size-4" strokeWidth={2} />
-          Step {index + 1} of {steps.length}
-        </span>
-        <h1 className="font-display mt-5 text-[34px] leading-[1.05] font-extrabold tracking-tight">
-          {step.title}
-        </h1>
-        <p className="mt-4 text-[16px] leading-[1.45] text-muted-foreground">{step.body}</p>
 
-        <div className="mt-7 flex gap-2">
-          {steps.map((s, i) => (
-            <span
-              key={s.title}
-              className={cn(
-                "h-1.5 rounded-full transition-all",
-                i === index ? "w-8 bg-accent" : "w-3 bg-border",
-              )}
-            />
+        <div key={step.pill} className="onboarding-step flex flex-1 flex-col">
+          <div className="relative mt-6 grid min-h-[270px] place-items-center overflow-hidden rounded-[32px] border border-white/80 bg-card px-4 py-5 shadow-[var(--shadow-card)] sm:min-h-[310px]">
+            <span aria-hidden className="absolute -top-12 -right-10 size-36 rounded-full bg-blush-soft/80 blur-2xl" />
+            <span aria-hidden className="absolute -bottom-14 -left-12 size-40 rounded-full bg-sunny-soft/70 blur-2xl" />
+            <span aria-hidden className="onboarding-orbit absolute top-8 right-8 size-3 rounded-full bg-sunny" />
+            <picture className={cn("relative z-10 block", step.visualClass)}>
+              {index === 0 ? <source media="(prefers-reduced-motion: reduce)" srcSet="/illustrations/onboarding/capture-mascot-optimized.png" /> : null}
+              <img
+                src={step.image}
+                alt={step.imageAlt}
+                className="max-h-[245px] w-auto max-w-[94%] object-contain sm:max-h-[282px]"
+              />
+            </picture>
+          </div>
+          <span className="mt-6 inline-flex w-fit text-[13px] font-bold">
+            <span className={cn("rounded-full px-3 py-1.5", step.pillClass)}>{step.pill}</span>
+          </span>
+          <p className="onboarding-copy mt-5 text-[13px] font-bold tracking-[0.08em] text-muted-foreground uppercase">{step.detail}</p>
+          <h1 className="onboarding-copy font-display mt-2 text-balance text-[34px] leading-[1.04] font-extrabold tracking-tight sm:text-[38px]">
+            {step.title}
+          </h1>
+          <p className="onboarding-copy mt-4 max-w-[34rem] text-[16px] leading-[1.5] text-muted-foreground">{step.body}</p>
+        </div>
+
+        <div className="mt-6 flex gap-2" aria-label={`Onboarding step ${index + 1} of ${steps.length}`}>
+          {steps.map((item, itemIndex) => (
+            <span key={item.title} className={cn("h-1.5 rounded-full transition-all", itemIndex === index ? "w-8 bg-accent" : "w-3 bg-border")} />
           ))}
         </div>
 
-        <div className="mt-auto space-y-3 pt-12">
-          <button
-            type="button"
-            onClick={() => (last ? finish() : setIndex(index + 1))}
-            className="press h-14 w-full rounded-full bg-accent text-[16px] font-semibold text-accent-foreground"
-          >
+        <div className="mt-auto space-y-2 pt-7 sm:pt-9">
+          <button type="button" onClick={() => (last ? finish() : setIndex(index + 1))} className="press h-14 w-full rounded-full bg-accent text-[16px] font-semibold text-accent-foreground">
             {last ? "Start my food diary" : "Continue"}
           </button>
           {!last ? (
-            <button
-              type="button"
-              onClick={finish}
-              className="press h-12 w-full rounded-full text-[15px] font-medium text-muted-foreground"
-            >
+            <button type="button" onClick={finish} className="press h-12 w-full rounded-full text-[15px] font-medium text-muted-foreground">
               Skip
             </button>
           ) : null}
