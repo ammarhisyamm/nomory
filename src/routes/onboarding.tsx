@@ -27,9 +27,8 @@ const steps = [
   {
     pill: "Capture",
     pillClass: "bg-blush-soft text-[#c2437b]",
-    image: "/illustrations/onboarding/capture-mascot-optimized.gif",
+    image: "/illustrations/onboarding/capture-mascot-optimized.png",
     imageAlt: "Nomory tomato mascot holding a meal memory",
-    visualClass: "onboarding-visual-capture",
     title: "A photo is all it takes.",
     body: "Snap a meal in the moment. No calorie counting, no long forms—just your food diary, starting with a bite.",
     detail: "Photo first · zero pressure",
@@ -39,7 +38,6 @@ const steps = [
     pillClass: "bg-sunny-soft text-[#8a6100]",
     image: "/illustrations/onboarding/remember-mascots-optimized.png",
     imageAlt: "Nomory toast and clover mascots arranging memory cards",
-    visualClass: "onboarding-visual-remember",
     title: "Remember without trying.",
     body: "Each meal finds its place by date and time, so the little things are there whenever you want them.",
     detail: "Saved by day · easy to find",
@@ -49,7 +47,6 @@ const steps = [
     pillClass: "bg-sky-soft text-sky",
     image: "/illustrations/onboarding/lookback-mascot-optimized.png",
     imageAlt: "Nomory flower mascot looking at a collage of meal memories",
-    visualClass: "onboarding-visual-lookback",
     title: "Little bites. Brighter days.",
     body: "Look back by day, month, or craving—and notice the food moments that made your days feel good.",
     detail: "Your visual diary · yours to keep",
@@ -85,38 +82,15 @@ function Onboarding() {
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
         <div className="flex items-center justify-between gap-4">
           <NomoryLogo className="text-[35px] sm:text-[38px]" />
-          <span className="rounded-full bg-card px-3 py-1.5 text-[12px] font-bold text-muted-foreground shadow-[var(--shadow-pill)]">
-            {index + 1} / {steps.length}
-          </span>
         </div>
 
         <div key={step.pill} className="onboarding-step flex flex-1 flex-col">
-          <div className="relative mt-6 grid min-h-[270px] place-items-center overflow-hidden rounded-[32px] border border-white/80 bg-card px-4 py-5 shadow-[var(--shadow-card)] sm:min-h-[310px]">
-            <span
-              aria-hidden
-              className="absolute -top-12 -right-10 size-36 rounded-full bg-blush-soft/80 blur-2xl"
+          <div className="relative mt-8 grid min-h-[250px] place-items-center px-4 sm:min-h-[290px]">
+            <img
+              src={step.image}
+              alt={step.imageAlt}
+              className="onboarding-illustration max-h-[235px] w-auto max-w-[94%] object-contain sm:max-h-[270px]"
             />
-            <span
-              aria-hidden
-              className="absolute -bottom-14 -left-12 size-40 rounded-full bg-sunny-soft/70 blur-2xl"
-            />
-            <span
-              aria-hidden
-              className="onboarding-orbit absolute top-8 right-8 size-3 rounded-full bg-sunny"
-            />
-            <picture className={cn("relative z-10 block", step.visualClass)}>
-              {index === 0 ? (
-                <source
-                  media="(prefers-reduced-motion: reduce)"
-                  srcSet="/illustrations/onboarding/capture-mascot-optimized.png"
-                />
-              ) : null}
-              <img
-                src={step.image}
-                alt={step.imageAlt}
-                className="max-h-[245px] w-auto max-w-[94%] object-contain sm:max-h-[282px]"
-              />
-            </picture>
           </div>
           <span className="mt-6 inline-flex w-fit text-[13px] font-bold">
             <span className={cn("rounded-full px-3 py-1.5", step.pillClass)}>{step.pill}</span>
@@ -133,15 +107,16 @@ function Onboarding() {
         </div>
 
         <div
-          className="mt-6 flex gap-2"
+          className="mt-6 flex items-center gap-2"
           aria-label={`Onboarding step ${index + 1} of ${steps.length}`}
         >
           {steps.map((item, itemIndex) => (
             <span
               key={item.title}
+              aria-hidden="true"
               className={cn(
-                "h-1.5 rounded-full transition-all",
-                itemIndex === index ? "w-8 bg-accent" : "w-3 bg-border",
+                "rounded-full transition-all",
+                itemIndex === index ? "size-2.5 bg-accent" : "size-2 bg-border",
               )}
             />
           ))}
