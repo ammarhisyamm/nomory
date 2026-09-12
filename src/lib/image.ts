@@ -60,9 +60,9 @@ function findSubjectSquare(img: HTMLImageElement) {
 
   const score = (gx: number, gy: number) => {
     const i = (gy * grid + gx) * 4;
-    const r = data[i] / 255;
-    const g = data[i + 1] / 255;
-    const b = data[i + 2] / 255;
+    const r = (data[i] ?? 0) / 255;
+    const g = (data[i + 1] ?? 0) / 255;
+    const b = (data[i + 2] ?? 0) / 255;
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
     const sat = max === 0 ? 0 : (max - min) / max;
