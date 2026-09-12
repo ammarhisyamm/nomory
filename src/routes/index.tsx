@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   CalendarDays,
   ChevronRight,
@@ -14,6 +15,7 @@ import { EmptyState } from "@/components/empty-state";
 import { MealCard } from "@/components/meal-card";
 import { StatPill } from "@/components/pills";
 import { FoodSticker } from "@/components/food-sticker";
+import { getAuthStatus } from "@/lib/auth";
 import { formatDateLabel, mealImage, toDateKey, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/")({
@@ -38,6 +40,8 @@ export const Route = createFileRoute("/")({
 function TodayPage() {
   const navigate = useNavigate();
   const { meals, ready, mealsByDate, streak } = useMeals();
+  const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
+  const user = auth?.user ?? null;
   const todayKey = toDateKey(new Date());
   const todayMeals = mealsByDate(todayKey);
 
@@ -68,9 +72,18 @@ function TodayPage() {
               <Link
                 to="/profile"
                 aria-label="Profile"
-                className="press grid size-11 place-items-center rounded-full bg-accent-soft text-[15px] font-bold text-accent"
+                className="press grid size-11 place-items-center overflow-hidden rounded-full bg-accent-soft text-[15px] font-bold text-accent"
               >
-                M
+                {user?.picture ? (
+                  <img
+                    src={user.picture}
+                    alt={user.name}
+                    referrerPolicy="no-referrer"
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  (user?.name || user?.email || "M").charAt(0).toUpperCase()
+                )}
               </Link>
             </div>
           }

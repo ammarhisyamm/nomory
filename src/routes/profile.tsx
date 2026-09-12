@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Flame, Images, Trash2, UtensilsCrossed } from "lucide-react";
+import { Flame, Images, Loader2, LogOut, Trash2, UtensilsCrossed } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { StatPill } from "@/components/pills";
+import { getAuthStatus, signOutFromGoogle } from "@/lib/auth";
 import { toDateKey, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/profile")({
@@ -25,7 +27,11 @@ export const Route = createFileRoute("/profile")({
 
 function ProfilePage() {
   const { meals, streak, clearAll, mealsByDate } = useMeals();
+  const queryClient = useQueryClient();
   const todayCount = mealsByDate(toDateKey(new Date())).length;
+  const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
+  const user = auth?.user ?? null;
+  const initial = (user?.name || user?.email || "M").charAt(0).toUpperCase();
 
   const reset = async () => {
     if (!confirm("Delete every saved meal on this device? This can't be undone.")) return;
@@ -33,22 +39,87 @@ function ProfilePage() {
     toast("Diary cleared");
   };
 
+  const signOut = async () => {
+    await signOutFromGoogle();
+    await queryClient.invalidateQueries({ queryKey: ["auth"] });
+    toast("Signed out");
+  };
+
   return (
     <AppShell>
       <Page>
-        <PageHeader title="Profile" subtitle="Your diary lives on this device." />
+        <PageHeader
+          title="Profile"
+          subtitle={user ? user.email : "Your diary lives on this device."}
+        />
 
-        <div className="surface-card flex items-center gap-4 p-5">
-          <span className="grid size-14 place-items-center rounded-full bg-accent-soft text-[20px] font-bold text-accent">
-            M
-          </span>
-          <div>
-            <p className="text-[17px] font-bold">My food diary</p>
-            <p className="mt-1 text-[14px] text-muted-foreground">
-              Saved privately on this device.
-            </p>
+        {user ? (
+          <div className="surface-card flex items-center gap-4 p-5">
+            {user.picture ? (
+              <img
+                src={user.picture}
+                alt={user.name}
+                referrerPolicy="no-referrer"
+                className="size-14 rounded-full border border-border object-cover"
+              />
+            ) : (
+              <span className="grid size-14 place-items-center rounded-full bg-accent-soft text-[20px] font-bold text-accent">
+                {initial}
+              </span>
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[17px] font-bold">{user.name}</p>
+              <p className="mt-1 truncate text-[14px] text-muted-foreground">{user.email}</p>
+            </div>
+            <button
+              type="button"
+              onClick={signOut}
+              aria-label="Sign out"
+              className="press grid size-11 shrink-0 place-items-center rounded-full bg-muted"
+            >
+              <LogOut className="size-[18px] text-muted-foreground" strokeWidth={1.9} />
+            </button>
           </div>
-        </div>
+        ) : (
+          <div className="surface-card flex items-center gap-4 p-5">
+            <span className="grid size-14 place-items-center rounded-full bg-accent-soft text-[20px] font-bold text-accent">
+              M
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[17px] font-bold">My food diary</p>
+              <p className="mt-1 text-[14px] text-muted-foreground">
+                {auth === undefined ? "Checking your account…" : "Saved privately on this device."}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {auth?.googleConfigured && !user ? (
+          <a
+            href="/auth/google"
+            className="surface-card press mt-4 flex h-14 w-full items-center justify-center gap-3 rounded-[20px] text-[15px] font-semibold"
+          >
+            <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true">
+              <path
+                fill="#4285F4"
+                d="M23.5 12.3c0-.9-.1-1.5-.3-2.2H12v4.3h6.5c-.1 1.1-.8 2.7-2.4 3.8l3.7 2.9c2.3-2.1 3.7-5.2 3.7-8.8z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 24c3.2 0 5.9-1.1 7.9-2.9l-3.7-2.9c-1 .7-2.4 1.2-4.2 1.2-3.2 0-5.9-2.2-6.9-5.1L1.3 17.2C3.3 21.2 7.3 24 12 24z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.1 14.3c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3L1.3 6.8C.5 8.4 0 10.1 0 12s.5 3.6 1.3 5.2l3.8-2.9z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 4.7c1.8 0 3 .8 3.7 1.4l3.3-3.2C17.9 1.1 15.2 0 12 0 7.3 0 3.3 2.8 1.3 6.8l3.8 2.9c1-2.9 3.7-5 6.9-5z"
+              />
+            </svg>
+            Continue with Google
+          </a>
+        ) : null}
 
         <div className="mt-4 flex flex-wrap gap-2">
           <StatPill icon={Images} label={`${meals.length} memories`} />
@@ -74,6 +145,13 @@ function ProfilePage() {
             </span>
           </button>
         </section>
+
+        {auth === undefined ? (
+          <p className="mt-6 flex items-center justify-center gap-2 text-[13px] text-subtle">
+            <Loader2 className="size-4 animate-spin" strokeWidth={2} />
+            Loading account…
+          </p>
+        ) : null}
       </Page>
     </AppShell>
   );
