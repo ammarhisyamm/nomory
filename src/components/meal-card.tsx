@@ -9,6 +9,7 @@ const savedLabel: Record<Meal["mealType"], string> = {
   lunch: "Lunch saved!",
   dinner: "Dinner saved!",
   snack: "Snack saved!",
+  drink: "Drink saved!",
 };
 
 export function MealCard({ meal }: { meal: Meal }) {

@@ -22,7 +22,7 @@ const mealSchema = z.object({
   processedImage: z.string().max(12_000_000).default(""),
   useOriginal: z.boolean().default(false),
   mealName: z.string().max(120).default(""),
-  mealType: z.enum(["breakfast", "lunch", "dinner", "snack"]).default("snack"),
+  mealType: z.enum(["breakfast", "lunch", "dinner", "snack", "drink"]).default("snack"),
   note: z.string().max(2000).default(""),
   tags: z.array(z.string().max(40)).max(20).default([]),
   mealDate: z.string().default("1970-01-01"),

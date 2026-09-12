@@ -13,7 +13,7 @@ import { dbClear, dbDelete, dbGetAll, dbPut } from "./db";
 import { getAuthStatus } from "./auth";
 import { clearMealsCloud, deleteMealCloud, listMealsCloud, saveMealCloud } from "./meals-cloud";
 
-export type MealType = "breakfast" | "lunch" | "dinner" | "snack";
+export type MealType = "breakfast" | "lunch" | "dinner" | "snack" | "drink";
 
 export type Meal = {
   id: string;
@@ -37,6 +37,7 @@ export const MEAL_TYPES: { value: MealType; label: string }[] = [
   { value: "lunch", label: "Lunch" },
   { value: "dinner", label: "Dinner" },
   { value: "snack", label: "Snack" },
+  { value: "drink", label: "Drink" },
 ];
 
 export function suggestMealType(time: string): MealType {

@@ -21,7 +21,7 @@ export type MealRow = {
   updated_at: number;
 };
 
-const MEAL_TYPES = new Set(["breakfast", "lunch", "dinner", "snack"]);
+const MEAL_TYPES = new Set(["breakfast", "lunch", "dinner", "snack", "drink"]);
 
 export function isRemoteUrl(value: string) {
   return value.startsWith("http://") || value.startsWith("https://");
