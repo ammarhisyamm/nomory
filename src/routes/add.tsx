@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/add")({
   head: () => ({
     meta: [
-      { title: "Add a meal | Morsel" },
+      { title: "Add a meal | Nomory" },
       {
         name: "description",
         content: "Take a photo of your meal or upload one from your gallery.",

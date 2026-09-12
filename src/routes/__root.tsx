@@ -79,20 +79,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Morsel — Remember what you ate" },
+      { title: "Nomory — Your meals, remembered" },
       {
         name: "description",
-        content: "A visual food diary. Save a photo of each meal and revisit your food memories.",
+        content:
+          "Nomory helps you remember what you eat, one photo at a time. Good food, brighter days.",
       },
-      { name: "theme-color", content: "#F95410" },
+      { name: "theme-color", content: "#FF5A1F" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
-      { name: "apple-mobile-web-app-title", content: "Morsel" },
-      { property: "og:title", content: "Morsel — Remember what you ate" },
+      { name: "apple-mobile-web-app-title", content: "Nomory" },
+      { property: "og:title", content: "Nomory — Your meals, remembered" },
       {
         property: "og:description",
-        content: "Save meals with a quick photo and build your own visual food diary.",
+        content: "Capture meals. Remember what you ate. Look back on your food memories.",
       },
       { property: "og:type", content: "website" },
     ],
@@ -101,6 +102,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      // Baloo 2 (display) + Satoshi (body) per Nomory brand guidelines
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap",
+      },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },

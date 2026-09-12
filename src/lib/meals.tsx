@@ -4,10 +4,14 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { dbClear, dbDelete, dbGetAll, dbPut } from "./db";
+import { getAuthStatus } from "./auth";
+import { clearMealsCloud, deleteMealCloud, listMealsCloud, saveMealCloud } from "./meals-cloud";
 
 export type MealType = "breakfast" | "lunch" | "dinner" | "snack";
 
@@ -76,12 +80,17 @@ export function formatTimeLabel(time: string) {
 type MealsContextValue = {
   meals: Meal[];
   ready: boolean;
+  /** True when signed in + D1 bound: writes also go to the cloud. */
+  cloudEnabled: boolean;
+  syncing: boolean;
   saveMeal: (meal: Meal) => Promise<void>;
   removeMeal: (id: string) => Promise<void>;
   clearAll: () => Promise<void>;
   getMeal: (id: string) => Meal | undefined;
   mealsByDate: (dateKey: string) => Meal[];
   streak: number;
+  /** Pull latest from cloud and merge (cloud wins on conflict). */
+  syncNow: () => Promise<void>;
 };
 
 const MealsContext = createContext<MealsContextValue | null>(null);
@@ -96,6 +105,11 @@ const sortMeals = (list: Meal[]) =>
 export function MealsProvider({ children }: { children: ReactNode }) {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [ready, setReady] = useState(false);
+  const [cloudEnabled, setCloudEnabled] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const cloudRef = useRef(false);
+  const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
+  const userId = auth?.user?.id ?? null;
 
   useEffect(() => {
     let alive = true;
@@ -112,19 +126,93 @@ export function MealsProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const saveMeal = useCallback(async (meal: Meal) => {
-    await dbPut(meal);
-    setMeals((prev) => sortMeals([...prev.filter((m) => m.id !== meal.id), meal]));
+  const mergeCloudMeals = useCallback(async (cloudMeals: Meal[]) => {
+    let merged: Meal[] = [];
+    setMeals((prev) => {
+      const byId = new Map(prev.map((m) => [m.id, m]));
+      for (const cm of cloudMeals) {
+        const local = byId.get(cm.id);
+        if (!local || cm.updatedAt >= local.updatedAt) byId.set(cm.id, cm);
+      }
+      merged = sortMeals([...byId.values()]);
+      return merged;
+    });
+    // Refresh the on-device cache so offline mode shows cloud meals too.
+    await Promise.allSettled(merged.map((m) => dbPut(m)));
   }, []);
+
+  const syncNow = useCallback(async () => {
+    if (!userId) return;
+    setSyncing(true);
+    try {
+      const res = await listMealsCloud();
+      if (res.cloud) {
+        cloudRef.current = true;
+        setCloudEnabled(true);
+        await mergeCloudMeals(res.meals);
+      } else {
+        cloudRef.current = false;
+        setCloudEnabled(false);
+      }
+    } catch {
+      // Offline or cloud unavailable — local IndexedDB stays the source.
+    } finally {
+      setSyncing(false);
+    }
+  }, [userId, mergeCloudMeals]);
+
+  useEffect(() => {
+    if (!userId) {
+      cloudRef.current = false;
+      setCloudEnabled(false);
+      return;
+    }
+    void syncNow();
+  }, [userId, syncNow]);
+
+  const saveMeal = useCallback(
+    async (meal: Meal) => {
+      await dbPut(meal);
+      setMeals((prev) => sortMeals([...prev.filter((m) => m.id !== meal.id), meal]));
+      // Cloud write-through (fire-and-forget): server uploads photos to R2
+      // when configured and returns the meal with remote URLs.
+      if (cloudRef.current || userId) {
+        saveMealCloud({ data: meal })
+          .then(async (res) => {
+            if (!res.cloud) {
+              if (userId) {
+                cloudRef.current = false;
+                setCloudEnabled(false);
+              }
+              return;
+            }
+            cloudRef.current = true;
+            setCloudEnabled(true);
+            if (res.meal) {
+              await dbPut(res.meal);
+              setMeals((prev) => sortMeals([...prev.filter((m) => m.id !== meal.id), res.meal!]));
+            }
+          })
+          .catch(() => undefined);
+      }
+    },
+    [userId],
+  );
 
   const removeMeal = useCallback(async (id: string) => {
     await dbDelete(id);
     setMeals((prev) => prev.filter((m) => m.id !== id));
+    if (cloudRef.current) {
+      deleteMealCloud({ data: { id } }).catch(() => undefined);
+    }
   }, []);
 
   const clearAll = useCallback(async () => {
     await dbClear();
     setMeals([]);
+    if (cloudRef.current) {
+      clearMealsCloud().catch(() => undefined);
+    }
   }, []);
 
   const streak = useMemo(() => {
@@ -143,17 +231,20 @@ export function MealsProvider({ children }: { children: ReactNode }) {
     () => ({
       meals,
       ready,
+      cloudEnabled,
+      syncing,
       saveMeal,
       removeMeal,
       clearAll,
       streak,
+      syncNow,
       getMeal: (id) => meals.find((m) => m.id === id),
       mealsByDate: (dateKey) =>
         meals
           .filter((m) => m.mealDate === dateKey)
           .sort((a, b) => a.mealTime.localeCompare(b.mealTime)),
     }),
-    [meals, ready, saveMeal, removeMeal, clearAll, streak],
+    [meals, ready, cloudEnabled, syncing, saveMeal, removeMeal, clearAll, streak, syncNow],
   );
 
   return <MealsContext.Provider value={value}>{children}</MealsContext.Provider>;

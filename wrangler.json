@@ -1,3 +1,20 @@
 {
-  "name": "trackerfood"
+  "name": "trackerfood",
+  "compatibility_date": "2026-09-12",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "nomory-db",
+      "database_id": "6fc3a487-8be3-43c3-82af-cf9f0de0e835"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      "bucket_name": "nomory-images"
+    }
+  ],
+  "vars": {
+    "R2_PUBLIC_URL": "https://pub-9ac9781ada9641ffb736141d7132a2eb.r2.dev"
+  }
 }

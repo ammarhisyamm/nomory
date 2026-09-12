@@ -21,9 +21,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/meal/$id")({
   head: () => ({
     meta: [
-      { title: "Meal — Morsel" },
-      { name: "description", content: "A saved meal in your visual food diary." },
-      { property: "og:title", content: "Meal — Morsel" },
+      { title: "Meal — Nomory" },
+      { name: "description", content: "A saved meal in your Nomory food diary." },
+      { property: "og:title", content: "Meal — Nomory" },
       {
         property: "og:description",
         content: "A saved meal in your visual food diary.",

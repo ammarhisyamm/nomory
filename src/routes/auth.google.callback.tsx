@@ -14,7 +14,7 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/auth/google/callback")({
   validateSearch: searchSchema,
   head: () => ({
-    meta: [{ title: "Signing in — Morsel" }],
+    meta: [{ title: "Signing in — Nomory" }],
   }),
   component: GoogleCallbackRoute,
 });

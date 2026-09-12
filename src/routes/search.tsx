@@ -8,7 +8,7 @@ import { formatDateLabel, formatTimeLabel, mealImage, useMeals } from "@/lib/mea
 export const Route = createFileRoute("/search")({
   head: () => ({
     meta: [
-      { title: "Search your meals | Morsel" },
+      { title: "Search your meals | Nomory" },
       {
         name: "description",
         content: "Find a saved meal by name, note or tag in your visual food diary.",

@@ -1,5 +1,6 @@
-// Tiny IndexedDB wrapper — meals live on the device only.
-const DB_NAME = "food-diary";
+// Tiny IndexedDB wrapper — Nomory meals cache on the device.
+// Cloud D1 is the source of truth when signed in (see meals-cloud.ts).
+const DB_NAME = "nomory-meals";
 const STORE = "meals";
 const VERSION = 1;
 

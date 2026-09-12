@@ -2,19 +2,20 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { CalendarDays, Camera, Images } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { NomoryLogo } from "@/components/nomory-logo";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "Welcome to Morsel — Your visual food diary" },
+      { title: "Welcome to Nomory — Your meals, remembered" },
       {
         name: "description",
-        content: "Save meals with a quick photo and watch your food memories grow.",
+        content: "Nomory helps you remember what you eat, one photo at a time.",
       },
-      { property: "og:title", content: "Welcome to Morsel" },
+      { property: "og:title", content: "Welcome to Nomory" },
       {
         property: "og:description",
-        content: "Save meals with a quick photo and watch your food memories grow.",
+        content: "Capture meals. Remember what you ate. Look back anytime.",
       },
     ],
   }),
@@ -24,18 +25,24 @@ export const Route = createFileRoute("/onboarding")({
 const steps = [
   {
     icon: Camera,
-    title: "Remember what you ate.",
+    pill: "Capture",
+    pillClass: "bg-blush-soft text-[#c2437b]",
+    title: "Capture what you eat.",
     body: "Save meals with a quick photo and build your own visual food diary.",
   },
   {
     icon: CalendarDays,
-    title: "Your meals, automatically organized.",
+    pill: "Remember",
+    pillClass: "bg-sunny-soft text-[#8a6100]",
+    title: "Remember, automatically.",
     body: "Every photo is saved by date and time so you can revisit it later.",
   },
   {
     icon: Images,
-    title: "See your food memories grow.",
-    body: "Browse your meals by day, month, or memory.",
+    pill: "Look Back",
+    pillClass: "bg-sky-soft text-sky",
+    title: "Look back on big memories.",
+    body: "Browse little bites by day, month, or craving. Good food, brighter days.",
   },
 ];
 
@@ -47,17 +54,23 @@ function Onboarding() {
   const last = index === steps.length - 1;
 
   const finish = () => {
-    localStorage.setItem("morsel.onboarded", "1");
+    localStorage.setItem("nomory.onboarded", "1");
     navigate({ to: "/" });
   };
 
   return (
     <div className="flex min-h-screen flex-col px-6 pt-16 pb-10">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
-        <span className="pop-in grid size-20 place-items-center rounded-[28px] bg-accent-soft">
+        <NomoryLogo className="text-[38px]" />
+        <span className="pop-in mt-8 inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-[13px] font-bold">
+          <span className={cn("rounded-full px-3 py-1", step.pillClass)}>{step.pill}</span>
+        </span>
+        <span className="pop-in mt-4 grid size-20 place-items-center rounded-[28px] bg-accent-soft">
           <Icon className="size-9 text-accent" strokeWidth={1.8} />
         </span>
-        <h1 className="mt-10 text-[34px] leading-[1.08] font-bold">{step.title}</h1>
+        <h1 className="font-display mt-6 text-[34px] leading-[1.05] font-extrabold tracking-tight">
+          {step.title}
+        </h1>
         <p className="mt-4 text-[16px] leading-[1.45] text-muted-foreground">{step.body}</p>
 
         <div className="mt-10 flex gap-2">

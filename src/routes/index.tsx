@@ -21,16 +21,16 @@ import { formatDateLabel, mealImage, toDateKey, useMeals } from "@/lib/meals";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Morsel — Remember what you ate" },
+      { title: "Nomory — Your meals, remembered" },
       {
         name: "description",
         content:
-          "A visual food diary. Save a photo of each meal and revisit your food memories by day, month or mood.",
+          "Nomory helps you remember what you eat, one photo at a time. Good food, brighter days.",
       },
-      { property: "og:title", content: "Morsel — Remember what you ate" },
+      { property: "og:title", content: "Nomory — Your meals, remembered" },
       {
         property: "og:description",
-        content: "Save meals with a quick photo and build your own visual food diary.",
+        content: "Capture meals. Remember what you ate. Look back on your food memories.",
       },
     ],
   }),
@@ -47,7 +47,11 @@ function TodayPage() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (!localStorage.getItem("morsel.onboarded")) {
+    // Migrate the old Morsel flag forward.
+    if (localStorage.getItem("morsel.onboarded") && !localStorage.getItem("nomory.onboarded")) {
+      localStorage.setItem("nomory.onboarded", "1");
+    }
+    if (!localStorage.getItem("nomory.onboarded")) {
       navigate({ to: "/onboarding" });
     }
   }, [navigate]);
@@ -58,8 +62,8 @@ function TodayPage() {
     <AppShell>
       <Page>
         <PageHeader
-          title="What did you eat today?"
-          subtitle="Capture meals. Keep your memories."
+          title="Good food, brighter days."
+          subtitle="Your meals, remembered — one photo at a time."
           right={
             <div className="flex items-center gap-2">
               <Link
@@ -82,7 +86,7 @@ function TodayPage() {
                     className="size-full object-cover"
                   />
                 ) : (
-                  (user?.name || user?.email || "M").charAt(0).toUpperCase()
+                  (user?.name || user?.email || "N").charAt(0).toUpperCase()
                 )}
               </Link>
             </div>

@@ -1,7 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Flame, Images, Loader2, LogOut, Trash2, UtensilsCrossed } from "lucide-react";
+import {
+  Cloud,
+  CloudOff,
+  Flame,
+  Images,
+  Loader2,
+  LogOut,
+  RefreshCw,
+  Trash2,
+  UtensilsCrossed,
+} from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { StatPill } from "@/components/pills";
 import { getAuthStatus, signOutFromGoogle } from "@/lib/auth";
@@ -10,7 +20,7 @@ import { toDateKey, useMeals } from "@/lib/meals";
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
-      { title: "Profile — Your food diary | Morsel" },
+      { title: "Profile — Your food diary | Nomory" },
       {
         name: "description",
         content: "Your diary stats and settings. Meals are saved privately on this device.",
@@ -26,17 +36,29 @@ export const Route = createFileRoute("/profile")({
 });
 
 function ProfilePage() {
-  const { meals, streak, clearAll, mealsByDate } = useMeals();
+  const { meals, streak, clearAll, mealsByDate, cloudEnabled, syncing, syncNow } = useMeals();
   const queryClient = useQueryClient();
   const todayCount = mealsByDate(toDateKey(new Date())).length;
   const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const user = auth?.user ?? null;
-  const initial = (user?.name || user?.email || "M").charAt(0).toUpperCase();
+  const initial = (user?.name || user?.email || "N").charAt(0).toUpperCase();
 
   const reset = async () => {
-    if (!confirm("Delete every saved meal on this device? This can't be undone.")) return;
+    if (
+      !confirm(
+        cloudEnabled
+          ? "Delete every saved meal everywhere, including the cloud? This can't be undone."
+          : "Delete every saved meal on this device? This can't be undone.",
+      )
+    )
+      return;
     await clearAll();
     toast("Diary cleared");
+  };
+
+  const sync = async () => {
+    await syncNow();
+    toast(cloudEnabled ? "Synced with cloud" : "Sync finished");
   };
 
   const signOut = async () => {
@@ -52,6 +74,32 @@ function ProfilePage() {
           title="Profile"
           subtitle={user ? user.email : "Your diary lives on this device."}
         />
+
+        <div className="surface-card flex items-center gap-4 p-5">
+          <span
+            className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-bold ${
+              cloudEnabled ? "bg-leaf-soft text-[#15803d]" : "bg-muted text-muted-foreground"
+            }`}
+          >
+            {cloudEnabled ? (
+              <Cloud className="size-4" strokeWidth={2} />
+            ) : (
+              <CloudOff className="size-4" strokeWidth={2} />
+            )}
+            {cloudEnabled ? "Cloud sync on" : user ? "Cloud not set up yet" : "On this device"}
+          </span>
+          {user ? (
+            <button
+              type="button"
+              onClick={sync}
+              disabled={syncing}
+              className="press ml-auto inline-flex h-10 items-center gap-2 rounded-full bg-muted px-4 text-[13px] font-semibold text-muted-foreground disabled:opacity-60"
+            >
+              <RefreshCw className={`size-4 ${syncing ? "animate-spin" : ""}`} strokeWidth={2} />
+              {syncing ? "Syncing…" : "Sync now"}
+            </button>
+          ) : null}
+        </div>
 
         {user ? (
           <div className="surface-card flex items-center gap-4 p-5">
@@ -83,10 +131,10 @@ function ProfilePage() {
         ) : (
           <div className="surface-card flex items-center gap-4 p-5">
             <span className="grid size-14 place-items-center rounded-full bg-accent-soft text-[20px] font-bold text-accent">
-              M
+              N
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[17px] font-bold">My food diary</p>
+              <p className="text-[17px] font-bold">My Nomory diary</p>
               <p className="mt-1 text-[14px] text-muted-foreground">
                 {auth === undefined ? "Checking your account…" : "Saved privately on this device."}
               </p>

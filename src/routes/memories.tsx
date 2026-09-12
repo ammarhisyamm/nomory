@@ -16,7 +16,7 @@ import {
 export const Route = createFileRoute("/memories")({
   head: () => ({
     meta: [
-      { title: "Memories — Your meal archive | Morsel" },
+      { title: "Memories — Your meal archive | Nomory" },
       {
         name: "description",
         content: "Browse every meal you've saved as a visual archive, grouped by month.",

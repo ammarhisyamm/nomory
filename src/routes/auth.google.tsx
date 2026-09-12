@@ -6,7 +6,7 @@ import { startGoogleSignIn } from "@/lib/auth";
 
 export const Route = createFileRoute("/auth/google")({
   head: () => ({
-    meta: [{ title: "Signing in — Morsel" }],
+    meta: [{ title: "Signing in — Nomory" }],
   }),
   component: GoogleSignInRoute,
 });

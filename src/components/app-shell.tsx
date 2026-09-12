@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { CalendarDays, Images, Plus, Sparkles, User } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { NomoryLogo, NomoryMark } from "./nomory-logo";
 
 const destinations = [
   { to: "/", label: "Today", icon: Sparkles },
@@ -19,11 +20,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="mx-auto flex w-full max-w-[1240px]">
         {/* Desktop rail */}
         <aside className="sticky top-0 hidden h-screen w-[232px] shrink-0 flex-col gap-1 px-5 py-8 lg:flex">
-          <div className="mb-8 flex items-center gap-2 px-3">
-            <span className="grid size-9 place-items-center rounded-full bg-accent text-accent-foreground">
-              <Sparkles className="size-[18px]" strokeWidth={2} />
-            </span>
-            <span className="text-[17px] font-bold tracking-tight">Morsel</span>
+          <div className="mb-8 px-3">
+            <NomoryLogo className="text-[26px]" withTagline />
           </div>
           {destinations.map(({ to, label, icon: Icon }) => (
             <Link
@@ -108,15 +106,20 @@ export function PageHeader({
   title,
   subtitle,
   right,
+  eyebrow,
 }: {
   title: string;
   subtitle?: string;
   right?: ReactNode;
+  eyebrow?: ReactNode;
 }) {
   return (
     <header className="flex items-start justify-between gap-4 pt-8 pb-6">
       <div>
-        <h1 className="text-[30px] leading-[1.08] font-bold sm:text-[34px]">{title}</h1>
+        {eyebrow}
+        <h1 className="font-display text-[30px] leading-[1.05] font-extrabold tracking-tight sm:text-[34px]">
+          {title}
+        </h1>
         {subtitle ? <p className="mt-2 text-[15px] text-muted-foreground">{subtitle}</p> : null}
       </div>
       {right}

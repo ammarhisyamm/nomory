@@ -1,13 +1,13 @@
 {
-  "name": "Morsel — Remember what you ate",
-  "short_name": "Morsel",
-  "description": "A visual food diary. Save a photo of each meal and revisit your food memories.",
+  "name": "Nomory — Your meals, remembered",
+  "short_name": "Nomory",
+  "description": "Nomory helps you remember what you eat, one photo at a time. Good food, brighter days.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FCF1E4",
-  "theme_color": "#F95410",
+  "background_color": "#FFF7EE",
+  "theme_color": "#FF5A1F",
   "icons": [
     {
       "src": "/icons/icon-192.png",

@@ -17,7 +17,7 @@ import {
 export const Route = createFileRoute("/calendar")({
   head: () => ({
     meta: [
-      { title: "Calendar — Your meals by day | Morsel" },
+      { title: "Calendar — Your meals by day | Nomory" },
       {
         name: "description",
         content: "See your meal photos laid out across the month and revisit any day.",

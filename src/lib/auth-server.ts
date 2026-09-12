@@ -9,8 +9,8 @@ export type SessionUser = {
   picture: string;
 };
 
-const SESSION_COOKIE = "morsel.session";
-const STATE_COOKIE = "morsel.oauth_state";
+const SESSION_COOKIE = "nomory.session";
+const STATE_COOKIE = "nomory.oauth_state";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
 export function googleConfig() {
@@ -20,7 +20,7 @@ export function googleConfig() {
 }
 
 function sessionSecret() {
-  return process.env["SESSION_SECRET"] || process.env["GOOGLE_CLIENT_SECRET"] || "morsel-dev-secret";
+  return process.env["SESSION_SECRET"] || process.env["GOOGLE_CLIENT_SECRET"] || "nomory-dev-secret";
 }
 
 function bytesToB64url(bytes: Uint8Array) {
