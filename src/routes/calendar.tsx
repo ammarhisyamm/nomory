@@ -79,7 +79,11 @@ function CalendarPage() {
               {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
             </h2>
             <div className="flex items-center gap-2">
-              <button type="button" onClick={goToday} className="press hidden h-11 rounded-full bg-muted px-4 text-[13px] font-semibold text-muted-foreground sm:block">
+              <button
+                type="button"
+                onClick={goToday}
+                className="press hidden h-11 rounded-full bg-muted px-4 text-[13px] font-semibold text-muted-foreground sm:block"
+              >
                 Today
               </button>
               <button

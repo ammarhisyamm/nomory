@@ -1,15 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  CalendarDays,
-  Flame,
-  Images,
-  Plus,
-  Search,
-  Target,
-  UtensilsCrossed,
-} from "lucide-react";
+import { CalendarDays, Flame, Images, Plus, Search, Target, UtensilsCrossed } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { MealCard } from "@/components/meal-card";
@@ -129,7 +121,10 @@ function TodayPage() {
               ))}
 
               {ready && todayMeals.length > 0 ? (
-                <Link to="/add" className="press flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-dashed border-accent/35 bg-accent-soft/55 px-5 text-[15px] font-bold text-accent">
+                <Link
+                  to="/add"
+                  className="press flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-dashed border-accent/35 bg-accent-soft/55 px-5 text-[15px] font-bold text-accent"
+                >
                   <Plus className="size-5" strokeWidth={2.2} />
                   Add another meal
                 </Link>

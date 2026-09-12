@@ -45,11 +45,37 @@ function LoginPage() {
     if (auth?.user) navigate({ to: "/" });
   }, [auth, navigate]);
 
+  const cloudDown = pwStatus && !pwStatus.available;
+  const signupClosed = mode === "register" && pwStatus && !pwStatus.signupOpen;
+
+  /** Same rules as the server — instant, specific feedback before submit. */
+  const validateLocal = (): string | null => {
+    const u = username.trim();
+    if (!u || !password) return "Isi username dan password dulu ya.";
+    if (u.length < 3) return "Username minimal 3 karakter.";
+    if (u.length > 20) return "Username maksimal 20 karakter.";
+    if (!/^[a-zA-Z0-9_]+$/.test(u))
+      return "Username hanya boleh huruf, angka, dan underscore (tanpa spasi).";
+    if (password.length < 8) return "Password minimal 8 karakter.";
+    if (password.length > 128) return "Password maksimal 128 karakter.";
+    if (mode === "register" && name.trim().length > 40) return "Nama maksimal 40 karakter.";
+    return null;
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!username.trim() || !password) {
-      setError("Isi username dan password dulu ya.");
+    if (cloudDown) {
+      setError("Login username belum tersedia — database cloud belum disiapkan.");
+      return;
+    }
+    if (signupClosed) {
+      setError("Pendaftaran akun baru sedang ditutup. Masuk dengan akun yang sudah ada ya.");
+      return;
+    }
+    const invalid = validateLocal();
+    if (invalid) {
+      setError(invalid);
       return;
     }
     setBusy(true);
@@ -61,14 +87,16 @@ function LoginPage() {
       if (result.ok) {
         await queryClient.invalidateQueries({ queryKey: ["auth"] });
         toast.success(
-          mode === "login" ? "Selamat datang kembali!" : "Akun dibuat. Selamat datang!",
+          mode === "login"
+            ? "Selamat datang kembali!"
+            : `Akun @${username.trim().toLowerCase()} dibuat. Selamat datang!`,
         );
         navigate({ to: "/" });
       } else {
         setError(result.error ?? "Gagal. Coba lagi.");
       }
     } catch {
-      setError("Tidak bisa terhubung. Periksa koneksi lalu coba lagi.");
+      setError("Tidak bisa terhubung ke server. Periksa koneksi lalu coba lagi.");
     } finally {
       setBusy(false);
     }
@@ -110,12 +138,21 @@ function LoginPage() {
           ))}
         </div>
 
-        {pwStatus && !pwStatus.available ? (
+        {cloudDown ? (
           <div className="surface-card mt-4 flex gap-3 p-5 text-left">
             <TriangleAlert className="size-5 shrink-0 text-accent" strokeWidth={2} />
             <p className="text-[14px] leading-relaxed text-muted-foreground">
-              Login username belum tersedia — database cloud belum disiapkan di deployment ini.
-              Sementara kamu tetap bisa pakai Nomory di perangkat ini tanpa login.
+              Login username belum tersedia — database cloud belum disiapkan di deployment ini. Coba
+              masuk dengan Google lewat halaman Profile, atau hubungi admin.
+            </p>
+          </div>
+        ) : null}
+
+        {signupClosed ? (
+          <div className="surface-card mt-4 flex gap-3 p-5 text-left">
+            <TriangleAlert className="size-5 shrink-0 text-accent" strokeWidth={2} />
+            <p className="text-[14px] leading-relaxed text-muted-foreground">
+              Pendaftaran akun baru sedang ditutup. Masuk dengan akun yang sudah ada ya.
             </p>
           </div>
         ) : null}
@@ -146,7 +183,7 @@ function LoginPage() {
               htmlFor="nomory-username"
               className="mb-2 block text-[13px] font-semibold text-muted-foreground"
             >
-              Username
+              Username <span className="font-normal">(3–20 karakter: huruf, angka, _)</span>
             </label>
             <input
               id="nomory-username"
@@ -207,7 +244,7 @@ function LoginPage() {
 
           <button
             type="submit"
-            disabled={busy}
+            disabled={busy || Boolean(cloudDown || signupClosed)}
             className="press flex h-14 w-full items-center justify-center gap-2 rounded-full bg-accent text-[16px] font-semibold text-accent-foreground disabled:opacity-60"
           >
             {busy ? <Loader2 className="size-5 animate-spin" strokeWidth={2.2} /> : null}

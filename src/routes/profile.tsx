@@ -95,6 +95,14 @@ function ProfilePage() {
       toast.error("Isi password lama dan baru dulu ya.");
       return;
     }
+    if (nextPw.length < 8) {
+      toast.error("Password baru minimal 8 karakter.");
+      return;
+    }
+    if (currentPw === nextPw) {
+      toast.error("Password baru harus berbeda dari yang lama.");
+      return;
+    }
     setChangingPw(true);
     try {
       const res = await changePassword({ data: { current: currentPw, next: nextPw } });
@@ -151,45 +159,47 @@ function ProfilePage() {
             ) : null}
           </div>
 
-        {user ? (
-          <div className="surface-card flex items-center gap-4 p-5">
-            {user.picture ? (
-              <img
-                src={user.picture}
-                alt={user.name}
-                referrerPolicy="no-referrer"
-                className="size-14 rounded-full border border-border object-cover"
-              />
-            ) : (
+          {user ? (
+            <div className="surface-card flex items-center gap-4 p-5">
+              {user.picture ? (
+                <img
+                  src={user.picture}
+                  alt={user.name}
+                  referrerPolicy="no-referrer"
+                  className="size-14 rounded-full border border-border object-cover"
+                />
+              ) : (
+                <span className="grid size-14 place-items-center rounded-full bg-accent-soft text-[20px] font-bold text-accent">
+                  {initial}
+                </span>
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[17px] font-bold">{user.name}</p>
+                <p className="mt-1 truncate text-[14px] text-muted-foreground">{user.email}</p>
+              </div>
+              <button
+                type="button"
+                onClick={signOutUser}
+                aria-label="Sign out"
+                className="press grid size-11 shrink-0 place-items-center rounded-full bg-muted"
+              >
+                <LogOut className="size-[18px] text-muted-foreground" strokeWidth={1.9} />
+              </button>
+            </div>
+          ) : (
+            <div className="surface-card flex items-center gap-4 p-5">
               <span className="grid size-14 place-items-center rounded-full bg-accent-soft text-[20px] font-bold text-accent">
-                {initial}
+                N
               </span>
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-[17px] font-bold">{user.name}</p>
-              <p className="mt-1 truncate text-[14px] text-muted-foreground">{user.email}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-[17px] font-bold">My Nomory diary</p>
+                <p className="mt-1 text-[14px] text-muted-foreground">
+                  {auth === undefined
+                    ? "Checking your account…"
+                    : "Saved privately on this device."}
+                </p>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={signOutUser}
-              aria-label="Sign out"
-              className="press grid size-11 shrink-0 place-items-center rounded-full bg-muted"
-            >
-              <LogOut className="size-[18px] text-muted-foreground" strokeWidth={1.9} />
-            </button>
-          </div>
-        ) : (
-          <div className="surface-card flex items-center gap-4 p-5">
-            <span className="grid size-14 place-items-center rounded-full bg-accent-soft text-[20px] font-bold text-accent">
-              N
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-[17px] font-bold">My Nomory diary</p>
-              <p className="mt-1 text-[14px] text-muted-foreground">
-                {auth === undefined ? "Checking your account…" : "Saved privately on this device."}
-              </p>
-            </div>
-          </div>
           )}
         </section>
 

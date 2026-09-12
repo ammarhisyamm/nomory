@@ -9,9 +9,15 @@ export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
       { title: "Welcome to Nomory — Your meals, remembered" },
-      { name: "description", content: "Nomory helps you remember what you eat, one photo at a time." },
+      {
+        name: "description",
+        content: "Nomory helps you remember what you eat, one photo at a time.",
+      },
       { property: "og:title", content: "Welcome to Nomory" },
-      { property: "og:description", content: "Capture meals. Remember what you ate. Look back anytime." },
+      {
+        property: "og:description",
+        content: "Capture meals. Remember what you ate. Look back anytime.",
+      },
     ],
   }),
   component: Onboarding,
@@ -86,11 +92,25 @@ function Onboarding() {
 
         <div key={step.pill} className="onboarding-step flex flex-1 flex-col">
           <div className="relative mt-6 grid min-h-[270px] place-items-center overflow-hidden rounded-[32px] border border-white/80 bg-card px-4 py-5 shadow-[var(--shadow-card)] sm:min-h-[310px]">
-            <span aria-hidden className="absolute -top-12 -right-10 size-36 rounded-full bg-blush-soft/80 blur-2xl" />
-            <span aria-hidden className="absolute -bottom-14 -left-12 size-40 rounded-full bg-sunny-soft/70 blur-2xl" />
-            <span aria-hidden className="onboarding-orbit absolute top-8 right-8 size-3 rounded-full bg-sunny" />
+            <span
+              aria-hidden
+              className="absolute -top-12 -right-10 size-36 rounded-full bg-blush-soft/80 blur-2xl"
+            />
+            <span
+              aria-hidden
+              className="absolute -bottom-14 -left-12 size-40 rounded-full bg-sunny-soft/70 blur-2xl"
+            />
+            <span
+              aria-hidden
+              className="onboarding-orbit absolute top-8 right-8 size-3 rounded-full bg-sunny"
+            />
             <picture className={cn("relative z-10 block", step.visualClass)}>
-              {index === 0 ? <source media="(prefers-reduced-motion: reduce)" srcSet="/illustrations/onboarding/capture-mascot-optimized.png" /> : null}
+              {index === 0 ? (
+                <source
+                  media="(prefers-reduced-motion: reduce)"
+                  srcSet="/illustrations/onboarding/capture-mascot-optimized.png"
+                />
+              ) : null}
               <img
                 src={step.image}
                 alt={step.imageAlt}
@@ -101,25 +121,46 @@ function Onboarding() {
           <span className="mt-6 inline-flex w-fit text-[13px] font-bold">
             <span className={cn("rounded-full px-3 py-1.5", step.pillClass)}>{step.pill}</span>
           </span>
-          <p className="onboarding-copy mt-5 text-[13px] font-bold tracking-[0.08em] text-muted-foreground uppercase">{step.detail}</p>
+          <p className="onboarding-copy mt-5 text-[13px] font-bold tracking-[0.08em] text-muted-foreground uppercase">
+            {step.detail}
+          </p>
           <h1 className="onboarding-copy font-display mt-2 text-balance text-[34px] leading-[1.04] font-extrabold tracking-tight sm:text-[38px]">
             {step.title}
           </h1>
-          <p className="onboarding-copy mt-4 max-w-[34rem] text-[16px] leading-[1.5] text-muted-foreground">{step.body}</p>
+          <p className="onboarding-copy mt-4 max-w-[34rem] text-[16px] leading-[1.5] text-muted-foreground">
+            {step.body}
+          </p>
         </div>
 
-        <div className="mt-6 flex gap-2" aria-label={`Onboarding step ${index + 1} of ${steps.length}`}>
+        <div
+          className="mt-6 flex gap-2"
+          aria-label={`Onboarding step ${index + 1} of ${steps.length}`}
+        >
           {steps.map((item, itemIndex) => (
-            <span key={item.title} className={cn("h-1.5 rounded-full transition-all", itemIndex === index ? "w-8 bg-accent" : "w-3 bg-border")} />
+            <span
+              key={item.title}
+              className={cn(
+                "h-1.5 rounded-full transition-all",
+                itemIndex === index ? "w-8 bg-accent" : "w-3 bg-border",
+              )}
+            />
           ))}
         </div>
 
         <div className="mt-auto space-y-2 pt-7 sm:pt-9">
-          <button type="button" onClick={() => (last ? finish() : setIndex(index + 1))} className="press h-14 w-full rounded-full bg-accent text-[16px] font-semibold text-accent-foreground">
+          <button
+            type="button"
+            onClick={() => (last ? finish() : setIndex(index + 1))}
+            className="press h-14 w-full rounded-full bg-accent text-[16px] font-semibold text-accent-foreground"
+          >
             {last ? "Start my food diary" : "Continue"}
           </button>
           {!last ? (
-            <button type="button" onClick={finish} className="press h-12 w-full rounded-full text-[15px] font-medium text-muted-foreground">
+            <button
+              type="button"
+              onClick={finish}
+              className="press h-12 w-full rounded-full text-[15px] font-medium text-muted-foreground"
+            >
               Skip
             </button>
           ) : null}

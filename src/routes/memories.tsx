@@ -80,8 +80,16 @@ function MemoriesPage() {
         {ready && groups.length === 0 ? (
           <div className="mt-6">
             <EmptyState
-              title={meals.length === 0 ? "Your food memories will live here" : `No ${filter} memories yet`}
-              description={meals.length === 0 ? "Save a meal and it’ll appear here, ready to revisit anytime." : "Choose another meal type or show everything you’ve saved."}
+              title={
+                meals.length === 0
+                  ? "Your food memories will live here"
+                  : `No ${filter} memories yet`
+              }
+              description={
+                meals.length === 0
+                  ? "Save a meal and it’ll appear here, ready to revisit anytime."
+                  : "Choose another meal type or show everything you’ve saved."
+              }
               cta={meals.length === 0 ? "Add your first meal" : undefined}
               secondaryCta={meals.length > 0 ? "Show all memories" : undefined}
               onSecondary={() => setFilter("all")}

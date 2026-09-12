@@ -37,7 +37,9 @@ function SearchPage() {
       <Page>
         <PageHeader title="Search" subtitle="Find a meal by name, note or tag." />
 
-        <label htmlFor="meal-search" className="sr-only">Search meals</label>
+        <label htmlFor="meal-search" className="sr-only">
+          Search meals
+        </label>
         <div className="surface-card flex h-14 items-center gap-3 px-5 focus-within:border-accent">
           <SearchIcon className="size-[19px] text-subtle" strokeWidth={1.9} />
           <input
@@ -49,7 +51,11 @@ function SearchPage() {
             className="h-full w-full bg-transparent text-[15px] outline-none placeholder:text-subtle"
           />
           {query ? (
-            <button type="button" onClick={() => setQuery("")} className="press rounded-full px-3 py-2 text-[13px] font-semibold text-muted-foreground">
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              className="press rounded-full px-3 py-2 text-[13px] font-semibold text-muted-foreground"
+            >
               Clear
             </button>
           ) : null}
@@ -77,7 +83,9 @@ function SearchPage() {
             />
           ) : null}
           {q && results.length > 0 ? (
-            <p className="section-label pb-1">{results.length} {results.length === 1 ? "memory" : "memories"} found</p>
+            <p className="section-label pb-1">
+              {results.length} {results.length === 1 ? "memory" : "memories"} found
+            </p>
           ) : null}
           {results.map((meal) => (
             <Link

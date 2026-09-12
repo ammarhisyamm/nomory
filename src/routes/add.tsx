@@ -203,10 +203,17 @@ function AddMealPage() {
           <div className="enter-card flex flex-col items-center px-6 py-24 text-center">
             <div className="relative">
               <span aria-hidden className="absolute inset-6 rounded-full bg-sunny-soft blur-2xl" />
-              <img src="/illustrations/empty-meals.png" alt="" className="pop-in relative h-40 w-auto object-contain" />
+              <img
+                src="/illustrations/empty-meals.png"
+                alt=""
+                className="pop-in relative h-40 w-auto object-contain"
+              />
             </div>
             <h2 className="mt-8 text-[22px] font-bold">Making your meal look nice…</h2>
-            <p className="mt-2 flex max-w-xs items-center gap-2 text-[14.5px] text-muted-foreground" aria-live="polite">
+            <p
+              className="mt-2 flex max-w-xs items-center gap-2 text-[14.5px] text-muted-foreground"
+              aria-live="polite"
+            >
               <Loader2 className="size-4 animate-spin text-accent" strokeWidth={2} />
               {PROCESSING_PHASES[phase]}
             </p>

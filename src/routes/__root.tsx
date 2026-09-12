@@ -18,8 +18,15 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="surface-card relative w-full max-w-md overflow-hidden px-6 py-10 text-center">
-        <span aria-hidden className="absolute -top-16 -left-12 size-36 rounded-full bg-sunny-soft blur-2xl" />
-        <img src="/illustrations/search-meals.png" alt="" className="relative mx-auto h-40 w-auto object-contain" />
+        <span
+          aria-hidden
+          className="absolute -top-16 -left-12 size-36 rounded-full bg-sunny-soft blur-2xl"
+        />
+        <img
+          src="/illustrations/search-meals.png"
+          alt=""
+          className="relative mx-auto h-40 w-auto object-contain"
+        />
         <p className="section-label mt-2">404 · Lost bite</p>
         <h1 className="mt-2 text-[26px] font-extrabold text-foreground">This page wandered off</h1>
         <p className="mx-auto mt-2 max-w-xs text-[15px] leading-6 text-muted-foreground">
@@ -48,7 +55,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="surface-card w-full max-w-md px-6 py-10 text-center">
-        <img src="/illustrations/empty-meals.png" alt="" className="mx-auto h-36 w-auto object-contain" />
+        <img
+          src="/illustrations/empty-meals.png"
+          alt=""
+          className="mx-auto h-36 w-auto object-contain"
+        />
         <h1 className="mt-3 text-[24px] font-extrabold tracking-tight text-foreground">
           We dropped this one
         </h1>

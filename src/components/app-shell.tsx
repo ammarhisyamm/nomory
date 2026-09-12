@@ -74,7 +74,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
 
       {/* Mobile bottom nav */}
-      <nav aria-label="Primary navigation" className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 shadow-[0_-8px_24px_oklch(0.32_0.05_55/0.06)] backdrop-blur-xl lg:hidden">
+      <nav
+        aria-label="Primary navigation"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 shadow-[0_-8px_24px_oklch(0.32_0.05_55/0.06)] backdrop-blur-xl lg:hidden"
+      >
         <div className="mx-auto grid max-w-md grid-cols-5 items-center px-3 pt-2 pb-[max(10px,env(safe-area-inset-bottom))]">
           {destinations.slice(0, 2).map((d) => (
             <NavItem key={d.to} {...d} active={isActive(d.to)} />
@@ -141,7 +144,9 @@ export function PageHeader({
         <h1 className="font-display break-words text-[29px] leading-[1.08] font-extrabold tracking-tight sm:text-[34px]">
           {title}
         </h1>
-        {subtitle ? <p className="mt-2 max-w-xl text-[15px] leading-6 text-muted-foreground">{subtitle}</p> : null}
+        {subtitle ? (
+          <p className="mt-2 max-w-xl text-[15px] leading-6 text-muted-foreground">{subtitle}</p>
+        ) : null}
       </div>
       {right ? <div className="shrink-0">{right}</div> : null}
     </header>
@@ -149,5 +154,9 @@ export function PageHeader({
 }
 
 export function Page({ children }: { children: ReactNode }) {
-  return <div className="mx-auto w-full min-w-0 max-w-full overflow-x-hidden px-4 sm:px-6 lg:px-8">{children}</div>;
+  return (
+    <div className="mx-auto w-full min-w-0 max-w-full overflow-x-hidden px-4 sm:px-6 lg:px-8">
+      {children}
+    </div>
+  );
 }
