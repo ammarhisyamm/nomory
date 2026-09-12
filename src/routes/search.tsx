@@ -12,12 +12,12 @@ export const Route = createFileRoute("/search")({
       { title: "Search your meals | Nomory" },
       {
         name: "description",
-        content: "Find a saved meal by name, note or tag in your visual food diary.",
+        content: "Find a saved meal by name, note or location in your visual food diary.",
       },
       { property: "og:title", content: "Search your meals" },
       {
         property: "og:description",
-        content: "Find a saved meal by name, note or tag in your visual food diary.",
+        content: "Find a saved meal by name, note or location in your visual food diary.",
       },
     ],
   }),
@@ -29,13 +29,15 @@ function SearchPage() {
   const [query, setQuery] = useState("");
   const q = query.trim().toLowerCase();
   const results = q
-    ? meals.filter((m) => [m.mealName, m.note, ...m.tags].join(" ").toLowerCase().includes(q))
+    ? meals.filter((m) =>
+        [m.mealName, m.note, m.location || ""].join(" ").toLowerCase().includes(q),
+      )
     : [];
 
   return (
     <AppShell>
       <Page>
-        <PageHeader title="Search" subtitle="Find a meal by name, note or tag." />
+        <PageHeader title="Search" subtitle="Find a meal by name, note or location." />
 
         <label htmlFor="meal-search" className="sr-only">
           Search meals
@@ -67,7 +69,7 @@ function SearchPage() {
               kind="search"
               compact
               title="What are you looking for?"
-              description="Try a meal name, note, or tag—like ramen, coffee, or homemade."
+              description="Try a meal name, note, or location—like ramen, coffee, or home."
             />
           ) : null}
           {q && results.length === 0 ? (
@@ -75,7 +77,7 @@ function SearchPage() {
               kind="search"
               compact
               title={`No matches for “${query.trim()}”`}
-              description="Try a shorter word, another tag, or browse all your memories."
+              description="Try a shorter word, another location, or browse all your memories."
               cta="Browse memories"
               to="/memories"
               secondaryCta="Clear search"

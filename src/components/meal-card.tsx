@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, MapPin } from "lucide-react";
 import { FoodSticker } from "./food-sticker";
-import { TagPill } from "./pills";
 import { formatTimeLabel, mealImage, type Meal } from "@/lib/meals";
 
 const savedLabel: Record<Meal["mealType"], string> = {
@@ -32,12 +31,11 @@ export function MealCard({ meal }: { meal: Meal }) {
             {formatTimeLabel(meal.mealTime)}
           </span>
         </div>
-        {meal.tags.length > 0 ? (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {meal.tags.slice(0, 3).map((tag) => (
-              <TagPill key={tag}>{tag}</TagPill>
-            ))}
-          </div>
+        {meal.location ? (
+          <p className="mt-3 flex min-w-0 items-center gap-1.5 truncate text-[12.5px] text-subtle">
+            <MapPin className="size-3.5 shrink-0" strokeWidth={1.9} />
+            <span className="truncate">{meal.location}</span>
+          </p>
         ) : null}
       </div>
       <ChevronRight className="mt-1 size-[18px] shrink-0 self-center text-subtle" strokeWidth={2} />

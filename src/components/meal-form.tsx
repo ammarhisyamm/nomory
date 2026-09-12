@@ -1,8 +1,6 @@
-import { useState } from "react";
-import { X } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MEAL_TYPES, type Meal, type MealType } from "@/lib/meals";
-import { TagPill } from "./pills";
 
 export type MealFormValues = {
   mealName: string;
@@ -10,7 +8,7 @@ export type MealFormValues = {
   mealDate: string;
   mealTime: string;
   note: string;
-  tags: string[];
+  location: string;
 };
 
 export function mealToForm(meal: Meal): MealFormValues {
@@ -20,7 +18,7 @@ export function mealToForm(meal: Meal): MealFormValues {
     mealDate: meal.mealDate,
     mealTime: meal.mealTime,
     note: meal.note,
-    tags: meal.tags,
+    location: meal.location || "",
   };
 }
 
@@ -34,16 +32,8 @@ export function MealForm({
   values: MealFormValues;
   onChange: (next: MealFormValues) => void;
 }) {
-  const [tagDraft, setTagDraft] = useState("");
   const set = <K extends keyof MealFormValues>(key: K, value: MealFormValues[K]) =>
     onChange({ ...values, [key]: value });
-
-  const addTag = () => {
-    const label = tagDraft.trim();
-    if (!label || values.tags.includes(label)) return setTagDraft("");
-    set("tags", [...values.tags, label]);
-    setTagDraft("");
-  };
 
   return (
     <div className="space-y-5">
@@ -105,53 +95,20 @@ export function MealForm({
         />
       </Field>
 
-      <Field label="Tags">
-        <div className="flex gap-2">
-          <input
-            className={fieldClass}
-            placeholder="Homemade, so good!"
-            value={tagDraft}
-            onChange={(e) => setTagDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addTag();
-              }
-            }}
+      <Field label="Location">
+        <div className="relative">
+          <MapPin
+            className="pointer-events-none absolute top-1/2 left-4 size-[18px] -translate-y-1/2 text-subtle"
+            strokeWidth={1.9}
           />
-          <button
-            type="button"
-            onClick={addTag}
-            className="press h-12 shrink-0 rounded-[14px] bg-muted px-4 text-[14px] font-semibold"
-          >
-            Add
-          </button>
+          <input
+            className={`${fieldClass} pl-11`}
+            placeholder="Home, cafe, or restaurant"
+            value={values.location}
+            onChange={(e) => set("location", e.target.value)}
+            maxLength={160}
+          />
         </div>
-        {values.tags.length > 0 ? (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {values.tags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                onClick={() =>
-                  set(
-                    "tags",
-                    values.tags.filter((t) => t !== tag),
-                  )
-                }
-                className="press inline-flex items-center gap-1.5"
-                aria-label={`Remove tag ${tag}`}
-              >
-                <TagPill>
-                  <span className="inline-flex items-center gap-1.5">
-                    {tag}
-                    <X className="size-3.5" strokeWidth={2.2} />
-                  </span>
-                </TagPill>
-              </button>
-            ))}
-          </div>
-        ) : null}
       </Field>
     </div>
   );

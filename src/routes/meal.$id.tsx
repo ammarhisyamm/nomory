@@ -1,13 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import { ArrowLeft, CalendarDays, Loader2, Pencil, RefreshCw, Trash2 } from "lucide-react";
+import { ArrowLeft, CalendarDays, Loader2, MapPin, Pencil, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { FoodSticker } from "@/components/food-sticker";
 import { PageLoadingState } from "@/components/loading-state";
 import { MealForm, mealToForm, type MealFormValues } from "@/components/meal-form";
-import { TagPill } from "@/components/pills";
 import { processPhoto } from "@/lib/image";
 import {
   MEAL_TYPES,
@@ -91,7 +90,7 @@ function MealDetailPage() {
         mealDate: values.mealDate,
         mealTime: values.mealTime,
         note: values.note.trim(),
-        tags: values.tags,
+        location: values.location.trim(),
         updatedAt: Date.now(),
       };
       await saveMeal(updated);
@@ -238,12 +237,16 @@ function MealDetailPage() {
           </section>
         ) : null}
 
-        {meal.tags.length > 0 ? (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {meal.tags.map((tag) => (
-              <TagPill key={tag}>{tag}</TagPill>
-            ))}
-          </div>
+        {meal.location ? (
+          <section className="surface-card mt-4 flex items-center gap-3 p-5">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
+              <MapPin className="size-[18px]" strokeWidth={1.9} />
+            </span>
+            <div className="min-w-0">
+              <p className="text-[13px] font-semibold text-muted-foreground">Location</p>
+              <p className="mt-1 truncate text-[15px]">{meal.location}</p>
+            </div>
+          </section>
         ) : null}
 
         <div className="mt-4 grid gap-2 sm:grid-cols-3">

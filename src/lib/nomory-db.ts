@@ -11,7 +11,7 @@ export type MealRow = {
   meal_name: string;
   meal_type: string;
   note: string;
-  tags: string;
+  location: string;
   meal_date: string;
   meal_time: string;
   original_image: string;
@@ -86,12 +86,7 @@ export function sanitizeMeal(input: Meal): Meal | null {
     mealName: String(input.mealName ?? "").slice(0, 120),
     mealType,
     note: String(input.note ?? "").slice(0, 2000),
-    tags: Array.isArray(input.tags)
-      ? input.tags
-          .filter((t) => typeof t === "string")
-          .map((t) => t.slice(0, 40))
-          .slice(0, 20)
-      : [],
+    location: String(input.location ?? "").slice(0, 160),
     mealDate: /^\d{4}-\d{2}-\d{2}$/.test(input.mealDate ?? "") ? input.mealDate : "1970-01-01",
     mealTime: /^\d{2}:\d{2}$/.test(input.mealTime ?? "") ? input.mealTime : "12:00",
     createdAt: Number.isFinite(input.createdAt) ? input.createdAt : Date.now(),
@@ -100,13 +95,6 @@ export function sanitizeMeal(input: Meal): Meal | null {
 }
 
 export function rowToMeal(row: MealRow): Meal {
-  let tags: string[] = [];
-  try {
-    const parsed: unknown = JSON.parse(row.tags || "[]");
-    if (Array.isArray(parsed)) tags = parsed.filter((t): t is string => typeof t === "string");
-  } catch {
-    tags = [];
-  }
   return {
     id: row.id,
     originalImage: row.original_image || "",
@@ -115,7 +103,7 @@ export function rowToMeal(row: MealRow): Meal {
     mealName: row.meal_name || "",
     mealType: (MEAL_TYPES.has(row.meal_type) ? row.meal_type : "snack") as MealType,
     note: row.note || "",
-    tags,
+    location: row.location || "",
     mealDate: row.meal_date,
     mealTime: row.meal_time,
     createdAt: row.created_at,
@@ -126,7 +114,7 @@ export function rowToMeal(row: MealRow): Meal {
 export async function listMeals(db: D1Database, userId: string): Promise<Meal[]> {
   const res = await db
     .prepare(
-      `SELECT id, user_id, meal_name, meal_type, note, tags, meal_date, meal_time,
+      `SELECT id, user_id, meal_name, meal_type, note, location, meal_date, meal_time,
               original_image, processed_image, use_original, created_at, updated_at
        FROM meals WHERE user_id = ? ORDER BY meal_date DESC, meal_time DESC LIMIT 2000`,
     )
@@ -138,13 +126,13 @@ export async function listMeals(db: D1Database, userId: string): Promise<Meal[]>
 export async function upsertMeal(db: D1Database, userId: string, meal: Meal): Promise<void> {
   await db
     .prepare(
-      `INSERT INTO meals (id, user_id, meal_name, meal_type, note, tags, meal_date,
+      `INSERT INTO meals (id, user_id, meal_name, meal_type, note, location, meal_date,
                           meal_time, original_image, processed_image, use_original,
                           created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
          meal_name=excluded.meal_name, meal_type=excluded.meal_type, note=excluded.note,
-         tags=excluded.tags, meal_date=excluded.meal_date, meal_time=excluded.meal_time,
+         location=excluded.location, meal_date=excluded.meal_date, meal_time=excluded.meal_time,
          original_image=excluded.original_image, processed_image=excluded.processed_image,
          use_original=excluded.use_original, updated_at=excluded.updated_at
        WHERE user_id = ?`,
@@ -155,7 +143,7 @@ export async function upsertMeal(db: D1Database, userId: string, meal: Meal): Pr
       meal.mealName,
       meal.mealType,
       meal.note,
-      JSON.stringify(meal.tags),
+      meal.location,
       meal.mealDate,
       meal.mealTime,
       meal.originalImage,

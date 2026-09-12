@@ -24,7 +24,7 @@ const mealSchema = z.object({
   mealName: z.string().max(120).default(""),
   mealType: z.enum(["breakfast", "lunch", "dinner", "snack", "drink"]).default("snack"),
   note: z.string().max(2000).default(""),
-  tags: z.array(z.string().max(40)).max(20).default([]),
+  location: z.string().max(160).default(""),
   mealDate: z.string().default("1970-01-01"),
   mealTime: z.string().default("12:00"),
   createdAt: z.number().default(() => Date.now()),

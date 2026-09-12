@@ -7,7 +7,7 @@ Capture meals, remember them automatically by date, and look back on your food m
 ## Fitur
 
 - **Capture** — foto makanan langsung atau upload dari galeri, otomatis jadi stiker makanan.
-- **Remember** — setiap meal tersimpan dengan tanggal, jam, tipe (breakfast/lunch/dinner/snack/drink), catatan, dan tags.
+- **Remember** — setiap meal tersimpan dengan tanggal, jam, tipe (breakfast/lunch/dinner/snack/drink), catatan, dan lokasi.
 - **Look Back** — jelajahi memori lewat halaman Today, Calendar, Memories, dan Search.
 - **Cloud sync** — login dengan Google atau username + password untuk sinkronisasi antar perangkat (D1 + R2). Tanpa login, data tersimpan lokal di perangkat (IndexedDB).
 - **PWA** — bisa di-install di HP, support offline untuk data lokal.

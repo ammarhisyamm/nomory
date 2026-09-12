@@ -23,7 +23,7 @@ export type Meal = {
   mealName: string;
   mealType: MealType;
   note: string;
-  tags: string[];
+  location: string;
   /** yyyy-mm-dd */
   mealDate: string;
   /** HH:mm */

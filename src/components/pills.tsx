@@ -11,14 +11,6 @@ export function StatPill({ icon: Icon, label }: { icon: LucideIcon; label: strin
   );
 }
 
-export function TagPill({ children }: { children: ReactNode }) {
-  return (
-    <span className="rounded-full bg-muted px-3 py-1.5 text-[12.5px] font-medium text-muted-foreground">
-      {children}
-    </span>
-  );
-}
-
 export function FilterPill({
   active,
   onClick,

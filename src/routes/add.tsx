@@ -45,7 +45,7 @@ function freshValues(): MealFormValues {
     mealDate: toDateKey(now),
     mealTime: toTimeKey(now),
     note: "",
-    tags: [],
+    location: "",
   };
 }
 
@@ -101,7 +101,7 @@ function AddMealPage() {
         mealName: values.mealName.trim(),
         mealType: values.mealType,
         note: values.note.trim(),
-        tags: values.tags,
+        location: values.location.trim(),
         mealDate: values.mealDate,
         mealTime: values.mealTime,
         createdAt: now,
