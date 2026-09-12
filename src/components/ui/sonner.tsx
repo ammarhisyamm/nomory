@@ -8,6 +8,17 @@ const Toaster = ({ ...props }: ToasterProps) => {
       className="toaster group"
       closeButton
       duration={3600}
+      icons={{
+        success: (
+          <img src="/illustrations/toast-success.png" alt="" className="size-7 object-contain" />
+        ),
+        error: (
+          <img src="/illustrations/toast-error.png" alt="" className="size-7 object-contain" />
+        ),
+        warning: (
+          <img src="/illustrations/toast-warning.png" alt="" className="size-7 object-contain" />
+        ),
+      }}
       richColors
       toastOptions={{
         classNames: {

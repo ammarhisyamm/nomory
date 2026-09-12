@@ -299,9 +299,11 @@ function MealDetailPage() {
         <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
           <AlertDialogContent className="w-[calc(100%-2rem)] rounded-[26px] border-border bg-background p-5 sm:p-6">
             <AlertDialogHeader className="text-left">
-              <div className="mb-1 grid size-11 place-items-center rounded-full bg-destructive/10 text-destructive">
-                <Trash2 className="size-5" strokeWidth={2} />
-              </div>
+              <img
+                src="/illustrations/toast-error.png"
+                alt=""
+                className="mb-1 size-14 object-contain"
+              />
               <AlertDialogTitle>Delete this memory?</AlertDialogTitle>
               <AlertDialogDescription>
                 “{meal.mealName || typeLabel}” will be removed from your diary. This action can’t be
