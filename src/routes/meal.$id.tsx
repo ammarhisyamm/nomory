@@ -206,7 +206,7 @@ function MealDetailPage() {
             <FoodSticker
               src={mealImage(meal)}
               alt={meal.mealName || "Saved meal"}
-              className={cn("size-56", replacing && "opacity-50")}
+              className={cn("size-48 sm:size-56", replacing && "opacity-50")}
               rounded="rounded-[36px]"
             />
             {replacing ? (

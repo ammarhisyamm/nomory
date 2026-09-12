@@ -62,7 +62,7 @@ function MemoriesPage() {
           }
         />
 
-        <div className="sticky top-0 z-10 -mx-5 flex gap-2 overflow-x-auto bg-background/90 px-5 py-2 backdrop-blur sm:-mx-6 sm:px-6">
+        <div className="sticky top-0 z-10 flex w-full max-w-full gap-2 overflow-x-auto overscroll-x-contain bg-background/90 py-2 backdrop-blur [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <FilterPill active={filter === "all"} onClick={() => setFilter("all")}>
             All
           </FilterPill>

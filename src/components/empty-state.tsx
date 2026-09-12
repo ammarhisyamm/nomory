@@ -23,7 +23,7 @@ export function EmptyState({
   compact?: boolean;
 }) {
   return (
-    <div className={cn("surface-card enter-card relative flex flex-col items-center overflow-hidden px-6 text-center", compact ? "py-8" : "py-10 sm:py-12")}>
+    <div className={cn("surface-card enter-card relative flex w-full min-w-0 max-w-full flex-col items-center overflow-hidden px-5 text-center sm:px-6", compact ? "py-8" : "py-10 sm:py-12")}>
       <span aria-hidden className="absolute -top-16 -left-12 size-36 rounded-full bg-sunny-soft/70 blur-2xl" />
       <span aria-hidden className="absolute -right-12 -bottom-16 size-36 rounded-full bg-blush-soft/80 blur-2xl" />
       <img
@@ -31,7 +31,7 @@ export function EmptyState({
         alt=""
         className={cn("relative z-10 w-auto object-contain drop-shadow-sm", compact ? "h-28" : "h-36 sm:h-40")}
       />
-      <h3 className="relative z-10 mt-2 text-[20px] font-extrabold">{title}</h3>
+      <h3 className="relative z-10 mt-2 max-w-full break-words text-[20px] font-extrabold">{title}</h3>
       <p className="relative z-10 mt-2 max-w-sm text-[15px] leading-6 text-muted-foreground">{description}</p>
       {cta || secondaryCta ? (
         <div className="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-2">

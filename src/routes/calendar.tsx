@@ -73,7 +73,7 @@ function CalendarPage() {
       <Page>
         <PageHeader title="Calendar" subtitle="Your meals, day by day." />
 
-        <div className="surface-card p-5">
+        <div className="surface-card min-w-0 max-w-full p-3 sm:p-5">
           <div className="mb-5 flex items-center justify-between gap-3">
             <h2 className="text-[19px] font-bold">
               {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
@@ -107,7 +107,7 @@ function CalendarPage() {
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-1.5">
+          <div className="grid min-w-0 grid-cols-7 gap-0.5 sm:gap-1.5">
             {cells.map((key, i) => {
               if (!key) return <span key={`empty-${i}`} />;
               const items = byDate.get(key) ?? [];
@@ -119,7 +119,7 @@ function CalendarPage() {
                   type="button"
                   onClick={() => setSelected(key)}
                   className={cn(
-                    "press relative flex aspect-square flex-col items-center justify-start gap-1 rounded-[16px] p-1.5 text-[12px] font-semibold transition-colors",
+                    "press relative flex min-w-0 aspect-square flex-col items-center justify-start gap-0.5 rounded-xl p-1 text-[11px] font-semibold transition-colors sm:gap-1 sm:rounded-[16px] sm:p-1.5 sm:text-[12px]",
                     isSelected ? "bg-accent-soft text-accent" : "hover:bg-muted",
                   )}
                 >
@@ -130,7 +130,7 @@ function CalendarPage() {
                         src={mealImage(first)}
                         alt=""
                         loading="lazy"
-                        className="size-7 rounded-[9px] object-cover shadow-[var(--shadow-pill)]"
+                        className="size-5 rounded-[7px] object-cover shadow-[var(--shadow-pill)] sm:size-7 sm:rounded-[9px]"
                       />
                       {items.length > 1 ? (
                         <span className="absolute -right-1.5 -bottom-1 grid size-4 place-items-center rounded-full bg-accent text-[9px] text-accent-foreground">

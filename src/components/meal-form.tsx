@@ -57,7 +57,7 @@ export function MealForm({
       </Field>
 
       <Field label="Meal type">
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-4">
           {MEAL_TYPES.map((type) => (
             <button
               key={type.value}
@@ -76,7 +76,7 @@ export function MealForm({
         </div>
       </Field>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid min-w-0 gap-3 sm:grid-cols-2">
         <Field label="Date">
           <input
             type="date"

@@ -80,7 +80,7 @@ function Onboarding() {
         <NomoryLogo className="text-[38px]" />
         <div className="relative mt-7 overflow-hidden rounded-[32px] bg-card px-5 pt-5 shadow-[var(--shadow-card)]">
           <span aria-hidden className="absolute -top-8 -right-8 size-32 rounded-full bg-blush-soft blur-2xl" />
-          <img src="/illustrations/empty-meals.png" alt="" className="relative mx-auto h-44 w-auto object-contain" />
+          <img src="/illustrations/empty-meals.png" alt="" className="relative mx-auto h-40 max-w-full object-contain sm:h-44" />
         </div>
         <span className="pop-in mt-6 inline-flex w-fit items-center gap-2 rounded-full text-[13px] font-bold">
           <span className={cn("rounded-full px-3 py-1", step.pillClass)}>{step.pill}</span>

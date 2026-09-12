@@ -34,8 +34,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="mx-auto flex w-full max-w-[1240px]">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-background">
+      <div className="mx-auto flex w-full min-w-0 max-w-[1240px]">
         {/* Desktop rail */}
         <aside className="sticky top-0 hidden h-screen w-[236px] shrink-0 flex-col gap-1 border-r border-border/70 px-5 py-8 lg:flex">
           <div className="mb-8 px-3">
@@ -68,7 +68,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
         </aside>
 
-        <main className="min-w-0 flex-1 pb-28 lg:pb-12">{children}</main>
+        <main className="w-full min-w-0 max-w-full flex-1 overflow-x-hidden pb-28 lg:pb-12">
+          {children}
+        </main>
       </div>
 
       {/* Mobile bottom nav */}
@@ -133,19 +135,19 @@ export function PageHeader({
   eyebrow?: ReactNode;
 }) {
   return (
-    <header className="flex items-start justify-between gap-4 pt-7 pb-6 sm:pt-9">
-      <div>
+    <header className="flex min-w-0 items-start justify-between gap-3 pt-7 pb-6 sm:gap-4 sm:pt-9">
+      <div className="min-w-0 flex-1">
         {eyebrow}
-        <h1 className="font-display text-[29px] leading-[1.08] font-extrabold tracking-tight sm:text-[34px]">
+        <h1 className="font-display break-words text-[29px] leading-[1.08] font-extrabold tracking-tight sm:text-[34px]">
           {title}
         </h1>
         {subtitle ? <p className="mt-2 max-w-xl text-[15px] leading-6 text-muted-foreground">{subtitle}</p> : null}
       </div>
-      {right}
+      {right ? <div className="shrink-0">{right}</div> : null}
     </header>
   );
 }
 
 export function Page({ children }: { children: ReactNode }) {
-  return <div className="px-5 sm:px-6 lg:px-8">{children}</div>;
+  return <div className="mx-auto w-full min-w-0 max-w-full overflow-x-hidden px-4 sm:px-6 lg:px-8">{children}</div>;
 }
