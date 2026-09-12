@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { CalendarDays, Camera, Images } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NomoryLogo } from "@/components/nomory-logo";
+import { getAuthStatus } from "@/lib/auth";
+import { NomoryLogo, NomoryMark } from "@/components/nomory-logo";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -49,6 +51,20 @@ const steps = [
 function Onboarding() {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
+  const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
+
+  useEffect(() => {
+    if (auth && !auth.user) navigate({ to: "/login" });
+  }, [auth, navigate]);
+
+  if (!auth?.user) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background">
+        <NomoryMark className="size-20 animate-pulse text-[64px]" />
+      </div>
+    );
+  }
+
   const step = steps[index]!;
   const Icon = step.icon;
   const last = index === steps.length - 1;

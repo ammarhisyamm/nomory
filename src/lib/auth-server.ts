@@ -7,6 +7,8 @@ export type SessionUser = {
   name: string;
   email: string;
   picture: string;
+  /** Set for username/password accounts, absent for Google accounts. */
+  username?: string;
 };
 
 const SESSION_COOKIE = "nomory.session";
@@ -23,6 +25,11 @@ function sessionSecret() {
   return (
     process.env["SESSION_SECRET"] || process.env["GOOGLE_CLIENT_SECRET"] || "nomory-dev-secret"
   );
+}
+
+/** Server-side pepper mixed into password hashes (never sent to clients). */
+export function passwordPepper() {
+  return sessionSecret();
 }
 
 function bytesToB64url(bytes: Uint8Array) {
@@ -84,8 +91,14 @@ export async function verifySessionToken(token: string | undefined): Promise<Ses
   try {
     const data = JSON.parse(decodeB64url(payload)) as SessionUser & { exp: number };
     if (typeof data.exp !== "number" || Date.now() > data.exp) return null;
-    if (!data.id || !data.email) return null;
-    return { id: data.id, name: data.name ?? "", email: data.email, picture: data.picture ?? "" };
+    if (!data.id) return null;
+    return {
+      id: data.id,
+      name: data.name ?? "",
+      email: data.email ?? "",
+      picture: data.picture ?? "",
+      ...(typeof data.username === "string" && data.username ? { username: data.username } : {}),
+    };
   } catch {
     return null;
   }

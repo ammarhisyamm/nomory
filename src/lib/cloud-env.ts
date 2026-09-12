@@ -1,9 +1,8 @@
 // Cloudflare runtime bindings for Nomory.
-// `src/server.ts` stashes the worker `env` on globalThis per request
-// (bindings are identical for every request in the same deployment,
-// so a deployment-constant stash is safe). In `vite dev` / Lovable
-// preview there are no bindings — every helper below degrades to
-// "cloud unavailable" and the app falls back to on-device IndexedDB.
+// Bindings are identical for every request in the same deployment, so a
+// deployment-constant lookup is safe. In `vite dev` / Lovable preview
+// there are no bindings — helpers degrade to "cloud unavailable" and the
+// app falls back to on-device IndexedDB.
 
 export interface D1Result<T = Record<string, unknown>> {
   results: T[];
@@ -46,6 +45,12 @@ export function setCloudEnv(env: unknown) {
 export function getCloudEnv(): CloudflareEnv {
   const env = (globalThis as Record<string, unknown>)[GLOBAL_KEY] as CloudflareEnv | undefined;
   if (env?.DB) return env;
+  // Production (Nitro cloudflare-module preset): the worker entry routes
+  // through nitroApp.fetch(request) WITHOUT the env argument, so the
+  // `setCloudEnv` stash above stays empty. Nitro instead publishes the
+  // bindings on `globalThis.__env__` on every request before routing.
+  const nitro = (globalThis as Record<string, unknown>)["__env__"] as CloudflareEnv | undefined;
+  if (nitro?.DB) return nitro;
   // `wrangler dev` / Node fallback: process.env can't hold bindings,
   // so cloud is simply unavailable there.
   return {};

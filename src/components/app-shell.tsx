@@ -1,7 +1,9 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { CalendarDays, Images, Plus, Sparkles, User } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { getAuthStatus } from "@/lib/auth";
 import { NomoryLogo, NomoryMark } from "./nomory-logo";
 
 const destinations = [
@@ -13,7 +15,23 @@ const destinations = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const isActive = (to: string) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
+
+  useEffect(() => {
+    if (auth && !auth.user) navigate({ to: "/login" });
+  }, [auth, navigate]);
+
+  // Require login before showing any app content (also avoids a flash of
+  // another user's cached meals on shared devices).
+  if (!auth?.user) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background">
+        <NomoryMark className="size-20 animate-pulse text-[64px]" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

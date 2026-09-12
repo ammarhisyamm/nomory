@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   CalendarDays,
@@ -8,6 +8,7 @@ import {
   Images,
   Plus,
   Search,
+  Target,
   UtensilsCrossed,
 } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
@@ -16,6 +17,7 @@ import { MealCard } from "@/components/meal-card";
 import { StatPill } from "@/components/pills";
 import { FoodSticker } from "@/components/food-sticker";
 import { getAuthStatus } from "@/lib/auth";
+import { getDailyGoal, getWeeklyInsight } from "@/lib/meal-insights";
 import { formatDateLabel, mealImage, toDateKey, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/")({
@@ -44,6 +46,11 @@ function TodayPage() {
   const user = auth?.user ?? null;
   const todayKey = toDateKey(new Date());
   const todayMeals = mealsByDate(todayKey);
+  const [dailyGoal, setDailyGoal] = useState(3);
+
+  useEffect(() => {
+    setDailyGoal(getDailyGoal(user?.id));
+  }, [user?.id]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -57,6 +64,9 @@ function TodayPage() {
   }, [navigate]);
 
   const recent = meals.filter((m) => m.mealDate !== todayKey).slice(0, 6);
+  const progress = Math.min(todayMeals.length / dailyGoal, 1);
+  const remaining = Math.max(dailyGoal - todayMeals.length, 0);
+  const weeklyInsight = getWeeklyInsight(meals);
 
   return (
     <AppShell>
@@ -140,6 +150,55 @@ function TodayPage() {
           </section>
 
           <aside className="space-y-4">
+            <section className="surface-card p-5" aria-label="Daily goal">
+              <div className="flex items-center gap-2">
+                <span className="grid size-9 place-items-center rounded-full bg-accent-soft text-accent">
+                  <Target className="size-[18px]" strokeWidth={2} />
+                </span>
+                <div>
+                  <h2 className="text-[17px] font-bold">Today&apos;s rhythm</h2>
+                  <p className="text-[13px] text-muted-foreground">
+                    {remaining > 0
+                      ? `${remaining} more ${remaining === 1 ? "meal" : "meals"} to reach your goal.`
+                      : "Goal reached — your day is remembered."}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+                <div
+                  className="h-full rounded-full bg-accent transition-[width] duration-500"
+                  style={{ width: `${progress * 100}%` }}
+                />
+              </div>
+              <div className="mt-2 flex items-baseline justify-between">
+                <p className="text-[14px] font-semibold">
+                  {todayMeals.length} of {dailyGoal} meals
+                </p>
+                <Link
+                  to="/profile"
+                  className="text-[13px] font-semibold text-accent underline-offset-4 hover:underline"
+                >
+                  Set goal
+                </Link>
+              </div>
+            </section>
+
+            <section className="surface-card p-5" aria-label="Weekly insight">
+              <p className="text-[12px] font-bold tracking-[0.14em] text-accent uppercase">
+                This week
+              </p>
+              <h2 className="mt-1 text-[17px] font-bold">A small pattern</h2>
+              <p className="mt-2 text-[14px] leading-6 text-muted-foreground">
+                {weeklyInsight.message}
+              </p>
+              {weeklyInsight.totalMeals > 0 ? (
+                <p className="mt-3 text-[13px] font-semibold">
+                  {weeklyInsight.totalMeals} {weeklyInsight.totalMeals === 1 ? "meal" : "meals"}{" "}
+                  saved
+                </p>
+              ) : null}
+            </section>
+
             <h2 className="text-[22px] font-bold">Recent memories</h2>
             {recent.length === 0 ? (
               <p className="text-[14.5px] text-muted-foreground">Your food diary starts here.</p>

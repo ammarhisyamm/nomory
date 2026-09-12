@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Cloud,
@@ -7,14 +8,18 @@ import {
   Flame,
   Images,
   Loader2,
+  LogIn,
   LogOut,
   RefreshCw,
+  Target,
   Trash2,
   UtensilsCrossed,
 } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { StatPill } from "@/components/pills";
-import { getAuthStatus, signOutFromGoogle } from "@/lib/auth";
+import { getAuthStatus } from "@/lib/auth";
+import { getDailyGoal, saveDailyGoal } from "@/lib/meal-insights";
+import { changePassword, signOut } from "@/lib/password-auth";
 import { toDateKey, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/profile")({
@@ -42,6 +47,23 @@ function ProfilePage() {
   const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const user = auth?.user ?? null;
   const initial = (user?.name || user?.email || "N").charAt(0).toUpperCase();
+  const [dailyGoal, setDailyGoal] = useState(3);
+  const [currentPw, setCurrentPw] = useState("");
+  const [nextPw, setNextPw] = useState("");
+  const [changingPw, setChangingPw] = useState(false);
+
+  useEffect(() => {
+    setDailyGoal(getDailyGoal(user?.id));
+  }, [user?.id]);
+
+  const updateGoal = (value: number) => {
+    if (!saveDailyGoal(value, user?.id)) {
+      toast.error("Couldn’t save the goal on this device. Try again.");
+      return;
+    }
+    setDailyGoal(value);
+    toast.success(`Daily goal set to ${value} ${value === 1 ? "meal" : "meals"}.`);
+  };
 
   const reset = async () => {
     if (
@@ -61,10 +83,33 @@ function ProfilePage() {
     toast(cloudEnabled ? "Synced with cloud" : "Sync finished");
   };
 
-  const signOut = async () => {
-    await signOutFromGoogle();
+  const signOutUser = async () => {
+    await signOut();
     await queryClient.invalidateQueries({ queryKey: ["auth"] });
     toast("Signed out");
+  };
+
+  const changePw = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPw || !nextPw) {
+      toast.error("Isi password lama dan baru dulu ya.");
+      return;
+    }
+    setChangingPw(true);
+    try {
+      const res = await changePassword({ data: { current: currentPw, next: nextPw } });
+      if (res.ok) {
+        setCurrentPw("");
+        setNextPw("");
+        toast.success("Password berhasil diganti.");
+      } else {
+        toast.error(res.error ?? "Gagal ganti password.");
+      }
+    } catch {
+      toast.error("Tidak bisa terhubung. Coba lagi.");
+    } finally {
+      setChangingPw(false);
+    }
   };
 
   return (
@@ -72,7 +117,11 @@ function ProfilePage() {
       <Page>
         <PageHeader
           title="Profile"
-          subtitle={user ? user.email : "Your diary lives on this device."}
+          subtitle={
+            user
+              ? user.email || (user.username ? `@${user.username}` : "Nomory account")
+              : "Your diary lives on this device."
+          }
         />
 
         <div className="surface-card flex items-center gap-4 p-5">
@@ -121,7 +170,7 @@ function ProfilePage() {
             </div>
             <button
               type="button"
-              onClick={signOut}
+              onClick={signOutUser}
               aria-label="Sign out"
               className="press grid size-11 shrink-0 place-items-center rounded-full bg-muted"
             >
@@ -141,6 +190,16 @@ function ProfilePage() {
             </div>
           </div>
         )}
+
+        {!user ? (
+          <Link
+            to="/login"
+            className="press mt-4 flex h-14 w-full items-center justify-center gap-3 rounded-[20px] bg-accent text-[15px] font-semibold text-accent-foreground"
+          >
+            <LogIn className="size-5" strokeWidth={2} />
+            Masuk / Daftar dengan username
+          </Link>
+        ) : null}
 
         {auth?.googleConfigured && !user ? (
           <a
@@ -177,10 +236,71 @@ function ProfilePage() {
 
         <section className="mt-8">
           <h2 className="mb-4 text-[22px] font-bold">Settings</h2>
+          <section className="surface-card mb-2 p-5" aria-labelledby="daily-goal-title">
+            <div className="flex items-start gap-4">
+              <span className="grid size-11 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
+                <Target className="size-[19px]" strokeWidth={2} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h3 id="daily-goal-title" className="text-[16px] font-bold">
+                  Daily meal goal
+                </h3>
+                <p className="mt-1 text-[14px] text-muted-foreground">
+                  A gentle reminder, not a nutrition rule. Saved on this device.
+                </p>
+                <div
+                  className="mt-4 flex flex-wrap gap-2"
+                  role="group"
+                  aria-label="Choose daily meal goal"
+                >
+                  {[1, 2, 3, 4, 5].map((goal) => (
+                    <button
+                      key={goal}
+                      type="button"
+                      onClick={() => updateGoal(goal)}
+                      className={`press min-w-11 rounded-full px-4 py-2 text-[14px] font-semibold ${dailyGoal === goal ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}
+                      aria-pressed={dailyGoal === goal}
+                    >
+                      {goal}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+          {user?.username ? (
+            <form onSubmit={changePw} className="surface-card space-y-3 p-5">
+              <p className="text-[16px] font-bold">Ganti password</p>
+              <input
+                type="password"
+                value={currentPw}
+                onChange={(e) => setCurrentPw(e.target.value)}
+                placeholder="Password lama"
+                autoComplete="current-password"
+                className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+              />
+              <input
+                type="password"
+                value={nextPw}
+                onChange={(e) => setNextPw(e.target.value)}
+                placeholder="Password baru (min. 8 karakter)"
+                autoComplete="new-password"
+                className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+              />
+              <button
+                type="submit"
+                disabled={changingPw}
+                className="press flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground text-[15px] font-semibold text-background disabled:opacity-60"
+              >
+                {changingPw ? <Loader2 className="size-4 animate-spin" strokeWidth={2.2} /> : null}
+                Simpan password baru
+              </button>
+            </form>
+          ) : null}
           <button
             type="button"
             onClick={reset}
-            className="surface-card press flex w-full items-center gap-4 p-5 text-left"
+            className="surface-card press mt-2 flex w-full items-center gap-4 p-5 text-left"
           >
             <span className="grid size-11 shrink-0 place-items-center rounded-full bg-muted">
               <Trash2 className="size-[19px] text-destructive" strokeWidth={1.9} />

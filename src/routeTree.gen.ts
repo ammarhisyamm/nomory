@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AddRouteImport } from './routes/add'
 import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as MemoriesRouteImport } from './routes/memories'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -33,6 +34,11 @@ const AddRoute = AddRouteImport.update({
 const CalendarRoute = CalendarRouteImport.update({
   id: '/calendar',
   path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MemoriesRoute = MemoriesRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
   '/calendar': typeof CalendarRoute
+  '/login': typeof LoginRoute
   '/memories': typeof MemoriesRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
   '/calendar': typeof CalendarRoute
+  '/login': typeof LoginRoute
   '/memories': typeof MemoriesRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
   '/calendar': typeof CalendarRoute
+  '/login': typeof LoginRoute
   '/memories': typeof MemoriesRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/add'
     | '/calendar'
+    | '/login'
     | '/memories'
     | '/onboarding'
     | '/profile'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/add'
     | '/calendar'
+    | '/login'
     | '/memories'
     | '/onboarding'
     | '/profile'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/add'
     | '/calendar'
+    | '/login'
     | '/memories'
     | '/onboarding'
     | '/profile'
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddRoute: typeof AddRoute
   CalendarRoute: typeof CalendarRoute
+  LoginRoute: typeof LoginRoute
   MemoriesRoute: typeof MemoriesRoute
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/calendar'
       fullPath: '/calendar'
       preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/memories': {
@@ -250,6 +270,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddRoute: AddRoute,
   CalendarRoute: CalendarRoute,
+  LoginRoute: LoginRoute,
   MemoriesRoute: MemoriesRoute,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
