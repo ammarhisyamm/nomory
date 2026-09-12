@@ -17,6 +17,7 @@ import { Route as MemoriesRouteImport } from './routes/memories'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as AuthGoogleRouteImport } from './routes/auth.google'
 import { Route as MealIdRouteImport } from './routes/meal.$id'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.callback'
@@ -61,6 +62,11 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthGoogleRoute = AuthGoogleRouteImport.update({
   id: '/auth/google',
   path: '/auth/google',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/search'
+    | '/settings'
     | '/auth/google'
     | '/meal/$id'
     | '/auth/google/callback'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/search'
+    | '/settings'
     | '/auth/google'
     | '/meal/$id'
     | '/auth/google/callback'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/search'
+    | '/settings'
     | '/auth/google'
     | '/meal/$id'
     | '/auth/google/callback'
@@ -168,6 +180,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   SearchRoute: typeof SearchRoute
+  SettingsRoute: typeof SettingsRoute
   AuthGoogleRoute: typeof AuthGoogleRouteWithChildren
   MealIdRoute: typeof MealIdRoute
 }
@@ -230,6 +243,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/google': {
       id: '/auth/google'
       path: '/auth/google'
@@ -275,6 +295,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   SearchRoute: SearchRoute,
+  SettingsRoute: SettingsRoute,
   AuthGoogleRoute: AuthGoogleRouteWithChildren,
   MealIdRoute: MealIdRoute,
 }
