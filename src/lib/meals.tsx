@@ -60,7 +60,10 @@ export function mealImage(meal: Meal) {
 export function formatDateLabel(dateKey: string, opts?: Intl.DateTimeFormatOptions) {
   const [y, m, d] = dateKey.split("-").map(Number);
   const date = new Date(y ?? 2026, (m ?? 1) - 1, d ?? 1);
-  return date.toLocaleDateString(undefined, opts ?? { weekday: "long", month: "short", day: "numeric" });
+  return date.toLocaleDateString(
+    undefined,
+    opts ?? { weekday: "long", month: "short", day: "numeric" },
+  );
 }
 
 export function formatTimeLabel(time: string) {
@@ -146,7 +149,9 @@ export function MealsProvider({ children }: { children: ReactNode }) {
       streak,
       getMeal: (id) => meals.find((m) => m.id === id),
       mealsByDate: (dateKey) =>
-        meals.filter((m) => m.mealDate === dateKey).sort((a, b) => a.mealTime.localeCompare(b.mealTime)),
+        meals
+          .filter((m) => m.mealDate === dateKey)
+          .sort((a, b) => a.mealTime.localeCompare(b.mealTime)),
     }),
     [meals, ready, saveMeal, removeMeal, clearAll, streak],
   );

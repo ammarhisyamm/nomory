@@ -133,7 +133,12 @@ export function MealForm({
               <button
                 key={tag}
                 type="button"
-                onClick={() => set("tags", values.tags.filter((t) => t !== tag))}
+                onClick={() =>
+                  set(
+                    "tags",
+                    values.tags.filter((t) => t !== tag),
+                  )
+                }
                 className="press inline-flex items-center gap-1.5"
                 aria-label={`Remove tag ${tag}`}
               >

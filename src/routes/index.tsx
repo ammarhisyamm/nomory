@@ -1,6 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { CalendarDays, ChevronRight, Flame, Images, Plus, Search, UtensilsCrossed } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronRight,
+  Flame,
+  Images,
+  Plus,
+  Search,
+  UtensilsCrossed,
+} from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { MealCard } from "@/components/meal-card";
@@ -92,10 +100,7 @@ function TodayPage() {
                 <MealCard key={meal.id} meal={meal} />
               ))}
 
-              <Link
-                to="/add"
-                className="surface-card press flex items-center gap-4 p-5"
-              >
+              <Link to="/add" className="surface-card press flex items-center gap-4 p-5">
                 <span className="grid size-12 shrink-0 place-items-center rounded-full bg-accent text-accent-foreground">
                   <Plus className="size-6" strokeWidth={2.2} />
                 </span>
@@ -120,9 +125,7 @@ function TodayPage() {
           <aside className="space-y-4">
             <h2 className="text-[22px] font-bold">Recent memories</h2>
             {recent.length === 0 ? (
-              <p className="text-[14.5px] text-muted-foreground">
-                Your food diary starts here.
-              </p>
+              <p className="text-[14.5px] text-muted-foreground">Your food diary starts here.</p>
             ) : (
               <div className="surface-card grid grid-cols-3 gap-3 p-4">
                 {recent.map((meal) => (

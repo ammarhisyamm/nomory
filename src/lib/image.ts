@@ -4,6 +4,8 @@
 export type ProcessedPhoto = {
   original: string;
   processed: string;
+  /** False when the sticker crop failed and the original photo was kept. */
+  cutout: boolean;
 };
 
 function loadImage(src: string): Promise<HTMLImageElement> {
@@ -95,7 +97,14 @@ function findSubjectSquare(img: HTMLImageElement) {
 
 export async function processPhoto(file: File): Promise<ProcessedPhoto> {
   const dataUrl = await fileToDataUrl(file);
-  const img = await loadImage(dataUrl);
+
+  let img: HTMLImageElement;
+  try {
+    img = await loadImage(dataUrl);
+  } catch {
+    // The file can't be decoded as an image — surface the PRD upload error.
+    throw new Error("Couldn't upload this photo. Try again.");
+  }
 
   const maxOriginal = 1280;
   const scale = Math.min(1, maxOriginal / Math.max(img.width, img.height));
@@ -109,18 +118,22 @@ export async function processPhoto(file: File): Promise<ProcessedPhoto> {
     0.82,
   );
 
-  const { x, y, side } = findSubjectSquare(img);
-  // Tighten slightly on the subject for the sticker crop.
-  const inset = side * 0.05;
-  const processed = drawToDataUrl(
-    img,
-    x + inset,
-    y + inset,
-    side - inset * 2,
-    side - inset * 2,
-    720,
-    0.88,
-  );
-
-  return { original, processed };
+  try {
+    const { x, y, side } = findSubjectSquare(img);
+    // Tighten slightly on the subject for the sticker crop.
+    const inset = side * 0.05;
+    const processed = drawToDataUrl(
+      img,
+      x + inset,
+      y + inset,
+      side - inset * 2,
+      side - inset * 2,
+      720,
+      0.88,
+    );
+    return { original, processed, cutout: true };
+  } catch {
+    // Never block saving because the cutout failed — keep the original photo.
+    return { original, processed: original, cutout: false };
+  }
 }

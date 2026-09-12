@@ -28,9 +28,7 @@ function SearchPage() {
   const [query, setQuery] = useState("");
   const q = query.trim().toLowerCase();
   const results = q
-    ? meals.filter((m) =>
-        [m.mealName, m.note, ...m.tags].join(" ").toLowerCase().includes(q),
-      )
+    ? meals.filter((m) => [m.mealName, m.note, ...m.tags].join(" ").toLowerCase().includes(q))
     : [];
 
   return (
@@ -51,9 +49,7 @@ function SearchPage() {
 
         <div className="mt-6 space-y-3">
           {q && results.length === 0 ? (
-            <p className="text-[14.5px] text-muted-foreground">
-              Nothing matches “{query}” yet.
-            </p>
+            <p className="text-[14.5px] text-muted-foreground">Nothing matches “{query}” yet.</p>
           ) : null}
           {results.map((meal) => (
             <Link

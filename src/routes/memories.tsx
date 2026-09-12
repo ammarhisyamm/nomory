@@ -67,7 +67,11 @@ function MemoriesPage() {
             All
           </FilterPill>
           {MEAL_TYPES.map((t) => (
-            <FilterPill key={t.value} active={filter === t.value} onClick={() => setFilter(t.value)}>
+            <FilterPill
+              key={t.value}
+              active={filter === t.value}
+              onClick={() => setFilter(t.value)}
+            >
               {t.label}
             </FilterPill>
           ))}
