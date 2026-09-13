@@ -123,7 +123,7 @@ function ProfilePage() {
               cta="Add your first meal"
             />
           ) : (
-            <div className="grid grid-cols-3 gap-1 sm:gap-2" aria-label="Saved meal photos">
+            <div className="grid grid-cols-3 gap-0" aria-label="Saved meal photos">
               {meals.map((meal) => (
                 <Link
                   key={meal.id}
@@ -136,7 +136,7 @@ function ProfilePage() {
                     src={mealThumb(meal)}
                     fallbackSrc={meal.processedImage || meal.originalImage}
                     alt={meal.mealName || "Saved meal"}
-                    className="size-full object-cover"
+                    className="size-full rounded-none !border-0 !shadow-none object-cover"
                   />
                 </Link>
               ))}
