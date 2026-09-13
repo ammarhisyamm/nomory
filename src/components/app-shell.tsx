@@ -94,7 +94,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <NavItem
                 key={d.to}
                 {...d}
-                active={isActive(d.to) || (d.to === "/profile" && pathname === "/settings")}
+                active={isActive(d.to) || (d.to === "/profile" && pathname.startsWith("/settings"))}
               />
             ))}
           </div>
