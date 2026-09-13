@@ -123,7 +123,7 @@ function CalendarPage() {
                   type="button"
                   onClick={() => setSelected(key)}
                   className={cn(
-                    "press relative flex min-w-0 aspect-square flex-col items-center justify-start gap-0.5 rounded-[15px] p-1 text-[10px] font-bold transition-colors sm:gap-1 sm:rounded-[18px] sm:p-1.5 sm:text-[12px]",
+                    "press relative flex min-w-0 aspect-auto min-h-[70px] flex-col items-center justify-start gap-1 rounded-[15px] p-1 text-[10px] font-bold transition-colors sm:min-h-[94px] sm:gap-1.5 sm:rounded-[18px] sm:p-1.5 sm:text-[12px]",
                     isSelected
                       ? "bg-accent-soft text-accent shadow-[var(--shadow-pill)]"
                       : "hover:bg-muted",
@@ -136,7 +136,7 @@ function CalendarPage() {
                         src={mealImage(first)}
                         alt=""
                         loading="lazy"
-                        className="size-7 rounded-[9px] object-cover shadow-[var(--shadow-pill)] sm:size-9 sm:rounded-[11px]"
+                        className="size-9 rounded-[10px] object-cover shadow-[var(--shadow-pill)] sm:size-12 sm:rounded-[13px]"
                       />
                       {items.length > 1 ? (
                         <span className="absolute -right-1.5 -bottom-1 grid size-4 place-items-center rounded-full bg-accent text-[9px] text-accent-foreground">
