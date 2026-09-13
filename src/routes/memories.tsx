@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Plus, Search, UtensilsCrossed, Wallet } from "lucide-react";
+import { CalendarDays, ChevronRight, Plus, Search, UtensilsCrossed, Wallet } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { FilterPill } from "@/components/pills";
@@ -8,7 +8,7 @@ import {
   MEAL_TYPES,
   formatDateLabel,
   formatTimeLabel,
-  mealImage,
+  mealThumb,
   toDateKey,
   useMeals,
   type MealType,
@@ -46,6 +46,7 @@ function MemoriesPage() {
     return [...map.entries()];
   }, [meals, filter]);
   const totalSpend = meals.reduce((sum, meal) => sum + (meal.price || 0), 0);
+  const loggedDays = new Set(meals.map((meal) => meal.mealDate)).size;
 
   return (
     <AppShell>
@@ -92,8 +93,8 @@ function MemoriesPage() {
                   ? "Save a meal and it’ll appear here, ready to revisit anytime."
                   : "Choose another meal type or show everything you’ve saved."
               }
-              cta={meals.length === 0 ? "Add your first meal" : undefined}
-              secondaryCta={meals.length > 0 ? "Show all memories" : undefined}
+              {...(meals.length === 0 ? { cta: "Add your first meal" } : {})}
+              {...(meals.length > 0 ? { secondaryCta: "Show all memories" } : {})}
               onSecondary={() => setFilter("all")}
             />
           </div>
@@ -120,8 +121,8 @@ function MemoriesPage() {
 
           <div className="mb-7 grid grid-cols-2 gap-3 sm:grid-cols-3">
             <SummaryStat icon={UtensilsCrossed} label="Meals saved" value={`${meals.length}`} />
+            <SummaryStat icon={CalendarDays} label="Days logged" value={`${loggedDays}`} />
             <SummaryStat icon={Wallet} label="Total spent" value={formatRupiah(totalSpend)} />
-            <SummaryStat icon={UtensilsCrossed} label="Days logged" value={`${groups.length}`} />
           </div>
 
           <div className="space-y-8">
@@ -136,48 +137,57 @@ function MemoriesPage() {
 }
 
 function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useMeals>["meals"] }) {
+  const previews = items.length > 4 ? items.slice(0, 3) : items;
+  const overflow = items.length > 4 ? items.length - 3 : 0;
+  const names = items
+    .slice(0, 3)
+    .map((meal) => meal.mealName || "Saved meal")
+    .join(", ");
+
   return (
-    <section aria-labelledby={`day-${date}`}>
-      <div className="mb-3 flex items-end justify-between gap-3 px-1">
+    <Link
+      to="/memories/$date"
+      params={{ date }}
+      aria-label={`Open memories from ${formatDateLabel(date, { dateStyle: "full" })}`}
+      className="press enter-card group block border-b border-border/70 px-1 pb-7 last:border-b-0 last:pb-0"
+    >
+      <div className="mb-4 flex items-center justify-between gap-3">
         <div>
-          <h3 id={`day-${date}`} className="font-display text-[21px] font-extrabold">
+          <h3 className="font-display text-[21px] font-extrabold leading-tight">
             {formatDateLabel(date, { weekday: "long", month: "short", day: "numeric" })}
           </h3>
-          <p className="mt-0.5 text-[12px] text-muted-foreground">
-            {date === toDateKey(new Date()) ? "Today · " : ""}
-            {items.length} {items.length === 1 ? "memory" : "memories"}
+          <p className="mt-1 text-[13px] text-muted-foreground">
+            {items.length} {items.length === 1 ? "meal" : "meals"}
+            {date === toDateKey(new Date()) ? " · Today" : ""}
           </p>
         </div>
-        <span className="text-[12px] font-semibold text-subtle">
-          {items[0] ? formatTimeLabel(items[0].mealTime) : ""}
-        </span>
+        <ChevronRight
+          className="size-6 shrink-0 text-foreground transition-transform group-hover:translate-x-0.5"
+          strokeWidth={1.8}
+          aria-hidden="true"
+        />
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {items.map((meal) => (
-          <Link
+      <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
+        {previews.map((meal) => (
+          <img
             key={meal.id}
-            to="/meal/$id"
-            params={{ id: meal.id }}
-            aria-label={`Open ${meal.mealName || "saved meal"}`}
-            className="press enter-card min-w-0 overflow-hidden rounded-[22px] border border-border/60 bg-background/40 p-2 shadow-[var(--shadow-pill)]"
-          >
-            <img
-              src={mealImage(meal)}
-              alt={meal.mealName || "Saved meal"}
-              loading="lazy"
-              className="aspect-square w-full rounded-[17px] object-cover"
-            />
-            <div className="px-1 pb-1 pt-2">
-              <p className="truncate text-[14px] font-bold">{meal.mealName || "Saved meal"}</p>
-              <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
-                {meal.location ||
-                  formatDateLabel(meal.mealDate, { month: "short", day: "numeric" })}
-              </p>
-            </div>
-          </Link>
+            src={mealThumb(meal)}
+            alt=""
+            loading="lazy"
+            className="aspect-square w-full rounded-[18px] object-cover shadow-[var(--shadow-pill)] transition-transform group-hover:scale-[1.01]"
+          />
         ))}
+        {overflow ? (
+          <div className="grid aspect-square place-items-center rounded-[18px] bg-foreground text-[17px] font-bold text-background shadow-[var(--shadow-pill)]">
+            +{overflow}
+          </div>
+        ) : null}
       </div>
-    </section>
+      <p className="mt-4 truncate text-[14px] text-muted-foreground">
+        {names || "Saved meals"}
+        {items.length > 3 ? " …" : ""}
+      </p>
+    </Link>
   );
 }
 
@@ -186,7 +196,7 @@ function SummaryStat({
   label,
   value,
 }: {
-  icon: typeof UtensilsCrossed;
+  icon: typeof UtensilsCrossed | typeof CalendarDays;
   label: string;
   value: string;
 }) {

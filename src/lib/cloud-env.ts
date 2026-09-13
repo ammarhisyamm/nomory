@@ -26,7 +26,10 @@ export interface R2Bucket {
   put(
     key: string,
     value: ArrayBuffer | Uint8Array,
-    options?: { httpMetadata?: { contentType?: string }; customMetadata?: Record<string, string> },
+    options?: {
+      httpMetadata?: { contentType?: string; cacheControl?: string };
+      customMetadata?: Record<string, string>;
+    },
   ): Promise<unknown>;
   delete(key: string | string[]): Promise<void>;
 }

@@ -26,7 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const isActive = (to: string) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
-  const hideMobileNav = pathname === "/add";
+  const hideMobileNav = pathname === "/add" || pathname === "/settings";
 
   useEffect(() => {
     if (auth && !auth.user) navigate({ to: "/login" });

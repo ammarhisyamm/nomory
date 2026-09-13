@@ -4,7 +4,7 @@ import { Search as SearchIcon } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { FoodSticker } from "@/components/food-sticker";
 import { EmptyState } from "@/components/empty-state";
-import { formatDateLabel, formatTimeLabel, mealImage, useMeals } from "@/lib/meals";
+import { formatDateLabel, formatTimeLabel, mealThumb, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/search")({
   head: () => ({
@@ -97,7 +97,7 @@ function SearchPage() {
               className="surface-card press enter-card flex items-center gap-4 p-4"
             >
               <FoodSticker
-                src={mealImage(meal)}
+                src={mealThumb(meal)}
                 alt={meal.mealName || "Saved meal"}
                 className="size-16"
                 rounded="rounded-[18px]"

@@ -11,7 +11,7 @@ import { FoodSticker } from "@/components/food-sticker";
 import { PageLoadingState } from "@/components/loading-state";
 import { getAuthStatus } from "@/lib/auth";
 import { getWeeklyInsight } from "@/lib/meal-insights";
-import { formatDateLabel, mealImage, toDateKey, useMeals } from "@/lib/meals";
+import { formatDateLabel, mealThumb, toDateKey, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -130,7 +130,7 @@ function TodayPage() {
                 {recent.map((meal) => (
                   <Link key={meal.id} to="/meal/$id" params={{ id: meal.id }} className="press">
                     <FoodSticker
-                      src={mealImage(meal)}
+                      src={mealThumb(meal)}
                       alt={meal.mealName || "Saved meal"}
                       className="size-full aspect-square"
                       rounded="rounded-[18px]"

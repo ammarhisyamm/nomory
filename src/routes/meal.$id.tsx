@@ -129,6 +129,7 @@ function MealDetailPage() {
         ...meal,
         originalImage: photo.original,
         processedImage: photo.processed,
+        thumbnailImage: photo.thumbnail,
         useOriginal: false,
         updatedAt: Date.now(),
       });

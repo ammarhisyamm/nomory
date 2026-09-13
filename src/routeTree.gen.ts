@@ -20,6 +20,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as AuthGoogleRouteImport } from './routes/auth.google'
 import { Route as MealIdRouteImport } from './routes/meal.$id'
+import { Route as MemoriesDateRouteImport } from './routes/memories.$date'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.callback'
 
 const IndexRoute = IndexRouteImport.update({
@@ -77,6 +78,11 @@ const MealIdRoute = MealIdRouteImport.update({
   path: '/meal/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MemoriesDateRoute = MemoriesDateRouteImport.update({
+  id: '/$date',
+  path: '/$date',
+  getParentRoute: () => MemoriesRoute,
+} as any)
 const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
@@ -88,13 +94,14 @@ export interface FileRoutesByFullPath {
   '/add': typeof AddRoute
   '/calendar': typeof CalendarRoute
   '/login': typeof LoginRoute
-  '/memories': typeof MemoriesRoute
+  '/memories': typeof MemoriesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
+  '/memories/$date': typeof MemoriesDateRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -102,13 +109,14 @@ export interface FileRoutesByTo {
   '/add': typeof AddRoute
   '/calendar': typeof CalendarRoute
   '/login': typeof LoginRoute
-  '/memories': typeof MemoriesRoute
+  '/memories': typeof MemoriesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
+  '/memories/$date': typeof MemoriesDateRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRoutesById {
@@ -117,13 +125,14 @@ export interface FileRoutesById {
   '/add': typeof AddRoute
   '/calendar': typeof CalendarRoute
   '/login': typeof LoginRoute
-  '/memories': typeof MemoriesRoute
+  '/memories': typeof MemoriesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
+  '/memories/$date': typeof MemoriesDateRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRouteTypes {
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/google'
     | '/meal/$id'
+    | '/memories/$date'
     | '/auth/google/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/google'
     | '/meal/$id'
+    | '/memories/$date'
     | '/auth/google/callback'
   id:
     | '__root__'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/google'
     | '/meal/$id'
+    | '/memories/$date'
     | '/auth/google/callback'
   fileRoutesById: FileRoutesById
 }
@@ -176,7 +188,7 @@ export interface RootRouteChildren {
   AddRoute: typeof AddRoute
   CalendarRoute: typeof CalendarRoute
   LoginRoute: typeof LoginRoute
-  MemoriesRoute: typeof MemoriesRoute
+  MemoriesRoute: typeof MemoriesRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   SearchRoute: typeof SearchRoute
@@ -264,6 +276,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MealIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/memories/$date': {
+      id: '/memories/$date'
+      path: '/$date'
+      fullPath: '/memories/$date'
+      preLoaderRoute: typeof MemoriesDateRouteImport
+      parentRoute: typeof MemoriesRoute
+    }
     '/auth/google/callback': {
       id: '/auth/google/callback'
       path: '/callback'
@@ -273,6 +292,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface MemoriesRouteChildren {
+  MemoriesDateRoute: typeof MemoriesDateRoute
+}
+
+const MemoriesRouteChildren: MemoriesRouteChildren = {
+  MemoriesDateRoute: MemoriesDateRoute,
+}
+
+const MemoriesRouteWithChildren = MemoriesRoute._addFileChildren(
+  MemoriesRouteChildren,
+)
 
 interface AuthGoogleRouteChildren {
   AuthGoogleCallbackRoute: typeof AuthGoogleCallbackRoute
@@ -291,7 +322,7 @@ const rootRouteChildren: RootRouteChildren = {
   AddRoute: AddRoute,
   CalendarRoute: CalendarRoute,
   LoginRoute: LoginRoute,
-  MemoriesRoute: MemoriesRoute,
+  MemoriesRoute: MemoriesRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   SearchRoute: SearchRoute,

@@ -41,6 +41,7 @@ const PROCESSING_PHASES = ["Finding your food.", "Cleaning up the photo.", "Almo
 type Photo = {
   original: string;
   processed: string;
+  thumbnail: string;
   cutout: boolean;
 };
 
@@ -106,6 +107,7 @@ function AddMealPage() {
         id: crypto.randomUUID(),
         originalImage: photo.original,
         processedImage: photo.processed,
+        thumbnailImage: photo.thumbnail,
         useOriginal,
         mealName: values.mealName.trim(),
         mealType: values.mealType,

@@ -5,7 +5,7 @@ import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { StatPill } from "@/components/pills";
 import { getAuthStatus } from "@/lib/auth";
-import { mealImage, toDateKey, useMeals } from "@/lib/meals";
+import { mealThumb, toDateKey, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
@@ -131,7 +131,7 @@ function ProfilePage() {
                   className="press aspect-square overflow-hidden bg-muted"
                 >
                   <img
-                    src={mealImage(meal)}
+                    src={mealThumb(meal)}
                     alt={meal.mealName || "Saved meal"}
                     loading="lazy"
                     className="size-full object-cover"

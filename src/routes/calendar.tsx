@@ -9,7 +9,7 @@ import {
   MEAL_TYPES,
   formatDateLabel,
   formatTimeLabel,
-  mealImage,
+  mealThumb,
   toDateKey,
   useMeals,
 } from "@/lib/meals";
@@ -133,7 +133,7 @@ function CalendarPage() {
                   {first ? (
                     <span className="relative">
                       <img
-                        src={mealImage(first)}
+                        src={mealThumb(first)}
                         alt=""
                         loading="lazy"
                         className="size-9 rounded-[10px] object-cover shadow-[var(--shadow-pill)] sm:size-12 sm:rounded-[13px]"
@@ -178,7 +178,7 @@ function CalendarPage() {
                   className="surface-card press enter-card flex items-center gap-4 p-4"
                 >
                   <FoodSticker
-                    src={mealImage(meal)}
+                    src={mealThumb(meal)}
                     alt={meal.mealName || "Saved meal"}
                     className="size-16"
                     rounded="rounded-[18px]"
