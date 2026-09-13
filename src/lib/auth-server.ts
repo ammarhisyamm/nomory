@@ -132,14 +132,31 @@ export function clearSessionCookie() {
 
 export async function beginOAuthState() {
   const state = crypto.randomUUID();
-  setCookie(STATE_COOKIE, state, cookieOptions(600));
+  const existing = getCookie(STATE_COOKIE);
+  let states: string[] = [];
+  if (existing) {
+    try {
+      const parsed = JSON.parse(existing);
+      states = Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === "string") : [existing];
+    } catch {
+      states = [existing];
+    }
+  }
+  setCookie(STATE_COOKIE, JSON.stringify([...states.slice(-4), state]), cookieOptions(600));
   return state;
 }
 
 export function consumeOAuthState(state: string) {
-  const expected = getCookie(STATE_COOKIE);
+  const raw = getCookie(STATE_COOKIE);
   deleteCookie(STATE_COOKIE, { path: "/" });
-  return Boolean(state && expected) && state === expected;
+  if (!state || !raw) return false;
+  try {
+    const parsed = JSON.parse(raw);
+    const states = Array.isArray(parsed) ? parsed : [raw];
+    return states.includes(state);
+  } catch {
+    return raw === state;
+  }
 }
 
 export function googleAuthUrl(clientId: string, redirectUri: string, state: string) {
