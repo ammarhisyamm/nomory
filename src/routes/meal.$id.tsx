@@ -1,6 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useRef, useState } from "react";
-import { ArrowLeft, CalendarDays, Loader2, MapPin, Pencil, RefreshCw, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  ArrowLeft,
+  CalendarDays,
+  Loader2,
+  MapPin,
+  Pencil,
+  RefreshCw,
+  Trash2,
+  X,
+} from "lucide-react";
 import { toast } from "@/lib/feedback";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
@@ -17,16 +26,6 @@ import {
   type Meal,
 } from "@/lib/meals";
 import { cn } from "@/lib/utils";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/meal/$id")({
   head: () => ({
@@ -298,32 +297,119 @@ function MealDetailPage() {
           Saved {formatDateLabel(meal.mealDate)} at {formatTimeLabel(meal.mealTime)}
         </p>
 
-        <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-          <AlertDialogContent className="w-[calc(100%-2rem)] rounded-[26px] border-border bg-background p-5 sm:p-6">
-            <AlertDialogHeader className="text-left">
-              <img
-                src="/illustrations/toast-error.png"
-                alt=""
-                className="mb-1 size-14 object-contain"
-              />
-              <AlertDialogTitle>Delete this memory?</AlertDialogTitle>
-              <AlertDialogDescription>
-                “{meal.mealName || typeLabel}” will be removed from your diary. This action can’t be
-                undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter className="mt-2 gap-2 sm:gap-2">
-              <AlertDialogCancel className="mt-0 rounded-full">Keep memory</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={destroy}
-                className="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                Delete memory
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <DeleteMemoryModal
+          open={deleteOpen}
+          mealName={meal.mealName || typeLabel}
+          onClose={() => setDeleteOpen(false)}
+          onConfirm={destroy}
+        />
       </Page>
     </AppShell>
+  );
+}
+
+function DeleteMemoryModal({
+  open,
+  mealName,
+  onClose,
+  onConfirm,
+}: {
+  open: boolean;
+  mealName: string;
+  onClose: () => void;
+  onConfirm: () => Promise<void>;
+}) {
+  const confirmRef = useRef<HTMLButtonElement>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    confirmRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !deleting) onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open, deleting, onClose]);
+
+  if (!open) return null;
+
+  const confirm = async () => {
+    setDeleting(true);
+    try {
+      await onConfirm();
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-foreground/20 p-0 backdrop-blur-[3px] sm:items-center sm:p-5"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget && !deleting) onClose();
+      }}
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-memory-title"
+        aria-describedby="delete-memory-description"
+        className="delete-modal relative w-full max-w-[500px] overflow-hidden rounded-t-[32px] bg-card px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-9 text-center shadow-[0_-16px_50px_oklch(0.32_0.05_55/0.18)] sm:rounded-[32px] sm:pb-7"
+      >
+        <div aria-hidden className="delete-gradient absolute inset-x-0 top-0 h-32 opacity-90" />
+        <button
+          type="button"
+          aria-label="Close delete confirmation"
+          onClick={onClose}
+          disabled={deleting}
+          className="absolute right-4 top-4 z-10 grid size-10 place-items-center rounded-full bg-card/80 text-muted-foreground shadow-[var(--shadow-pill)] backdrop-blur focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-50"
+        >
+          <X className="size-5" />
+        </button>
+        <span
+          aria-hidden
+          className="relative mx-auto mb-2 block h-1 w-10 rounded-full bg-border sm:hidden"
+        />
+        <div className="relative mx-auto grid size-24 place-items-center">
+          <img src="/illustrations/toast-warning.png" alt="" className="size-24 object-contain" />
+        </div>
+        <p className="relative mt-3 text-[11px] font-bold tracking-[0.16em] text-destructive uppercase">
+          Careful
+        </p>
+        <h2
+          id="delete-memory-title"
+          className="relative mt-2 font-display text-[25px] font-extrabold tracking-tight"
+        >
+          Delete this memory?
+        </h2>
+        <p
+          id="delete-memory-description"
+          className="relative mx-auto mt-3 max-w-sm text-[15px] leading-6 text-muted-foreground"
+        >
+          “{mealName}” will be removed from your diary. This can&apos;t be undone.
+        </p>
+        <div className="relative mt-7 grid gap-2 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={deleting}
+            className="press h-14 rounded-full border border-border bg-background text-[15px] font-bold text-foreground focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-50"
+          >
+            Keep memory
+          </button>
+          <button
+            ref={confirmRef}
+            type="button"
+            onClick={confirm}
+            disabled={deleting}
+            className="press h-14 rounded-full bg-destructive text-[15px] font-bold text-destructive-foreground focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-60"
+          >
+            {deleting ? "Deleting…" : "Delete memory"}
+          </button>
+        </div>
+      </section>
+    </div>
   );
 }
