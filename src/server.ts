@@ -2,8 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
-import { setCloudEnv } from "./lib/cloud-env";
-import type { CloudflareEnv } from "./lib/cloud-env";
+import { getCloudEnv, setCloudEnv } from "./lib/cloud-env";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -51,7 +50,7 @@ export default {
     try {
       // Make D1/R2 bindings reachable from server functions.
       setCloudEnv(env);
-      const mediaResponse = await serveMedia(request, env as CloudflareEnv);
+      const mediaResponse = await serveMedia(request);
       if (mediaResponse) return mediaResponse;
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
@@ -66,7 +65,7 @@ export default {
   },
 };
 
-async function serveMedia(request: Request, env: CloudflareEnv): Promise<Response | null> {
+async function serveMedia(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
   if (!url.pathname.startsWith("/media/")) return null;
   if (request.method !== "GET" && request.method !== "HEAD") {
@@ -77,7 +76,7 @@ async function serveMedia(request: Request, env: CloudflareEnv): Promise<Respons
   if (!/^meals\/[a-f0-9-]+\/[a-f0-9-]+-(original|processed)\.(jpg|png|webp)$/.test(key)) {
     return new Response("Not found", { status: 404 });
   }
-  const object = await env.IMAGES?.get(key);
+  const object = await getCloudEnv().IMAGES?.get(key);
   if (!object) return new Response("Not found", { status: 404 });
   return new Response(request.method === "HEAD" ? null : object.body, {
     headers: {
