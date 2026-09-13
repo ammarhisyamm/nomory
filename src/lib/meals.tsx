@@ -73,9 +73,21 @@ export function mealImage(meal: Meal) {
   return rewriteLegacyHost(meal.useOriginal ? meal.originalImage : meal.processedImage);
 }
 
+export function mealImageFallback(meal: Meal) {
+  const primary = meal.useOriginal ? meal.originalImage : meal.processedImage;
+  const fallback = meal.useOriginal ? meal.processedImage : meal.originalImage;
+  return rewriteLegacyHost(primary === fallback ? "" : fallback);
+}
+
 /** Small 240px variant for grids/lists — falls back gracefully for old meals. */
 export function mealThumb(meal: Meal) {
   return rewriteLegacyHost(meal.thumbnailImage || meal.processedImage || meal.originalImage);
+}
+
+export function mealThumbFallback(meal: Meal) {
+  const primary = meal.thumbnailImage || meal.processedImage || meal.originalImage;
+  const fallback = meal.processedImage || meal.originalImage;
+  return rewriteLegacyHost(primary === fallback ? "" : fallback);
 }
 
 export function formatDateLabel(dateKey: string, opts?: Intl.DateTimeFormatOptions) {

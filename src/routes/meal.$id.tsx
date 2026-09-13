@@ -22,6 +22,7 @@ import {
   formatDateLabel,
   formatTimeLabel,
   mealImage,
+  mealImageFallback,
   useMeals,
   type Meal,
 } from "@/lib/meals";
@@ -220,6 +221,7 @@ function MealDetailPage() {
           <div className="relative">
             <FoodSticker
               src={mealImage(meal)}
+              fallbackSrc={mealImageFallback(meal)}
               alt={meal.mealName || "Saved meal"}
               className={cn("size-48 sm:size-56", replacing && "opacity-50")}
               rounded="rounded-[36px]"

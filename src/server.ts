@@ -80,7 +80,20 @@ async function serveMedia(request: Request): Promise<Response | null> {
   ) {
     return new Response("Not found", { status: 404 });
   }
-  const object = await getCloudEnv().IMAGES?.get(key);
+  const bucket = getCloudEnv().IMAGES;
+  let object = await bucket?.get(key);
+  // Older records referenced the pre-versioned filename. If that exact
+  // object was replaced by a versioned upload, resolve the latest matching
+  // object instead of returning a broken image on another device.
+  if (!object && bucket && /-(original|processed|thumbnail)\.(jpg|png|webp)$/.test(key)) {
+    const listed = await bucket.list({ prefix: key.replace(/\.(jpg|png|webp)$/, ""), limit: 100 });
+    const match = listed.objects
+      .filter((item) =>
+        /-(original|processed|thumbnail)-[a-f0-9-]+\.(jpg|png|webp)$/.test(item.key),
+      )
+      .sort((a, b) => (b.uploaded?.getTime() ?? 0) - (a.uploaded?.getTime() ?? 0))[0];
+    if (match) object = await bucket.get(match.key);
+  }
   if (!object) return new Response("Not found", { status: 404 });
   return new Response(request.method === "HEAD" ? null : object.body, {
     headers: {
