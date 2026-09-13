@@ -40,7 +40,7 @@ function GoogleCallbackRoute() {
       .then((result) => {
         if (!alive) return;
         if (result.ok) {
-          toast.success("Signed in with Google!");
+          toast.success("Signed in with Google!", { title: "Welcome to Nomory" });
           navigate({ to: "/" });
         } else {
           toast.error(result.error ?? "Couldn't complete Google sign-in.");

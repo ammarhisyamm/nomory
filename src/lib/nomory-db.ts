@@ -84,11 +84,14 @@ export async function storeMealImage(
   }
   const decoded = dataUrlToBytes(value);
   if (!decoded) return value;
-  const key = `meals/${userId}/${mealId}-${kind}.${extFor(decoded.contentType)}`;
+  // A photo can be replaced while its meal id stays the same. Give each
+  // upload a versioned object name so an immutable edge cache can never
+  // serve a stale (or partially replaced) file to another device.
+  const key = `meals/${userId}/${mealId}-${kind}-${crypto.randomUUID()}.${extFor(decoded.contentType)}`;
   await bucket.put(key, decoded.bytes, {
     httpMetadata: {
       contentType: decoded.contentType,
-      // Keys are unique per meal+variant and never edited in place, so
+      // Keys are unique per upload and never edited in place, so
       // every object is immutable — let Cloudflare edge cache it for a
       // year. At 1000+ users this keeps photo traffic off R2 origin.
       cacheControl: "public, max-age=31536000, immutable",

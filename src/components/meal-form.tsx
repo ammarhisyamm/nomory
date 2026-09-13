@@ -28,7 +28,12 @@ export function mealToForm(meal: Meal): MealFormValues {
 }
 
 const fieldClass =
-  "h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none transition-[border-color,box-shadow] placeholder:text-subtle focus:border-accent focus:ring-4 focus:ring-accent/10";
+  "h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none shadow-[var(--shadow-card)] transition-[border-color,box-shadow] placeholder:text-subtle focus:border-accent focus:ring-2 focus:ring-accent/10";
+
+function formatPrice(value: string) {
+  if (!value) return "";
+  return new Intl.NumberFormat("id-ID").format(Number(value));
+}
 
 export function MealForm({
   values,
@@ -93,24 +98,18 @@ export function MealForm({
 
       <div className="grid min-w-0 gap-3 sm:grid-cols-2">
         <Field label="Price">
-          <div className="relative">
-            <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[14px] font-bold text-muted-foreground">
-              Rp
-            </span>
-            <input
-              className={`${fieldClass} pl-11`}
-              inputMode="numeric"
-              type="number"
-              min="0"
-              value={values.price}
-              placeholder="0"
-              onChange={(e) => set("price", e.target.value.replace(/\D/g, ""))}
-            />
-          </div>
+          <input
+            className={fieldClass}
+            inputMode="numeric"
+            type="text"
+            value={formatPrice(values.price)}
+            placeholder="0"
+            onChange={(e) => set("price", e.target.value.replace(/\D/g, ""))}
+          />
         </Field>
         <Field label="Rating">
           <div
-            className="flex h-12 items-center gap-1 rounded-[14px] border border-input bg-card px-3"
+            className="flex h-12 items-center gap-1 rounded-[14px] border border-input bg-card px-3 shadow-[var(--shadow-card)]"
             role="radiogroup"
             aria-label="Rate this meal"
           >
@@ -144,7 +143,7 @@ export function MealForm({
         {showNote ? (
           <textarea
             rows={3}
-            className="mt-3 min-h-24 w-full resize-y rounded-[14px] border border-input bg-card px-4 py-3 text-[15px] leading-[1.45] outline-none transition-[border-color,box-shadow] placeholder:text-subtle focus:border-accent focus:ring-4 focus:ring-accent/10"
+            className="mt-3 min-h-24 w-full resize-y rounded-[14px] border border-input bg-card px-4 py-3 text-[15px] leading-[1.45] outline-none shadow-[var(--shadow-card)] transition-[border-color,box-shadow] placeholder:text-subtle focus:border-accent focus:ring-2 focus:ring-accent/10"
             placeholder="What do you want to remember?"
             value={values.note}
             onChange={(e) => set("note", e.target.value)}

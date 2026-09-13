@@ -5,6 +5,8 @@ import type { FeedbackKind } from "@/lib/feedback";
 type FeedbackState = {
   kind: FeedbackKind;
   message: string;
+  title?: string;
+  eyebrow?: string;
 } | null;
 
 const feedbackCopy: Record<FeedbackKind, { eyebrow: string; title: string; image: string }> = {
@@ -88,13 +90,13 @@ export function FeedbackModal() {
           <img src={copy.image} alt="" className="size-24 object-contain" />
         </div>
         <p className="relative mt-3 text-[11px] font-bold tracking-[0.16em] text-muted-foreground uppercase">
-          {copy.eyebrow}
+          {feedback.eyebrow ?? copy.eyebrow}
         </p>
         <h2
           id="feedback-title"
           className="relative mt-2 font-display text-[25px] font-extrabold tracking-tight"
         >
-          {copy.title}
+          {feedback.title ?? copy.title}
         </h2>
         <p
           id="feedback-message"

@@ -107,7 +107,7 @@ function MealDetailPage() {
       };
       await saveMeal(updated);
       setEditing(false);
-      toast.success("Memory updated");
+      toast.success("Your changes are saved.", { title: "Memory updated" });
     } catch {
       toast.error("Couldn't save changes. Try again.");
     } finally {
@@ -133,7 +133,7 @@ function MealDetailPage() {
         useOriginal: false,
         updatedAt: Date.now(),
       });
-      toast.success("Photo updated");
+      toast.success("Your new photo is ready to view.", { title: "Photo updated" });
     } catch {
       toast.error("Couldn't upload this photo. Try again.");
     } finally {
@@ -145,7 +145,7 @@ function MealDetailPage() {
     if (!meal) return;
     try {
       await removeMeal(meal.id);
-      toast.success("Memory deleted");
+      toast.success("This meal is no longer in your diary.", { title: "Memory removed" });
       navigate({ to: "/" });
     } catch {
       toast.error("Couldn’t delete this memory. Try again.");

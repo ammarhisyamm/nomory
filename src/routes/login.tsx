@@ -24,6 +24,9 @@ export const Route = createFileRoute("/login")({
 
 type Mode = "login" | "register";
 
+const inputClass =
+  "h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none shadow-[var(--shadow-card)] placeholder:text-subtle focus:border-accent focus:ring-2 focus:ring-accent/10";
+
 function LoginPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -94,6 +97,7 @@ function LoginPage() {
           mode === "login"
             ? "Selamat datang kembali!"
             : `Akun @${username.trim().toLowerCase()} dibuat. Selamat datang!`,
+          { title: mode === "login" ? "Welcome back" : "Account created" },
         );
         navigate({ to: "/" });
       } else {
@@ -178,7 +182,7 @@ function LoginPage() {
                   placeholder="Nama depan"
                   maxLength={30}
                   autoComplete="given-name"
-                  className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+                  className={inputClass}
                 />
                 <input
                   id="nomory-last-name"
@@ -187,7 +191,7 @@ function LoginPage() {
                   placeholder="Nama belakang"
                   maxLength={30}
                   autoComplete="family-name"
-                  className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+                  className={inputClass}
                 />
               </div>
             </div>
@@ -198,7 +202,7 @@ function LoginPage() {
               htmlFor="nomory-username"
               className="mb-2 block text-[13px] font-semibold text-muted-foreground"
             >
-              Username <span className="font-normal">(3–20 karakter: huruf, angka, _)</span>
+              Username
             </label>
             <input
               id="nomory-username"
@@ -210,7 +214,7 @@ function LoginPage() {
               autoCapitalize="none"
               autoCorrect="off"
               spellCheck={false}
-              className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+              className={inputClass}
             />
           </div>
 
@@ -231,7 +235,7 @@ function LoginPage() {
                 placeholder="••••••••"
                 maxLength={128}
                 autoComplete={mode === "login" ? "current-password" : "new-password"}
-                className="h-12 w-full rounded-[14px] border border-input bg-card px-4 pr-12 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+                className={`${inputClass} pr-12`}
               />
               <button
                 type="button"

@@ -131,6 +131,7 @@ function AddMealPage() {
       } else {
         toast.success(
           values.mealName ? `“${values.mealName}” is saved to your memories.` : "Memory saved.",
+          { title: "Meal remembered" },
         );
       }
       navigate({ to: "/" });

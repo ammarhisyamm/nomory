@@ -73,7 +73,11 @@ async function serveMedia(request: Request): Promise<Response | null> {
   }
 
   const key = decodeURIComponent(url.pathname.slice("/media/".length));
-  if (!/^meals\/[a-f0-9-]+\/[a-f0-9-]+-(original|processed)\.(jpg|png|webp)$/.test(key)) {
+  if (
+    !/^meals\/[a-f0-9-]+\/[a-f0-9-]+-(original|processed|thumbnail)(?:-[a-f0-9-]+)?\.(jpg|png|webp)$/.test(
+      key,
+    )
+  ) {
     return new Response("Not found", { status: 404 });
   }
   const object = await getCloudEnv().IMAGES?.get(key);

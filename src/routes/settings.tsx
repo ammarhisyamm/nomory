@@ -50,12 +50,14 @@ function SettingsPage() {
     anchor.download = `nomory-data-${new Date().toISOString().slice(0, 10)}.json`;
     anchor.click();
     URL.revokeObjectURL(url);
-    toast.success("Your Nomory data is ready to download.");
+    toast.success("Your Nomory data is ready to download.", { title: "Export ready" });
   };
 
   const sync = async () => {
     await syncNow();
-    toast.success(cloudEnabled ? "Your memories are synced." : "Sync complete.");
+    toast.success(cloudEnabled ? "Your memories are synced." : "Sync complete.", {
+      title: cloudEnabled ? "Up to date" : "Sync complete",
+    });
   };
 
   const reset = async () => {
@@ -68,13 +70,13 @@ function SettingsPage() {
     )
       return;
     await clearAll();
-    toast.success("Your diary is clear.");
+    toast.success("Your diary is clear.", { title: "Memories cleared" });
   };
 
   const signOutUser = async () => {
     await signOut();
     await queryClient.invalidateQueries({ queryKey: ["auth"] });
-    toast.success("You’re signed out.");
+    toast.success("You’re signed out.", { title: "See you next time" });
   };
 
   const changePw = async (event: React.FormEvent) => {
@@ -88,7 +90,7 @@ function SettingsPage() {
       if (!result.ok) return toast.error(result.error ?? "Gagal ganti password.");
       setCurrentPw("");
       setNextPw("");
-      toast.success("Password berhasil diganti.");
+      toast.success("Password berhasil diganti.", { title: "Password updated" });
     } catch {
       toast.error("Tidak bisa terhubung. Coba lagi.");
     } finally {
