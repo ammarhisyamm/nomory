@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Flame, Images, LogIn, Settings, UtensilsCrossed } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
+import { FoodSticker } from "@/components/food-sticker";
 import { StatPill } from "@/components/pills";
 import { getAuthStatus } from "@/lib/auth";
 import { mealThumb, toDateKey, useMeals } from "@/lib/meals";
@@ -131,10 +132,10 @@ function ProfilePage() {
                   aria-label={`Open ${meal.mealName || "saved meal"}`}
                   className="press aspect-square overflow-hidden bg-muted"
                 >
-                  <img
+                  <FoodSticker
                     src={mealThumb(meal)}
+                    fallbackSrc={meal.processedImage || meal.originalImage}
                     alt={meal.mealName || "Saved meal"}
-                    loading="lazy"
                     className="size-full object-cover"
                   />
                 </Link>

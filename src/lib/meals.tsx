@@ -271,9 +271,11 @@ export function MealsProvider({ children }: { children: ReactNode }) {
     };
     window.addEventListener("focus", refreshWhenActive);
     document.addEventListener("visibilitychange", refreshWhenActive);
+    const syncInterval = window.setInterval(refreshWhenActive, 30_000);
     return () => {
       window.removeEventListener("focus", refreshWhenActive);
       document.removeEventListener("visibilitychange", refreshWhenActive);
+      window.clearInterval(syncInterval);
     };
   }, [userId, syncNow]);
 
