@@ -82,6 +82,18 @@ export function formatTimeLabel(time: string) {
   return date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 }
 
+export function calculateStreak(meals: Pick<Meal, "mealDate">[], now = new Date()) {
+  const days = new Set(meals.map((meal) => meal.mealDate));
+  let count = 0;
+  const cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if (!days.has(toDateKey(cursor))) cursor.setDate(cursor.getDate() - 1);
+  while (days.has(toDateKey(cursor))) {
+    count += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return count;
+}
+
 type MealsContextValue = {
   meals: Meal[];
   ready: boolean;
@@ -256,17 +268,7 @@ export function MealsProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const streak = useMemo(() => {
-    const days = new Set(meals.map((m) => m.mealDate));
-    let count = 0;
-    const cursor = new Date();
-    if (!days.has(toDateKey(cursor))) cursor.setDate(cursor.getDate() - 1);
-    while (days.has(toDateKey(cursor))) {
-      count += 1;
-      cursor.setDate(cursor.getDate() - 1);
-    }
-    return count;
-  }, [meals]);
+  const streak = useMemo(() => calculateStreak(meals), [meals]);
 
   const value = useMemo<MealsContextValue>(
     () => ({

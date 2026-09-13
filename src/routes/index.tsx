@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarDays, Flame, Images, Plus, Search, Target, UtensilsCrossed } from "lucide-react";
+import { CalendarDays, Flame, Images, Plus, Search } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { MealCard } from "@/components/meal-card";
@@ -9,7 +9,7 @@ import { StatPill } from "@/components/pills";
 import { FoodSticker } from "@/components/food-sticker";
 import { PageLoadingState } from "@/components/loading-state";
 import { getAuthStatus } from "@/lib/auth";
-import { getDailyGoal, getWeeklyInsight } from "@/lib/meal-insights";
+import { getWeeklyInsight } from "@/lib/meal-insights";
 import { formatDateLabel, mealImage, toDateKey, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/")({
@@ -38,12 +38,6 @@ function TodayPage() {
   const user = auth?.user ?? null;
   const todayKey = toDateKey(new Date());
   const todayMeals = mealsByDate(todayKey);
-  const [dailyGoal, setDailyGoal] = useState(3);
-
-  useEffect(() => {
-    setDailyGoal(getDailyGoal(user?.id));
-  }, [user?.id]);
-
   useEffect(() => {
     if (typeof window === "undefined") return;
     // Migrate the old Morsel flag forward.
@@ -56,16 +50,18 @@ function TodayPage() {
   }, [navigate]);
 
   const recent = meals.filter((m) => m.mealDate !== todayKey).slice(0, 6);
-  const progress = Math.min(todayMeals.length / dailyGoal, 1);
-  const remaining = Math.max(dailyGoal - todayMeals.length, 0);
   const weeklyInsight = getWeeklyInsight(meals);
+  const firstName = (user?.name || "there").split(" ")[0];
+  const todaySummary = todayMeals.length
+    ? `${todayMeals.length} ${todayMeals.length === 1 ? "memory" : "memories"} captured today.`
+    : "Your day is still open for a new memory.";
 
   return (
     <AppShell>
       <Page>
         <PageHeader
-          title="Good food, brighter days."
-          subtitle="Your meals, remembered — one photo at a time."
+          title={`Good morning, ${firstName}.`}
+          subtitle={todaySummary}
           right={
             <div className="flex items-center gap-2">
               <Link
@@ -95,20 +91,16 @@ function TodayPage() {
           }
         />
 
-        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+        <div
+          className="surface-card grid grid-cols-3 divide-x divide-border/70 p-1.5"
+          aria-label="Diary summary"
+        >
           <StatPill
             icon={CalendarDays}
             label={formatDateLabel(todayKey, { month: "short", day: "numeric" })}
           />
-          <StatPill
-            icon={UtensilsCrossed}
-            label={`${todayMeals.length} ${todayMeals.length === 1 ? "meal" : "meals"} logged`}
-          />
           <StatPill icon={Flame} label={`${streak} day streak`} />
-          <StatPill
-            icon={Images}
-            label={`${meals.length} ${meals.length === 1 ? "memory" : "memories"}`}
-          />
+          <StatPill icon={Images} label={`${meals.length} memories`} />
         </div>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -141,39 +133,6 @@ function TodayPage() {
           </section>
 
           <aside className="space-y-4">
-            <section className="surface-card p-5" aria-label="Daily goal">
-              <div className="flex items-center gap-2">
-                <span className="grid size-9 place-items-center rounded-full bg-accent-soft text-accent">
-                  <Target className="size-[18px]" strokeWidth={2} />
-                </span>
-                <div>
-                  <h2 className="text-[17px] font-bold">Today&apos;s rhythm</h2>
-                  <p className="text-[13px] text-muted-foreground">
-                    {remaining > 0
-                      ? `${remaining} more ${remaining === 1 ? "meal" : "meals"} to reach your goal.`
-                      : "Goal reached — your day is remembered."}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted" aria-hidden="true">
-                <div
-                  className="h-full rounded-full bg-accent transition-[width] duration-500"
-                  style={{ width: `${progress * 100}%` }}
-                />
-              </div>
-              <div className="mt-2 flex items-baseline justify-between">
-                <p className="text-[14px] font-semibold">
-                  {todayMeals.length} of {dailyGoal} meals
-                </p>
-                <Link
-                  to="/profile"
-                  className="text-[13px] font-semibold text-accent underline-offset-4 hover:underline"
-                >
-                  Set goal
-                </Link>
-              </div>
-            </section>
-
             <section className="surface-card p-5" aria-label="Weekly insight">
               <p className="text-[12px] font-bold tracking-[0.14em] text-accent uppercase">
                 This week

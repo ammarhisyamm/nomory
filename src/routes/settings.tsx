@@ -1,20 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "@/lib/feedback";
-import {
-  ArrowLeft,
-  Cloud,
-  CloudOff,
-  Loader2,
-  LogOut,
-  RefreshCw,
-  Target,
-  Trash2,
-} from "lucide-react";
+import { ArrowLeft, Cloud, CloudOff, Loader2, LogOut, RefreshCw, Trash2 } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { getAuthStatus } from "@/lib/auth";
-import { getDailyGoal, saveDailyGoal } from "@/lib/meal-insights";
 import { changePassword, signOut } from "@/lib/password-auth";
 import { useMeals } from "@/lib/meals";
 
@@ -33,21 +23,9 @@ function SettingsPage() {
   const queryClient = useQueryClient();
   const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const user = auth?.user ?? null;
-  const [dailyGoal, setDailyGoal] = useState(3);
   const [currentPw, setCurrentPw] = useState("");
   const [nextPw, setNextPw] = useState("");
   const [changingPw, setChangingPw] = useState(false);
-
-  useEffect(() => setDailyGoal(getDailyGoal(user?.id)), [user?.id]);
-
-  const updateGoal = (value: number) => {
-    if (!saveDailyGoal(value, user?.id)) {
-      toast.error("Couldn’t save the goal on this device. Try again.");
-      return;
-    }
-    setDailyGoal(value);
-    toast.success(`Daily goal set to ${value} ${value === 1 ? "meal" : "meals"}.`);
-  };
 
   const sync = async () => {
     await syncNow();
@@ -149,41 +127,6 @@ function SettingsPage() {
               </button>
             </div>
           ) : null}
-        </section>
-
-        <section className="mt-8" aria-labelledby="daily-goal-title">
-          <h2 id="daily-goal-title" className="mb-4 text-[22px] font-bold">
-            Daily meal goal
-          </h2>
-          <div className="surface-card p-5">
-            <div className="flex items-start gap-4">
-              <span className="grid size-11 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
-                <Target className="size-[19px]" strokeWidth={2} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[14px] text-muted-foreground">
-                  A gentle reminder, not a nutrition rule. Saved on this device.
-                </p>
-                <div
-                  className="mt-4 flex flex-wrap gap-2"
-                  role="group"
-                  aria-label="Choose daily meal goal"
-                >
-                  {[1, 2, 3, 4, 5].map((goal) => (
-                    <button
-                      key={goal}
-                      type="button"
-                      onClick={() => updateGoal(goal)}
-                      aria-pressed={dailyGoal === goal}
-                      className={`press min-w-11 rounded-full px-4 py-2 text-[14px] font-semibold ${dailyGoal === goal ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}
-                    >
-                      {goal}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
         </section>
 
         {user?.username ? (

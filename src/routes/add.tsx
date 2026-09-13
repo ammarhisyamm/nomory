@@ -6,7 +6,14 @@ import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { FoodSticker } from "@/components/food-sticker";
 import { MealForm, type MealFormValues } from "@/components/meal-form";
 import { processPhoto } from "@/lib/image";
-import { suggestMealType, toDateKey, toTimeKey, useMeals, type Meal } from "@/lib/meals";
+import {
+  calculateStreak,
+  suggestMealType,
+  toDateKey,
+  toTimeKey,
+  useMeals,
+  type Meal,
+} from "@/lib/meals";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/add")({
@@ -51,7 +58,7 @@ function freshValues(): MealFormValues {
 
 function AddMealPage() {
   const navigate = useNavigate();
-  const { saveMeal } = useMeals();
+  const { meals, saveMeal } = useMeals();
   const [step, setStep] = useState<Step>("choose");
   const [photo, setPhoto] = useState<Photo | null>(null);
   const [useOriginal, setUseOriginal] = useState(false);
@@ -107,10 +114,19 @@ function AddMealPage() {
         createdAt: now,
         updatedAt: now,
       };
+      const startsNewDay = !meals.some((item) => item.mealDate === meal.mealDate);
       await saveMeal(meal);
-      toast.success(
-        values.mealName ? `“${values.mealName}” is saved to your memories.` : "Memory saved.",
-      );
+      if (startsNewDay && typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("nomory:streak", {
+            detail: { days: calculateStreak([...meals, meal]) },
+          }),
+        );
+      } else {
+        toast.success(
+          values.mealName ? `“${values.mealName}” is saved to your memories.` : "Memory saved.",
+        );
+      }
       navigate({ to: "/" });
     } catch {
       toast.error("We couldn’t save this memory. Try again.");

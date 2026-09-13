@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { MealsProvider } from "../lib/meals";
 import { FeedbackModal } from "../components/feedback-modal";
+import { StreakModal } from "../components/streak-modal";
 
 function NotFoundComponent() {
   return (
@@ -168,6 +169,7 @@ function RootComponent() {
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
         <FeedbackModal />
+        <StreakModal />
       </MealsProvider>
     </QueryClientProvider>
   );
