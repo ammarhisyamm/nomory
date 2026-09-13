@@ -88,6 +88,7 @@ function TodayPage() {
 
             {ready && todayMeals.length === 0 ? (
               <EmptyState
+                kind="today"
                 title="Ready for your first bite?"
                 description="Capture your next meal. We’ll remember the date and time for you."
                 cta="Add your first meal"

@@ -1,14 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
-type EmptyStateKind = "meals" | "search";
+type EmptyStateKind = "today" | "memories" | "calendar" | "profile" | "search";
 
 export function EmptyState({
   title,
   description,
   cta,
   to = "/add",
-  kind = "meals",
+  kind = "today",
   secondaryCta,
   onSecondary,
   compact = false,
@@ -31,7 +31,13 @@ export function EmptyState({
     >
       <img
         src={
-          kind === "search" ? "/illustrations/search-meals.png" : "/illustrations/empty-meals.png"
+          {
+            today: "/illustrations/empty-today.png",
+            memories: "/illustrations/empty-memories.png",
+            calendar: "/illustrations/empty-calendar.png",
+            profile: "/illustrations/empty-profile.png",
+            search: "/illustrations/search-meals.png",
+          }[kind]
         }
         alt=""
         className={cn("w-auto object-contain drop-shadow-sm", compact ? "h-28" : "h-36 sm:h-40")}

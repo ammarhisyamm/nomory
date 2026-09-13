@@ -56,6 +56,7 @@ function MemoryDayPage() {
           </section>
         ) : (
           <EmptyState
+            kind="calendar"
             title="No memories on this day"
             description="This day may have been removed or is no longer available."
             cta="Back to memories"

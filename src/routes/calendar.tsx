@@ -163,6 +163,7 @@ function CalendarPage() {
           <h2 className="mb-4 text-[22px] font-bold">{formatDateLabel(selected)}</h2>
           {dayMeals.length === 0 ? (
             <EmptyState
+              kind="calendar"
               compact
               title="Nothing saved on this day"
               description="Add a meal for this date, or pick another day with a photo in the calendar."

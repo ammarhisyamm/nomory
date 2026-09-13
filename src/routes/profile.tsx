@@ -116,6 +116,7 @@ function ProfilePage() {
           </div>
           {ready && meals.length === 0 ? (
             <EmptyState
+              kind="profile"
               title="Your food grid starts here"
               description="Save a meal and it will appear here as a visual memory."
               cta="Add your first meal"

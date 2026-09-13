@@ -57,6 +57,7 @@ function MemoriesPage() {
         {ready && groups.length === 0 ? (
           <div className="mt-6">
             <EmptyState
+              kind="memories"
               title={
                 meals.length === 0
                   ? "Your food memories will live here"
