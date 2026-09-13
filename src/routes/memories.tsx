@@ -98,8 +98,8 @@ function MemoriesPage() {
           </div>
         ) : null}
 
-        <section className="mt-6 rounded-[30px] bg-card/55 p-4 shadow-[var(--shadow-card)] sm:p-6">
-          <div className="mb-5 flex items-center justify-between gap-3 px-1">
+        <section className="mt-6 px-1 sm:px-2">
+          <div className="mb-5 flex items-center justify-between gap-3">
             <div>
               <p className="section-label">Your archive</p>
               <h2 className="mt-1 font-display text-[24px] font-extrabold">

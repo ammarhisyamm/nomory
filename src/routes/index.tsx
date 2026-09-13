@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarDays, Flame, Images, Plus, Search } from "lucide-react";
+import { Bookmark, Flame, Images, Plus, Search } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { MealCard } from "@/components/meal-card";
@@ -51,17 +52,13 @@ function TodayPage() {
 
   const recent = meals.filter((m) => m.mealDate !== todayKey).slice(0, 6);
   const weeklyInsight = getWeeklyInsight(meals);
-  const firstName = (user?.name || "there").split(" ")[0];
-  const todaySummary = todayMeals.length
-    ? `${todayMeals.length} ${todayMeals.length === 1 ? "memory" : "memories"} captured today.`
-    : "Your day is still open for a new memory.";
+  const displayName = formatDisplayName(user?.name || "there");
 
   return (
     <AppShell>
       <Page>
         <PageHeader
-          title={`Good morning, ${firstName}.`}
-          subtitle={todaySummary}
+          title={`Good morning, ${displayName}.`}
           right={
             <div className="flex items-center gap-2">
               <Link
@@ -91,17 +88,25 @@ function TodayPage() {
           }
         />
 
-        <div
-          className="surface-card grid grid-cols-3 divide-x divide-border/70 p-1.5"
-          aria-label="Diary summary"
-        >
-          <StatPill
-            icon={CalendarDays}
-            label={formatDateLabel(todayKey, { month: "short", day: "numeric" })}
+        <p className="mt-1 max-w-3xl text-[19px] leading-[1.45] text-muted-foreground sm:text-[24px]">
+          You&apos;ve captured{" "}
+          <InlineStat
+            icon={Images}
+            value={`${todayMeals.length} ${todayMeals.length === 1 ? "memory" : "memories"}`}
+          />{" "}
+          today, saved{" "}
+          <InlineStat
+            icon={Bookmark}
+            value={`${meals.length} ${meals.length === 1 ? "meal" : "meals"}`}
           />
-          <StatPill icon={Flame} label={`${streak} day streak`} />
-          <StatPill icon={Images} label={`${meals.length} memories`} />
-        </div>
+          , and built a <InlineStat icon={Flame} value={`${streak} day streak`} />.
+        </p>
+        <Link
+          to="/profile"
+          className="mt-5 inline-flex text-[13px] font-bold text-accent underline-offset-4 hover:underline"
+        >
+          View your profile
+        </Link>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
           <section>
@@ -174,5 +179,20 @@ function TodayPage() {
         </div>
       </Page>
     </AppShell>
+  );
+}
+
+function formatDisplayName(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return parts[0] || "there";
+  return `${parts[0]} ${parts[parts.length - 1]?.charAt(0).toUpperCase()}.`;
+}
+
+function InlineStat({ icon: Icon, value }: { icon: LucideIcon; value: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap font-bold text-foreground">
+      <Icon className="inline size-5 text-accent" strokeWidth={2.1} />
+      {value}
+    </span>
   );
 }

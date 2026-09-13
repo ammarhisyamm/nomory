@@ -31,6 +31,7 @@ function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -58,7 +59,8 @@ function LoginPage() {
       return "Username hanya boleh huruf, angka, dan underscore (tanpa spasi).";
     if (password.length < 8) return "Password minimal 8 karakter.";
     if (password.length > 128) return "Password maksimal 128 karakter.";
-    if (mode === "register" && name.trim().length > 40) return "Nama maksimal 40 karakter.";
+    if (mode === "register" && `${name.trim()} ${lastName.trim()}`.trim().length > 40)
+      return "Nama maksimal 40 karakter.";
     return null;
   };
 
@@ -83,7 +85,9 @@ function LoginPage() {
       const result =
         mode === "login"
           ? await signInWithPassword({ data: { username, password } })
-          : await signUpWithPassword({ data: { username, password, name } });
+          : await signUpWithPassword({
+              data: { username, password, name: `${name.trim()} ${lastName.trim()}`.trim() },
+            });
       if (result.ok) {
         await queryClient.invalidateQueries({ queryKey: ["auth"] });
         toast.success(
@@ -166,15 +170,26 @@ function LoginPage() {
               >
                 Nama tampilan <span className="font-normal">(opsional)</span>
               </label>
-              <input
-                id="nomory-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="cth. Bunda"
-                maxLength={40}
-                autoComplete="nickname"
-                className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
-              />
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  id="nomory-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Nama depan"
+                  maxLength={30}
+                  autoComplete="given-name"
+                  className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+                />
+                <input
+                  id="nomory-last-name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Nama belakang"
+                  maxLength={30}
+                  autoComplete="family-name"
+                  className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+                />
+              </div>
             </div>
           ) : null}
 
