@@ -134,6 +134,27 @@
     max-width: 100%;
   }
 
+  input,
+  textarea,
+  select {
+    background-color: var(--color-card);
+    box-shadow: 0 5px 16px oklch(0.32 0.05 55 / 0.08);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-muted-foreground);
+    opacity: 0.82;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    box-shadow:
+      0 5px 16px oklch(0.32 0.05 55 / 0.08),
+      0 0 0 4px oklch(0.665 0.212 38 / 0.1);
+  }
+
   button,
   a,
   input,
