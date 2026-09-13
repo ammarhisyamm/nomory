@@ -1,18 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { CalendarDays, ChevronRight, Plus, Search, UtensilsCrossed, Wallet } from "lucide-react";
+import { useMemo } from "react";
+import { CalendarDays, ChevronRight, Search, UtensilsCrossed, Wallet } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
-import { FilterPill } from "@/components/pills";
-import {
-  MEAL_TYPES,
-  formatDateLabel,
-  formatTimeLabel,
-  mealThumb,
-  toDateKey,
-  useMeals,
-  type MealType,
-} from "@/lib/meals";
+import { formatDateLabel, mealThumb, toDateKey, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/memories")({
   head: () => ({
@@ -34,17 +25,15 @@ export const Route = createFileRoute("/memories")({
 
 function MemoriesPage() {
   const { meals, ready } = useMeals();
-  const [filter, setFilter] = useState<MealType | "all">("all");
 
   const groups = useMemo(() => {
-    const filtered = filter === "all" ? meals : meals.filter((m) => m.mealType === filter);
     const map = new Map<string, typeof meals>();
-    for (const meal of filtered) {
+    for (const meal of meals) {
       const key = meal.mealDate;
       map.set(key, [...(map.get(key) ?? []), meal]);
     }
     return [...map.entries()];
-  }, [meals, filter]);
+  }, [meals]);
   const totalSpend = meals.reduce((sum, meal) => sum + (meal.price || 0), 0);
   const loggedDays = new Set(meals.map((meal) => meal.mealDate)).size;
 
@@ -65,67 +54,32 @@ function MemoriesPage() {
           }
         />
 
-        <div className="sticky top-0 z-10 flex w-full max-w-full gap-2 overflow-x-auto overscroll-x-contain bg-background/90 py-2 backdrop-blur [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <FilterPill active={filter === "all"} onClick={() => setFilter("all")}>
-            All
-          </FilterPill>
-          {MEAL_TYPES.map((t) => (
-            <FilterPill
-              key={t.value}
-              active={filter === t.value}
-              onClick={() => setFilter(t.value)}
-            >
-              {t.label}
-            </FilterPill>
-          ))}
-        </div>
-
         {ready && groups.length === 0 ? (
           <div className="mt-6">
             <EmptyState
               title={
                 meals.length === 0
                   ? "Your food memories will live here"
-                  : `No ${filter} memories yet`
+                  : "Your saved memories will appear here"
               }
               description={
                 meals.length === 0
                   ? "Save a meal and it’ll appear here, ready to revisit anytime."
-                  : "Choose another meal type or show everything you’ve saved."
+                  : "Save a meal to start building your visual food diary."
               }
               {...(meals.length === 0 ? { cta: "Add your first meal" } : {})}
-              {...(meals.length > 0 ? { secondaryCta: "Show all memories" } : {})}
-              onSecondary={() => setFilter("all")}
             />
           </div>
         ) : null}
 
-        <section className="mt-6 rounded-[30px] bg-card/55 p-4 shadow-[var(--shadow-card)] sm:p-6">
-          <div className="mb-5 flex items-center justify-between gap-3">
-            <div>
-              <p className="section-label">Your archive</p>
-              <h2 className="mt-1 font-display text-[24px] font-extrabold">
-                Days worth remembering
-              </h2>
-            </div>
-            <Link
-              to="/add"
-              aria-label="Add a new memory"
-              className="press inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-background px-3.5 text-[12px] font-bold text-foreground shadow-[var(--shadow-pill)] ring-1 ring-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              <Plus className="size-4 text-accent" strokeWidth={2.2} />
-              <span className="hidden sm:inline">New memory</span>
-              <span className="sm:hidden">New</span>
-            </Link>
-          </div>
-
-          <div className="mb-7 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <section className="mt-7">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <SummaryStat icon={UtensilsCrossed} label="Meals saved" value={`${meals.length}`} />
             <SummaryStat icon={CalendarDays} label="Days logged" value={`${loggedDays}`} />
             <SummaryStat icon={Wallet} label="Total spent" value={formatRupiah(totalSpend)} />
           </div>
 
-          <div className="space-y-8">
+          <div className="mt-10 space-y-8">
             {groups.map(([date, items]) => (
               <DayGroup key={date} date={date} items={items} />
             ))}
