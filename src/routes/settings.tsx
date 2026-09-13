@@ -39,6 +39,8 @@ function SettingsPage() {
   const [currentPw, setCurrentPw] = useState("");
   const [nextPw, setNextPw] = useState("");
   const [changingPw, setChangingPw] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [showSecurity, setShowSecurity] = useState(false);
 
   const exportData = () => {
     const payload = {
@@ -140,82 +142,130 @@ function SettingsPage() {
         </SettingsGroup>
 
         <SettingsGroup title="Privacy & data">
-          <div className="flex items-center gap-3 p-5">
+          <button
+            type="button"
+            onClick={() => setShowPrivacy((open) => !open)}
+            aria-expanded={showPrivacy}
+            className="press flex w-full items-center gap-3 p-5 text-left"
+          >
             <span
               className={`grid size-11 shrink-0 place-items-center rounded-full ${cloudEnabled ? "bg-leaf-soft text-[#15803d]" : "bg-muted text-muted-foreground"}`}
             >
               {cloudEnabled ? <Cloud className="size-5" /> : <CloudOff className="size-5" />}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[15px] font-semibold">Cloud sync</p>
+              <p className="text-[15px] font-semibold">Privacy & data controls</p>
               <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
                 {cloudEnabled
-                  ? "Your signed-in memories are synced."
-                  : "Your memories stay on this device."}
+                  ? "Your memories are synced securely across devices."
+                  : "Your memories stay on this device until you sign in."}
               </p>
             </div>
-            {user ? (
-              <button
-                type="button"
-                onClick={sync}
-                disabled={syncing}
-                className="press inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-muted px-3.5 text-[12px] font-bold text-foreground disabled:opacity-60"
-              >
-                <RefreshCw className={`size-4 ${syncing ? "animate-spin" : ""}`} />
-                {syncing ? "Syncing…" : "Sync"}
-              </button>
-            ) : null}
-          </div>
-          <div className="flex items-center gap-3 border-t border-border/60 p-5">
-            <ShieldCheck className="size-5 shrink-0 text-accent" strokeWidth={1.9} />
-            <div className="min-w-0 flex-1">
-              <p className="text-[15px] font-semibold">Download a copy</p>
-              <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
-                Export your saved meal details as JSON.
-              </p>
+            <ChevronRight
+              className={`size-5 shrink-0 text-muted-foreground transition-transform ${showPrivacy ? "rotate-90" : ""}`}
+              strokeWidth={1.9}
+            />
+          </button>
+          {showPrivacy ? (
+            <div className="border-t border-border/60">
+              <div className="flex items-center gap-3 p-5">
+                <RefreshCw className="size-5 shrink-0 text-accent" strokeWidth={1.9} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[15px] font-semibold">Cloud sync</p>
+                  <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
+                    Refresh your memories across devices.
+                  </p>
+                </div>
+                {user ? (
+                  <button
+                    type="button"
+                    onClick={sync}
+                    disabled={syncing}
+                    className="press inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-muted px-3.5 text-[12px] font-bold text-foreground disabled:opacity-60"
+                  >
+                    <RefreshCw className={`size-4 ${syncing ? "animate-spin" : ""}`} />
+                    {syncing ? "Syncing…" : "Sync"}
+                  </button>
+                ) : null}
+              </div>
+              <div className="flex items-center gap-3 border-t border-border/60 p-5">
+                <ShieldCheck className="size-5 shrink-0 text-accent" strokeWidth={1.9} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[15px] font-semibold">Download a copy</p>
+                  <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
+                    Export your saved meal details as JSON.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={exportData}
+                  className="press inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-muted px-3.5 text-[12px] font-bold text-foreground"
+                >
+                  <Download className="size-4" /> Export
+                </button>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={exportData}
-              className="press inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-muted px-3.5 text-[12px] font-bold text-foreground"
-            >
-              <Download className="size-4" /> Export
-            </button>
-          </div>
+          ) : null}
         </SettingsGroup>
 
         {user?.username ? (
           <SettingsGroup title="Account security">
-            <form onSubmit={changePw} className="space-y-3 p-5">
-              <div>
-                <p className="text-[16px] font-bold">Change password</p>
-                <p className="mt-1 text-[14px] text-muted-foreground">Use at least 8 characters.</p>
-              </div>
-              <input
-                type="password"
-                value={currentPw}
-                onChange={(event) => setCurrentPw(event.target.value)}
-                placeholder="Current password"
-                autoComplete="current-password"
-                className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+            <button
+              type="button"
+              onClick={() => setShowSecurity((open) => !open)}
+              aria-expanded={showSecurity}
+              className="press flex w-full items-center gap-3 p-5 text-left"
+            >
+              <span className="grid size-11 shrink-0 place-items-center rounded-full bg-muted">
+                <ShieldCheck className="size-5" strokeWidth={1.9} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[15px] font-semibold">Account security</span>
+                <span className="mt-1 block text-[13px] leading-5 text-muted-foreground">
+                  Keep your account password up to date.
+                </span>
+              </span>
+              <ChevronRight
+                className={`size-5 shrink-0 text-muted-foreground transition-transform ${showSecurity ? "rotate-90" : ""}`}
+                strokeWidth={1.9}
               />
-              <input
-                type="password"
-                value={nextPw}
-                onChange={(event) => setNextPw(event.target.value)}
-                placeholder="New password"
-                autoComplete="new-password"
-                className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
-              />
-              <button
-                type="submit"
-                disabled={changingPw}
-                className="press flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground text-[15px] font-semibold text-background disabled:opacity-60"
-              >
-                {changingPw ? <Loader2 className="size-4 animate-spin" strokeWidth={2.2} /> : null}
-                Save new password
-              </button>
-            </form>
+            </button>
+            {showSecurity ? (
+              <form onSubmit={changePw} className="space-y-3 border-t border-border/60 p-5">
+                <div>
+                  <p className="text-[16px] font-bold">Change password</p>
+                  <p className="mt-1 text-[14px] text-muted-foreground">
+                    Use at least 8 characters.
+                  </p>
+                </div>
+                <input
+                  type="password"
+                  value={currentPw}
+                  onChange={(event) => setCurrentPw(event.target.value)}
+                  placeholder="Current password"
+                  autoComplete="current-password"
+                  className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+                />
+                <input
+                  type="password"
+                  value={nextPw}
+                  onChange={(event) => setNextPw(event.target.value)}
+                  placeholder="New password"
+                  autoComplete="new-password"
+                  className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+                />
+                <button
+                  type="submit"
+                  disabled={changingPw}
+                  className="press flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground text-[15px] font-semibold text-background disabled:opacity-60"
+                >
+                  {changingPw ? (
+                    <Loader2 className="size-4 animate-spin" strokeWidth={2.2} />
+                  ) : null}
+                  Save new password
+                </button>
+              </form>
+            ) : null}
           </SettingsGroup>
         ) : null}
 

@@ -267,7 +267,7 @@ function MealDetailPage() {
           </section>
         ) : null}
 
-        <div className="mt-4 grid gap-2 sm:grid-cols-3">
+        <div className="mt-4 grid gap-2">
           <button
             type="button"
             onClick={startEdit}

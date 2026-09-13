@@ -117,11 +117,13 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
             {date === toDateKey(new Date()) ? " · Today" : ""}
           </p>
         </div>
-        <ChevronRight
-          className="size-6 shrink-0 text-foreground transition-transform group-hover:translate-x-0.5"
-          strokeWidth={1.8}
-          aria-hidden="true"
-        />
+        {overflow ? (
+          <ChevronRight
+            className="size-6 shrink-0 text-foreground transition-transform group-hover:translate-x-0.5"
+            strokeWidth={1.8}
+            aria-hidden="true"
+          />
+        ) : null}
       </div>
       <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
         {previews.map((meal) => (
@@ -134,8 +136,13 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
           />
         ))}
         {overflow ? (
-          <div className="grid aspect-square w-full place-items-center rounded-[18px] border-[3px] border-card bg-foreground text-[17px] font-bold text-background shadow-[var(--shadow-sticker)]">
+          <div className="relative grid aspect-square w-full place-items-center rounded-[18px] border-[3px] border-card bg-foreground text-[17px] font-bold text-background shadow-[var(--shadow-sticker)]">
             +{overflow}
+            <ChevronRight
+              className="absolute right-2.5 size-5"
+              strokeWidth={2.2}
+              aria-hidden="true"
+            />
           </div>
         ) : null}
       </div>
