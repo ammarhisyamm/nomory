@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Bookmark, Flame, Images, Plus, Search } from "lucide-react";
+import { Bookmark, Flame, Images, Plus } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
@@ -57,36 +57,7 @@ function TodayPage() {
   return (
     <AppShell>
       <Page>
-        <PageHeader
-          title={`Good morning, ${displayName}.`}
-          right={
-            <div className="flex items-center gap-2">
-              <Link
-                to="/search"
-                aria-label="Search meals"
-                className="press grid size-11 place-items-center rounded-full bg-card shadow-[var(--shadow-pill)]"
-              >
-                <Search className="size-[19px]" strokeWidth={1.9} />
-              </Link>
-              <Link
-                to="/profile"
-                aria-label="Profile"
-                className="press grid size-11 place-items-center overflow-hidden rounded-full bg-accent-soft text-[15px] font-bold text-accent"
-              >
-                {user?.picture ? (
-                  <img
-                    src={user.picture}
-                    alt={user.name}
-                    referrerPolicy="no-referrer"
-                    className="size-full object-cover"
-                  />
-                ) : (
-                  (user?.name || user?.email || "N").charAt(0).toUpperCase()
-                )}
-              </Link>
-            </div>
-          }
-        />
+        <PageHeader title={`Good morning, ${displayName}.`} />
 
         <p className="mt-1 max-w-3xl text-[19px] leading-[1.45] text-muted-foreground sm:text-[24px]">
           You&apos;ve captured{" "}
@@ -101,13 +72,6 @@ function TodayPage() {
           />
           , and built a <InlineStat icon={Flame} value={`${streak} day streak`} />.
         </p>
-        <Link
-          to="/profile"
-          className="mt-5 inline-flex text-[13px] font-bold text-accent underline-offset-4 hover:underline"
-        >
-          View your profile
-        </Link>
-
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
           <section>
             <h2 className="mb-4 text-[22px] font-bold">Today</h2>

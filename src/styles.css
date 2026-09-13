@@ -286,6 +286,14 @@
 }
 
 .add-drawer {
+  max-width: 760px;
+  margin: 7vh auto 0;
+  border: 1px solid var(--color-border);
+  border-radius: 32px 32px 0 0;
+  background: color-mix(in oklab, var(--color-card) 96%, transparent);
+  box-shadow: var(--shadow-sheet);
+  padding: 0.75rem 1.5rem 2rem;
+  backdrop-filter: blur(18px);
   animation: drawer-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -301,9 +309,6 @@
 .add-overlay > div {
   max-width: 760px;
   margin: 7vh auto 0;
-  border-radius: 32px 32px 0 0;
-  background: var(--color-card);
-  box-shadow: var(--shadow-sheet);
 }
 
 @media (max-width: 639px) {
@@ -322,12 +327,8 @@
 
   .add-drawer {
     margin-inline: 0;
-    border: 1px solid var(--color-border);
     border-radius: 28px 28px 0 0;
-    background: color-mix(in oklab, var(--color-card) 94%, transparent);
-    box-shadow: var(--shadow-sheet);
     padding: 0.75rem 1rem 1.5rem;
-    backdrop-filter: blur(18px);
   }
 }
 

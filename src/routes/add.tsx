@@ -190,23 +190,21 @@ function AddMealPage() {
                   }
                 />
 
-                <div className="mb-6 flex justify-center">
-                  <img
-                    src="/illustrations/add-meal-mascot.png"
-                    alt=""
-                    className="h-44 w-auto object-contain"
-                  />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <button
                     type="button"
                     onClick={() => cameraRef.current?.click()}
-                    className="surface-card press enter-card flex flex-col items-start gap-4 p-6 text-left"
+                    className="surface-card press enter-card flex min-h-[190px] flex-col items-center justify-center gap-3 p-5 text-center"
                   >
+                    <img
+                      src="/illustrations/capture-photo.png"
+                      alt=""
+                      className="size-24 object-contain"
+                    />
                     <span>
-                      <span className="block text-[18px] font-bold">Take a photo</span>
-                      <span className="mt-1 block text-[14.5px] text-muted-foreground">
-                        Snap your plate right now.
+                      <span className="block text-[17px] font-bold">Take a photo</span>
+                      <span className="mt-1 block text-[13.5px] text-muted-foreground">
+                        Use your camera.
                       </span>
                     </span>
                   </button>
@@ -214,12 +212,17 @@ function AddMealPage() {
                   <button
                     type="button"
                     onClick={() => galleryRef.current?.click()}
-                    className="surface-card press enter-card flex flex-col items-start gap-4 p-6 text-left"
+                    className="surface-card press enter-card flex min-h-[190px] flex-col items-center justify-center gap-3 p-5 text-center"
                   >
+                    <img
+                      src="/illustrations/upload-gallery.png"
+                      alt=""
+                      className="size-24 object-contain"
+                    />
                     <span>
-                      <span className="block text-[18px] font-bold">Upload photo</span>
-                      <span className="mt-1 block text-[14.5px] text-muted-foreground">
-                        Pick one from your gallery.
+                      <span className="block text-[17px] font-bold">Choose from gallery</span>
+                      <span className="mt-1 block text-[13.5px] text-muted-foreground">
+                        Pick a saved photo.
                       </span>
                     </span>
                   </button>
