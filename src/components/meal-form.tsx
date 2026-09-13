@@ -1,4 +1,5 @@
-import { MapPin } from "lucide-react";
+import { MapPin, MessageSquarePlus, Star } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { MEAL_TYPES, type Meal, type MealType } from "@/lib/meals";
 
@@ -9,6 +10,8 @@ export type MealFormValues = {
   mealTime: string;
   note: string;
   location: string;
+  price: string;
+  rating: number;
 };
 
 export function mealToForm(meal: Meal): MealFormValues {
@@ -19,6 +22,8 @@ export function mealToForm(meal: Meal): MealFormValues {
     mealTime: meal.mealTime,
     note: meal.note,
     location: meal.location || "",
+    price: meal.price ? String(meal.price) : "",
+    rating: meal.rating || 0,
   };
 }
 
@@ -32,6 +37,7 @@ export function MealForm({
   values: MealFormValues;
   onChange: (next: MealFormValues) => void;
 }) {
+  const [showNote, setShowNote] = useState(Boolean(values.note));
   const set = <K extends keyof MealFormValues>(key: K, value: MealFormValues[K]) =>
     onChange({ ...values, [key]: value });
 
@@ -85,15 +91,66 @@ export function MealForm({
         </Field>
       </div>
 
-      <Field label="Note">
-        <textarea
-          rows={3}
-          className="min-h-24 w-full resize-y rounded-[14px] border border-input bg-card px-4 py-3 text-[15px] leading-[1.45] outline-none transition-[border-color,box-shadow] placeholder:text-subtle focus:border-accent focus:ring-4 focus:ring-accent/10"
-          placeholder="Add a note to remember."
-          value={values.note}
-          onChange={(e) => set("note", e.target.value)}
-        />
-      </Field>
+      <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+        <Field label="Price">
+          <div className="relative">
+            <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[14px] font-bold text-muted-foreground">
+              Rp
+            </span>
+            <input
+              className={`${fieldClass} pl-11`}
+              inputMode="numeric"
+              type="number"
+              min="0"
+              value={values.price}
+              placeholder="0"
+              onChange={(e) => set("price", e.target.value.replace(/\D/g, ""))}
+            />
+          </div>
+        </Field>
+        <Field label="Rating">
+          <div
+            className="flex h-12 items-center gap-1 rounded-[14px] border border-input bg-card px-3"
+            role="radiogroup"
+            aria-label="Rate this meal"
+          >
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                role="radio"
+                aria-checked={values.rating === star}
+                aria-label={`${star} out of 5 stars`}
+                onClick={() => set("rating", values.rating === star ? 0 : star)}
+                className="press rounded-full p-1 text-sunny focus-visible:outline-2 focus-visible:outline-accent"
+              >
+                <Star className="size-5" fill={star <= values.rating ? "currentColor" : "none"} />
+              </button>
+            ))}
+          </div>
+        </Field>
+      </div>
+
+      <div>
+        <button
+          type="button"
+          aria-expanded={showNote}
+          onClick={() => setShowNote(!showNote)}
+          className="press inline-flex h-10 items-center gap-2 rounded-full bg-muted px-4 text-[13.5px] font-semibold text-muted-foreground"
+        >
+          <MessageSquarePlus className="size-4" />
+          {showNote ? "Hide note" : "Add a note"}
+        </button>
+        {showNote ? (
+          <textarea
+            rows={3}
+            className="mt-3 min-h-24 w-full resize-y rounded-[14px] border border-input bg-card px-4 py-3 text-[15px] leading-[1.45] outline-none transition-[border-color,box-shadow] placeholder:text-subtle focus:border-accent focus:ring-4 focus:ring-accent/10"
+            placeholder="What do you want to remember?"
+            value={values.note}
+            onChange={(e) => set("note", e.target.value)}
+          />
+        ) : null}
+      </div>
 
       <Field label="Location">
         <div className="relative">

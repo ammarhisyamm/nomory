@@ -53,6 +53,8 @@ function freshValues(): MealFormValues {
     mealTime: toTimeKey(now),
     note: "",
     location: "",
+    price: "",
+    rating: 0,
   };
 }
 
@@ -109,6 +111,8 @@ function AddMealPage() {
         mealType: values.mealType,
         note: values.note.trim(),
         location: values.location.trim(),
+        price: Number(values.price) || 0,
+        rating: values.rating,
         mealDate: values.mealDate,
         mealTime: values.mealTime,
         createdAt: now,
@@ -137,199 +141,191 @@ function AddMealPage() {
 
   return (
     <AppShell>
-      <div
-        className="add-overlay"
-        role="presentation"
-        onMouseDown={(event) => {
-          if (event.target === event.currentTarget) navigate({ to: "/" });
-        }}
-      >
-        <Page>
-          <input
-            ref={cameraRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            className="hidden"
-            onChange={(e) => {
-              handleFile(e.target.files?.[0]);
-              e.target.value = "";
-            }}
+      <Page>
+        <input
+          ref={cameraRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={(e) => {
+            handleFile(e.target.files?.[0]);
+            e.target.value = "";
+          }}
+        />
+        <input
+          ref={galleryRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            handleFile(e.target.files?.[0]);
+            e.target.value = "";
+          }}
+        />
+
+        <div>
+          <span
+            aria-hidden
+            className="mx-auto mb-1 block h-1 w-10 rounded-full bg-border/80 sm:hidden"
           />
-          <input
-            ref={galleryRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              handleFile(e.target.files?.[0]);
-              e.target.value = "";
-            }}
-          />
 
-          <div className="add-drawer">
-            <span
-              aria-hidden
-              className="mx-auto mb-1 block h-1 w-10 rounded-full bg-border/80 sm:hidden"
-            />
-
-            {step === "choose" ? (
-              <>
-                <PageHeader
-                  title="Add a meal"
-                  subtitle="Take a photo or upload one from your gallery."
-                  right={
-                    <button
-                      type="button"
-                      aria-label="Back to today"
-                      onClick={() => navigate({ to: "/" })}
-                      className="press grid size-11 place-items-center rounded-full bg-card shadow-[var(--shadow-pill)]"
-                    >
-                      <ArrowLeft className="size-[19px]" strokeWidth={1.9} />
-                    </button>
-                  }
-                />
-
-                <div className="grid gap-3 sm:grid-cols-2">
+          {step === "choose" ? (
+            <>
+              <PageHeader
+                title="Add a meal"
+                subtitle="Take a photo or upload one from your gallery."
+                right={
                   <button
                     type="button"
-                    onClick={() => cameraRef.current?.click()}
-                    className="surface-card press enter-card flex min-h-[190px] flex-col items-center justify-center gap-3 p-5 text-center"
+                    aria-label="Back to today"
+                    onClick={() => navigate({ to: "/" })}
+                    className="press grid size-11 place-items-center rounded-full bg-card shadow-[var(--shadow-pill)]"
                   >
-                    <img
-                      src="/illustrations/capture-photo.png"
-                      alt=""
-                      className="size-24 object-contain"
-                    />
-                    <span>
-                      <span className="block text-[17px] font-bold">Take a photo</span>
-                      <span className="mt-1 block text-[13.5px] text-muted-foreground">
-                        Use your camera.
-                      </span>
-                    </span>
+                    <ArrowLeft className="size-[19px]" strokeWidth={1.9} />
                   </button>
+                }
+              />
 
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => cameraRef.current?.click()}
+                  className="surface-card press enter-card flex min-h-[190px] flex-col items-center justify-center gap-3 p-5 text-center"
+                >
+                  <img
+                    src="/illustrations/capture-photo.png"
+                    alt=""
+                    className="size-24 object-contain"
+                  />
+                  <span>
+                    <span className="block text-[17px] font-bold">Take a photo</span>
+                    <span className="mt-1 block text-[13.5px] text-muted-foreground">
+                      Use your camera.
+                    </span>
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => galleryRef.current?.click()}
+                  className="surface-card press enter-card flex min-h-[190px] flex-col items-center justify-center gap-3 p-5 text-center"
+                >
+                  <img
+                    src="/illustrations/upload-gallery.png"
+                    alt=""
+                    className="size-24 object-contain"
+                  />
+                  <span>
+                    <span className="block text-[17px] font-bold">Choose from gallery</span>
+                    <span className="mt-1 block text-[13.5px] text-muted-foreground">
+                      Pick a saved photo.
+                    </span>
+                  </span>
+                </button>
+              </div>
+
+              <p className="mt-6 text-center text-[13.5px] text-subtle">
+                We save the date and time for you — just add a name if you feel like it.
+              </p>
+            </>
+          ) : null}
+
+          {step === "processing" ? (
+            <div className="enter-card flex flex-col items-center px-6 py-24 text-center">
+              <div className="relative">
+                <span
+                  aria-hidden
+                  className="absolute inset-6 rounded-full bg-sunny-soft blur-2xl"
+                />
+                <img
+                  src="/illustrations/empty-meals.png"
+                  alt=""
+                  className="pop-in relative h-40 w-auto object-contain"
+                />
+              </div>
+              <h2 className="mt-8 text-[22px] font-bold">Making your meal look nice…</h2>
+              <p
+                className="mt-2 flex max-w-xs items-center gap-2 text-[14.5px] text-muted-foreground"
+                aria-live="polite"
+              >
+                <Loader2 className="size-4 animate-spin text-accent" strokeWidth={2} />
+                {PROCESSING_PHASES[phase]}
+              </p>
+            </div>
+          ) : null}
+
+          {step === "edit" && photo ? (
+            <div className="space-y-8">
+              <PageHeader
+                title="Looks good?"
+                subtitle="Add a few details, then save this memory."
+                right={
+                  <button
+                    type="button"
+                    aria-label="Discard photo"
+                    onClick={reset}
+                    className="press grid size-11 place-items-center rounded-full bg-card shadow-[var(--shadow-pill)]"
+                  >
+                    <ArrowLeft className="size-[19px]" strokeWidth={1.9} />
+                  </button>
+                }
+              />
+
+              <section className="surface-card enter-card flex flex-col items-center p-6">
+                <FoodSticker
+                  src={useOriginal ? photo.original : photo.processed}
+                  alt="Meal preview"
+                  className="size-52"
+                  rounded="rounded-[32px]"
+                />
+                {!photo.cutout ? (
+                  <p className="mt-4 flex items-center gap-2 text-[13.5px] text-muted-foreground">
+                    <TriangleAlert className="size-4 shrink-0 text-accent" strokeWidth={2} />
+                    We couldn't create a cutout, but your meal is still ready to save.
+                  </p>
+                ) : null}
+                <div className="mt-5 flex flex-wrap justify-center gap-2">
                   <button
                     type="button"
                     onClick={() => galleryRef.current?.click()}
-                    className="surface-card press enter-card flex min-h-[190px] flex-col items-center justify-center gap-3 p-5 text-center"
+                    className="press inline-flex h-11 items-center gap-2 rounded-full bg-muted px-4 text-[13.5px] font-semibold text-muted-foreground"
                   >
-                    <img
-                      src="/illustrations/upload-gallery.png"
-                      alt=""
-                      className="size-24 object-contain"
-                    />
-                    <span>
-                      <span className="block text-[17px] font-bold">Choose from gallery</span>
-                      <span className="mt-1 block text-[13.5px] text-muted-foreground">
-                        Pick a saved photo.
-                      </span>
-                    </span>
+                    <RefreshCw className="size-4" strokeWidth={2} />
+                    Change photo
                   </button>
-                </div>
-
-                <p className="mt-6 text-center text-[13.5px] text-subtle">
-                  We save the date and time for you — just add a name if you feel like it.
-                </p>
-              </>
-            ) : null}
-
-            {step === "processing" ? (
-              <div className="enter-card flex flex-col items-center px-6 py-24 text-center">
-                <div className="relative">
-                  <span
-                    aria-hidden
-                    className="absolute inset-6 rounded-full bg-sunny-soft blur-2xl"
-                  />
-                  <img
-                    src="/illustrations/empty-meals.png"
-                    alt=""
-                    className="pop-in relative h-40 w-auto object-contain"
-                  />
-                </div>
-                <h2 className="mt-8 text-[22px] font-bold">Making your meal look nice…</h2>
-                <p
-                  className="mt-2 flex max-w-xs items-center gap-2 text-[14.5px] text-muted-foreground"
-                  aria-live="polite"
-                >
-                  <Loader2 className="size-4 animate-spin text-accent" strokeWidth={2} />
-                  {PROCESSING_PHASES[phase]}
-                </p>
-              </div>
-            ) : null}
-
-            {step === "edit" && photo ? (
-              <div className="space-y-8">
-                <PageHeader
-                  title="Looks good?"
-                  subtitle="Add a few details, then save this memory."
-                  right={
-                    <button
-                      type="button"
-                      aria-label="Discard photo"
-                      onClick={reset}
-                      className="press grid size-11 place-items-center rounded-full bg-card shadow-[var(--shadow-pill)]"
-                    >
-                      <ArrowLeft className="size-[19px]" strokeWidth={1.9} />
-                    </button>
-                  }
-                />
-
-                <section className="surface-card enter-card flex flex-col items-center p-6">
-                  <FoodSticker
-                    src={useOriginal ? photo.original : photo.processed}
-                    alt="Meal preview"
-                    className="size-52"
-                    rounded="rounded-[32px]"
-                  />
-                  {!photo.cutout ? (
-                    <p className="mt-4 flex items-center gap-2 text-[13.5px] text-muted-foreground">
-                      <TriangleAlert className="size-4 shrink-0 text-accent" strokeWidth={2} />
-                      We couldn't create a cutout, but your meal is still ready to save.
-                    </p>
-                  ) : null}
-                  <div className="mt-5 flex flex-wrap justify-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => galleryRef.current?.click()}
-                      className="press inline-flex h-11 items-center gap-2 rounded-full bg-muted px-4 text-[13.5px] font-semibold text-muted-foreground"
-                    >
-                      <RefreshCw className="size-4" strokeWidth={2} />
-                      Change photo
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setUseOriginal(!useOriginal)}
-                      aria-pressed={useOriginal}
-                      className={cn(
-                        "press inline-flex h-11 items-center rounded-full px-4 text-[13.5px] font-semibold",
-                        useOriginal
-                          ? "bg-foreground text-background"
-                          : "bg-muted text-muted-foreground",
-                      )}
-                    >
-                      Use original photo
-                    </button>
-                  </div>
-                </section>
-
-                <section className="surface-card space-y-5 p-5 sm:p-6">
-                  <MealForm values={values} onChange={setValues} />
                   <button
                     type="button"
-                    onClick={save}
-                    disabled={saving}
-                    className="press flex h-14 w-full items-center justify-center gap-2 rounded-full bg-accent text-[16px] font-semibold text-accent-foreground disabled:opacity-60"
+                    onClick={() => setUseOriginal(!useOriginal)}
+                    aria-pressed={useOriginal}
+                    className={cn(
+                      "press inline-flex h-11 items-center rounded-full px-4 text-[13.5px] font-semibold",
+                      useOriginal
+                        ? "bg-foreground text-background"
+                        : "bg-muted text-muted-foreground",
+                    )}
                   >
-                    {saving ? <Loader2 className="size-5 animate-spin" strokeWidth={2.2} /> : null}
-                    Save memory
+                    Use original photo
                   </button>
-                </section>
-              </div>
-            ) : null}
-          </div>
-        </Page>
-      </div>
+                </div>
+              </section>
+
+              <section className="surface-card space-y-5 p-5 sm:p-6">
+                <MealForm values={values} onChange={setValues} />
+                <button
+                  type="button"
+                  onClick={save}
+                  disabled={saving}
+                  className="press flex h-14 w-full items-center justify-center gap-2 rounded-full bg-accent text-[16px] font-semibold text-accent-foreground disabled:opacity-60"
+                >
+                  {saving ? <Loader2 className="size-5 animate-spin" strokeWidth={2.2} /> : null}
+                  Save memory
+                </button>
+              </section>
+            </div>
+          ) : null}
+        </div>
+      </Page>
     </AppShell>
   );
 }

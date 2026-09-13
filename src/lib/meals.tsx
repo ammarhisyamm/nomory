@@ -24,6 +24,8 @@ export type Meal = {
   mealType: MealType;
   note: string;
   location: string;
+  price: number;
+  rating: number;
   /** yyyy-mm-dd */
   mealDate: string;
   /** HH:mm */

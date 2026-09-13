@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, UtensilsCrossed, Wallet } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { FilterPill } from "@/components/pills";
@@ -45,6 +45,7 @@ function MemoriesPage() {
     }
     return [...map.entries()];
   }, [meals, filter]);
+  const totalSpend = meals.reduce((sum, meal) => sum + (meal.price || 0), 0);
 
   return (
     <AppShell>
@@ -98,7 +99,7 @@ function MemoriesPage() {
           </div>
         ) : null}
 
-        <section className="mt-6 px-1 sm:px-2">
+        <section className="mt-6 rounded-[30px] bg-card/55 p-4 shadow-[var(--shadow-card)] sm:p-6">
           <div className="mb-5 flex items-center justify-between gap-3">
             <div>
               <p className="section-label">Your archive</p>
@@ -115,6 +116,12 @@ function MemoriesPage() {
               <span className="hidden sm:inline">New memory</span>
               <span className="sm:hidden">New</span>
             </Link>
+          </div>
+
+          <div className="mb-7 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <SummaryStat icon={UtensilsCrossed} label="Meals saved" value={`${meals.length}`} />
+            <SummaryStat icon={Wallet} label="Total spent" value={formatRupiah(totalSpend)} />
+            <SummaryStat icon={UtensilsCrossed} label="Days logged" value={`${groups.length}`} />
           </div>
 
           <div className="space-y-8">
@@ -152,7 +159,7 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
             to="/meal/$id"
             params={{ id: meal.id }}
             aria-label={`Open ${meal.mealName || "saved meal"}`}
-            className="surface-card press enter-card overflow-hidden rounded-[22px] bg-card p-2"
+            className="press enter-card min-w-0 overflow-hidden rounded-[22px] border border-border/60 bg-background/40 p-2 shadow-[var(--shadow-pill)]"
           >
             <img
               src={mealImage(meal)}
@@ -172,4 +179,30 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
       </div>
     </section>
   );
+}
+
+function SummaryStat({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof UtensilsCrossed;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="min-w-0 rounded-[20px] border border-border/60 bg-background/55 p-3">
+      <Icon className="size-5 text-accent" />
+      <p className="mt-3 truncate text-[12px] text-muted-foreground">{label}</p>
+      <p className="mt-0.5 truncate text-[17px] font-bold">{value}</p>
+    </div>
+  );
+}
+
+function formatRupiah(value: number) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(value);
 }

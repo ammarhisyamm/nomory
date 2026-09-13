@@ -12,6 +12,8 @@ export type MealRow = {
   meal_type: string;
   note: string;
   location: string;
+  price: number;
+  rating: number;
   meal_date: string;
   meal_time: string;
   original_image: string;
@@ -87,6 +89,8 @@ export function sanitizeMeal(input: Meal): Meal | null {
     mealType,
     note: String(input.note ?? "").slice(0, 2000),
     location: String(input.location ?? "").slice(0, 160),
+    price: Number.isFinite(input.price) ? Math.max(0, Math.round(input.price)) : 0,
+    rating: Number.isFinite(input.rating) ? Math.min(5, Math.max(0, Math.round(input.rating))) : 0,
     mealDate: /^\d{4}-\d{2}-\d{2}$/.test(input.mealDate ?? "") ? input.mealDate : "1970-01-01",
     mealTime: /^\d{2}:\d{2}$/.test(input.mealTime ?? "") ? input.mealTime : "12:00",
     createdAt: Number.isFinite(input.createdAt) ? input.createdAt : Date.now(),
@@ -104,6 +108,8 @@ export function rowToMeal(row: MealRow): Meal {
     mealType: (MEAL_TYPES.has(row.meal_type) ? row.meal_type : "snack") as MealType,
     note: row.note || "",
     location: row.location || "",
+    price: row.price || 0,
+    rating: row.rating || 0,
     mealDate: row.meal_date,
     mealTime: row.meal_time,
     createdAt: row.created_at,
@@ -114,7 +120,7 @@ export function rowToMeal(row: MealRow): Meal {
 export async function listMeals(db: D1Database, userId: string): Promise<Meal[]> {
   const res = await db
     .prepare(
-      `SELECT id, user_id, meal_name, meal_type, note, location, meal_date, meal_time,
+      `SELECT id, user_id, meal_name, meal_type, note, location, price, rating, meal_date, meal_time,
               original_image, processed_image, use_original, created_at, updated_at
        FROM meals WHERE user_id = ? ORDER BY meal_date DESC, meal_time DESC LIMIT 2000`,
     )
@@ -126,13 +132,14 @@ export async function listMeals(db: D1Database, userId: string): Promise<Meal[]>
 export async function upsertMeal(db: D1Database, userId: string, meal: Meal): Promise<void> {
   await db
     .prepare(
-      `INSERT INTO meals (id, user_id, meal_name, meal_type, note, location, meal_date,
+      `INSERT INTO meals (id, user_id, meal_name, meal_type, note, location, price, rating, meal_date,
                           meal_time, original_image, processed_image, use_original,
                           created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
          meal_name=excluded.meal_name, meal_type=excluded.meal_type, note=excluded.note,
          location=excluded.location, meal_date=excluded.meal_date, meal_time=excluded.meal_time,
+         price=excluded.price, rating=excluded.rating,
          original_image=excluded.original_image, processed_image=excluded.processed_image,
          use_original=excluded.use_original, updated_at=excluded.updated_at
        WHERE user_id = ?`,
@@ -144,6 +151,8 @@ export async function upsertMeal(db: D1Database, userId: string, meal: Meal): Pr
       meal.mealType,
       meal.note,
       meal.location,
+      meal.price,
+      meal.rating,
       meal.mealDate,
       meal.mealTime,
       meal.originalImage,

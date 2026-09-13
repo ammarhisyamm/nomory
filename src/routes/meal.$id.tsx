@@ -102,6 +102,8 @@ function MealDetailPage() {
         mealTime: values.mealTime,
         note: values.note.trim(),
         location: values.location.trim(),
+        price: Number(values.price) || 0,
+        rating: values.rating,
         updatedAt: Date.now(),
       };
       await saveMeal(updated);
