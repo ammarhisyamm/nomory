@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarDays, Images, Plus, Search, Settings, Sparkles, User } from "lucide-react";
+import { CalendarDays, Images, Plus, Sparkles, User } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -18,7 +18,7 @@ const mobileDestinations = [
   { to: "/", label: "Home", icon: Sparkles },
   { to: "/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/memories", label: "Memories", icon: Images },
-  { to: "/settings", label: "Settings", icon: Settings },
+  { to: "/profile", label: "Profile", icon: User },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -26,7 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const isActive = (to: string) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
-  const hideMobileNav = pathname === "/add" || pathname === "/settings";
+  const hideMobileNav = pathname === "/add";
 
   useEffect(() => {
     if (auth && !auth.user) navigate({ to: "/login" });
@@ -93,15 +93,19 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-md items-center gap-2.5">
           <div className="grid min-h-[64px] min-w-0 flex-1 grid-cols-4 rounded-[28px] border border-white/80 bg-card/80 p-2 shadow-[var(--shadow-card)] backdrop-blur-2xl">
             {mobileDestinations.map((d) => (
-              <NavItem key={d.to} {...d} active={isActive(d.to)} />
+              <NavItem
+                key={d.to}
+                {...d}
+                active={isActive(d.to) || (d.to === "/profile" && pathname === "/settings")}
+              />
             ))}
           </div>
           <Link
-            to="/search"
-            aria-label="Search meals"
+            to="/add"
+            aria-label="Add a meal"
             className="press grid size-14 shrink-0 touch-manipulation place-items-center rounded-full border border-white/80 bg-card/85 text-foreground shadow-[var(--shadow-card)] backdrop-blur-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            <Search className="size-6" strokeWidth={1.9} />
+            <Plus className="size-7" strokeWidth={1.9} />
           </Link>
         </div>
       </nav>
