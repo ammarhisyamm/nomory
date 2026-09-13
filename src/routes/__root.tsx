@@ -35,7 +35,7 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/"
-            className="press inline-flex h-12 items-center justify-center rounded-full bg-primary px-6 text-[15px] font-bold text-primary-foreground"
+            className="press inline-flex h-12 items-center justify-center rounded-full bg-accent px-6 text-[15px] font-bold text-accent-foreground"
           >
             Back to today
           </Link>
@@ -72,7 +72,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="press inline-flex h-12 items-center justify-center rounded-full bg-primary px-5 text-[15px] font-bold text-primary-foreground"
+            className="press inline-flex h-12 items-center justify-center rounded-full bg-accent px-5 text-[15px] font-bold text-accent-foreground"
           >
             Try again
           </button>
@@ -99,7 +99,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Nomory helps you remember what you eat, one photo at a time. Good food, brighter days.",
       },
-      { name: "theme-color", content: "#FF5A1F" },
+      { name: "theme-color", content: "#F3F1EC" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },

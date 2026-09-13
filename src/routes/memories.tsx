@@ -94,7 +94,7 @@ function MemoriesPage() {
           <div className="mb-5 flex items-center justify-between gap-3 px-1">
             <div>
               <p className="section-label">Your archive</p>
-              <h2 className="mt-1 font-display text-[24px] font-extrabold">My bookshelf</h2>
+              <h2 className="mt-1 font-display text-[24px] font-extrabold">Food memories</h2>
             </div>
             <Link
               to="/add"

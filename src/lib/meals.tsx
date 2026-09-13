@@ -59,7 +59,11 @@ export function toTimeKey(d: Date) {
 }
 
 export function mealImage(meal: Meal) {
-  return meal.useOriginal ? meal.originalImage : meal.processedImage;
+  const value = meal.useOriginal ? meal.originalImage : meal.processedImage;
+  const legacyHost = "https://pub-9ac9781ada9641ffb736141d7132a2eb.r2.dev/";
+  return value.startsWith(legacyHost)
+    ? `https://nomory.site/media/${value.slice(legacyHost.length)}`
+    : value;
 }
 
 export function formatDateLabel(dateKey: string, opts?: Intl.DateTimeFormatOptions) {

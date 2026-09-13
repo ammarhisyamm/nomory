@@ -22,6 +22,7 @@ export interface D1Database {
 }
 
 export interface R2Bucket {
+  get(key: string): Promise<R2Object | null>;
   put(
     key: string,
     value: ArrayBuffer | Uint8Array,
@@ -29,6 +30,11 @@ export interface R2Bucket {
   ): Promise<unknown>;
   delete(key: string | string[]): Promise<void>;
 }
+
+export type R2Object = {
+  body: ReadableStream<Uint8Array>;
+  httpMetadata?: { contentType?: string };
+};
 
 export type CloudflareEnv = {
   DB?: D1Database;

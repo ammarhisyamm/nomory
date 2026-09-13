@@ -66,9 +66,9 @@
 
 :root {
   /* Nomory palette: Cream #FFF7EE canvas, Nom Orange #FF5A1F primary */
-  --background: oklch(0.973 0.018 68);
+  --background: oklch(0.955 0.009 85);
   --foreground: oklch(0.18 0 0);
-  --card: oklch(1 0 0);
+  --card: oklch(0.995 0.004 85);
   --card-foreground: oklch(0.18 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0 0);
@@ -197,6 +197,28 @@
   animation: enter-card 200ms ease-out both;
 }
 
+.add-drawer {
+  animation: drawer-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (max-width: 639px) {
+  .add-drawer {
+    margin-inline: -0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 28px 28px 0 0;
+    background: color-mix(in oklab, var(--color-card) 94%, transparent);
+    box-shadow: var(--shadow-sheet);
+    padding: 0.75rem 1rem 1.5rem;
+    backdrop-filter: blur(18px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .add-drawer {
+    animation: none;
+  }
+}
+
 @utility pop-in {
   animation: pop-in 260ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
 }
@@ -209,6 +231,17 @@
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
