@@ -41,7 +41,7 @@ function GoogleCallbackRoute() {
         if (!alive) return;
         if (result.ok) {
           toast.success("Signed in with Google!", { title: "Welcome to Nomory" });
-          navigate({ to: "/" });
+          navigate({ to: result.needsOnboarding ? "/onboarding" : "/" });
         } else {
           toast.error(result.error ?? "Couldn't complete Google sign-in.");
           navigate({ to: "/profile" });

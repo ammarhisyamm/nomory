@@ -101,7 +101,7 @@ export const signUpWithPassword = createServerFn({ method: "POST" })
       now,
     });
 
-    const user: SessionUser = { id, name, email: "", picture: "", username };
+    const user: SessionUser = { id, name, email: "", picture: "", username, provider: "password" };
     await setSessionCookie(user);
     return { ok: true };
   });
@@ -155,6 +155,7 @@ export const signInWithPassword = createServerFn({ method: "POST" })
       email: "",
       picture: "",
       username: user.username,
+      provider: "password",
     };
     await setSessionCookie(session);
     return { ok: true };

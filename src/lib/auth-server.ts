@@ -9,6 +9,7 @@ export type SessionUser = {
   picture: string;
   /** Set for username/password accounts, absent for Google accounts. */
   username?: string;
+  provider?: "google" | "password";
 };
 
 const SESSION_COOKIE = "nomory.session";
@@ -98,6 +99,9 @@ export async function verifySessionToken(token: string | undefined): Promise<Ses
       email: data.email ?? "",
       picture: data.picture ?? "",
       ...(typeof data.username === "string" && data.username ? { username: data.username } : {}),
+      ...(data.provider === "google" || data.provider === "password"
+        ? { provider: data.provider }
+        : {}),
     };
   } catch {
     return null;
@@ -187,5 +191,6 @@ export async function exchangeCodeForUser(
     name: profile.name || profile.email,
     email: profile.email,
     picture: profile.picture || "",
+    provider: "google",
   };
 }
