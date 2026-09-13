@@ -155,7 +155,7 @@ function SummaryStat({
   value: string;
 }) {
   return (
-    <div className="min-w-0 rounded-[20px] border border-border/60 bg-background/55 p-3">
+    <div className="min-w-0 rounded-[20px] border border-border/50 bg-white p-3 shadow-[var(--shadow-card)]">
       <Icon className="size-5 text-accent" />
       <p className="mt-3 truncate text-[12px] text-muted-foreground">{label}</p>
       <p className="mt-0.5 truncate text-[17px] font-bold">{value}</p>

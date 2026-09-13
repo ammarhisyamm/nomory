@@ -2,7 +2,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "@/lib/feedback";
-import { ArrowLeft, Cloud, CloudOff, Loader2, LogOut, RefreshCw, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Cloud,
+  CloudOff,
+  Download,
+  Loader2,
+  LogOut,
+  RefreshCw,
+  ShieldCheck,
+  Trash2,
+} from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { getAuthStatus } from "@/lib/auth";
 import { changePassword, signOut } from "@/lib/password-auth";
@@ -26,6 +36,22 @@ function SettingsPage() {
   const [currentPw, setCurrentPw] = useState("");
   const [nextPw, setNextPw] = useState("");
   const [changingPw, setChangingPw] = useState(false);
+
+  const exportData = () => {
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      product: "Nomory",
+      memories: meals,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `nomory-data-${new Date().toISOString().slice(0, 10)}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    toast.success("Your Nomory data is ready to download.");
+  };
 
   const sync = async () => {
     await syncNow();
@@ -127,6 +153,54 @@ function SettingsPage() {
               </button>
             </div>
           ) : null}
+        </section>
+
+        <section className="surface-card mt-4 overflow-hidden" aria-labelledby="privacy-data-title">
+          <div className="flex items-start gap-3 border-b border-border/60 p-5">
+            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-accent-soft">
+              <ShieldCheck className="size-[20px] text-accent" strokeWidth={1.9} />
+            </span>
+            <div>
+              <h2 id="privacy-data-title" className="text-[16px] font-bold">
+                Privacy &amp; data
+              </h2>
+              <p className="mt-1 text-[14px] leading-5 text-muted-foreground">
+                Your memories belong to you. Keep a copy, understand sync, or clear your diary
+                anytime.
+              </p>
+            </div>
+          </div>
+          <div className="divide-y divide-border/60">
+            <div className="flex items-center gap-3 p-5">
+              <div className="min-w-0 flex-1">
+                <p className="text-[15px] font-semibold">Cloud sync</p>
+                <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
+                  {cloudEnabled
+                    ? "Your signed-in memories are synced to your Nomory account."
+                    : "Your memories stay on this device until cloud sync is connected."}
+                </p>
+              </div>
+              <span className="shrink-0 text-[12px] font-bold text-muted-foreground">
+                {cloudEnabled ? "On" : "Local"}
+              </span>
+            </div>
+            <div className="flex items-center gap-3 p-5">
+              <div className="min-w-0 flex-1">
+                <p className="text-[15px] font-semibold">Download a copy</p>
+                <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
+                  Export your saved meal details as a portable JSON file.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={exportData}
+                className="press inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-muted px-3.5 text-[12px] font-bold text-foreground"
+              >
+                <Download className="size-4" strokeWidth={2} />
+                Export
+              </button>
+            </div>
+          </div>
         </section>
 
         {user?.username ? (
