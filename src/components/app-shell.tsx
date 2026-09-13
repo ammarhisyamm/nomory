@@ -86,12 +86,12 @@ export function AppShell({ children }: { children: ReactNode }) {
       <nav
         aria-label="Primary navigation"
         className={cn(
-          "fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(10px,env(safe-area-inset-bottom))] lg:hidden",
+          "fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(14px,env(safe-area-inset-bottom))] lg:hidden",
           hideMobileNav && "hidden",
         )}
       >
-        <div className="mx-auto flex max-w-md items-center gap-2">
-          <div className="grid min-w-0 flex-1 grid-cols-4 rounded-[28px] border border-white/80 bg-card/80 p-2 shadow-[0_-6px_30px_oklch(0.32_0.05_55/0.09),0_6px_18px_oklch(0.32_0.05_55/0.08)] backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-md items-center gap-2.5">
+          <div className="grid min-h-[64px] min-w-0 flex-1 grid-cols-4 rounded-[28px] border border-white/80 bg-card/80 p-2 shadow-[var(--shadow-card)] backdrop-blur-2xl">
             {mobileDestinations.map((d) => (
               <NavItem key={d.to} {...d} active={isActive(d.to)} />
             ))}
@@ -99,7 +99,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link
             to="/search"
             aria-label="Search meals"
-            className="press grid size-14 shrink-0 place-items-center rounded-full border border-white/80 bg-card/85 text-foreground shadow-[0_6px_24px_oklch(0.32_0.05_55/0.12)] backdrop-blur-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="press grid size-14 shrink-0 touch-manipulation place-items-center rounded-full border border-white/80 bg-card/85 text-foreground shadow-[var(--shadow-card)] backdrop-blur-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <Search className="size-6" strokeWidth={1.9} />
           </Link>
@@ -114,7 +114,7 @@ function NavItem({ to, icon: Icon, active }: { to: string; icon: LucideIcon; act
     <Link
       to={to}
       className={cn(
-        "relative flex min-h-12 flex-col items-center justify-center gap-1 rounded-[20px] text-[10px] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+        "relative flex min-h-12 min-w-12 touch-manipulation flex-col items-center justify-center gap-1 rounded-[20px] text-[10px] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
         active
           ? "bg-white/65 text-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.8),var(--shadow-pill)] backdrop-blur-md"
           : "text-muted-foreground",

@@ -115,137 +115,112 @@ function SettingsPage() {
           }
         />
 
-        <section className="grid gap-3" aria-label="Account and sync status">
-          <div className="surface-card flex items-center gap-4 p-5">
+        <SettingsGroup title="Account">
+          <div className="flex items-center gap-4 p-5">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[16px] font-bold">{user?.name ?? "On this device"}</p>
+              <p className="mt-1 truncate text-[14px] text-muted-foreground">
+                {user?.email ?? "Sign in to sync your memories across devices."}
+              </p>
+            </div>
+            {user ? (
+              <button
+                type="button"
+                onClick={signOutUser}
+                className="press grid size-11 shrink-0 place-items-center rounded-full bg-muted"
+                aria-label="Sign out"
+              >
+                <LogOut className="size-[18px] text-muted-foreground" strokeWidth={1.9} />
+              </button>
+            ) : null}
+          </div>
+        </SettingsGroup>
+
+        <SettingsGroup title="Privacy & data">
+          <div className="flex items-center gap-3 p-5">
             <span
-              className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-bold ${cloudEnabled ? "bg-leaf-soft text-[#15803d]" : "bg-muted text-muted-foreground"}`}
+              className={`grid size-11 shrink-0 place-items-center rounded-full ${cloudEnabled ? "bg-leaf-soft text-[#15803d]" : "bg-muted text-muted-foreground"}`}
             >
-              {cloudEnabled ? (
-                <Cloud className="size-4" strokeWidth={2} />
-              ) : (
-                <CloudOff className="size-4" strokeWidth={2} />
-              )}
-              {cloudEnabled ? "Cloud sync on" : user ? "Cloud not set up yet" : "On this device"}
+              {cloudEnabled ? <Cloud className="size-5" /> : <CloudOff className="size-5" />}
             </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[15px] font-semibold">Cloud sync</p>
+              <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
+                {cloudEnabled
+                  ? "Your signed-in memories are synced."
+                  : "Your memories stay on this device."}
+              </p>
+            </div>
             {user ? (
               <button
                 type="button"
                 onClick={sync}
                 disabled={syncing}
-                className="press ml-auto inline-flex h-10 items-center gap-2 rounded-full bg-muted px-4 text-[13px] font-semibold text-muted-foreground disabled:opacity-60"
+                className="press inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-muted px-3.5 text-[12px] font-bold text-foreground disabled:opacity-60"
               >
-                <RefreshCw className={`size-4 ${syncing ? "animate-spin" : ""}`} strokeWidth={2} />
-                {syncing ? "Syncing…" : "Sync now"}
+                <RefreshCw className={`size-4 ${syncing ? "animate-spin" : ""}`} />
+                {syncing ? "Syncing…" : "Sync"}
               </button>
             ) : null}
           </div>
-          {user ? (
-            <div className="surface-card flex items-center gap-4 p-5">
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[16px] font-bold">{user.name}</p>
-                <p className="mt-1 truncate text-[14px] text-muted-foreground">{user.email}</p>
-              </div>
-              <button
-                type="button"
-                onClick={signOutUser}
-                aria-label="Sign out"
-                className="press grid size-11 shrink-0 place-items-center rounded-full bg-muted"
-              >
-                <LogOut className="size-[18px] text-muted-foreground" strokeWidth={1.9} />
-              </button>
-            </div>
-          ) : null}
-        </section>
-
-        <section className="surface-card mt-4 overflow-hidden" aria-labelledby="privacy-data-title">
-          <div className="flex items-start gap-3 border-b border-border/60 p-5">
-            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-accent-soft">
-              <ShieldCheck className="size-[20px] text-accent" strokeWidth={1.9} />
-            </span>
-            <div>
-              <h2 id="privacy-data-title" className="text-[16px] font-bold">
-                Privacy &amp; data
-              </h2>
-              <p className="mt-1 text-[14px] leading-5 text-muted-foreground">
-                Your memories belong to you. Keep a copy, understand sync, or clear your diary
-                anytime.
+          <div className="flex items-center gap-3 border-t border-border/60 p-5">
+            <ShieldCheck className="size-5 shrink-0 text-accent" strokeWidth={1.9} />
+            <div className="min-w-0 flex-1">
+              <p className="text-[15px] font-semibold">Download a copy</p>
+              <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
+                Export your saved meal details as JSON.
               </p>
             </div>
+            <button
+              type="button"
+              onClick={exportData}
+              className="press inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-muted px-3.5 text-[12px] font-bold text-foreground"
+            >
+              <Download className="size-4" /> Export
+            </button>
           </div>
-          <div className="divide-y divide-border/60">
-            <div className="flex items-center gap-3 p-5">
-              <div className="min-w-0 flex-1">
-                <p className="text-[15px] font-semibold">Cloud sync</p>
-                <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
-                  {cloudEnabled
-                    ? "Your signed-in memories are synced to your Nomory account."
-                    : "Your memories stay on this device until cloud sync is connected."}
-                </p>
-              </div>
-              <span className="shrink-0 text-[12px] font-bold text-muted-foreground">
-                {cloudEnabled ? "On" : "Local"}
-              </span>
-            </div>
-            <div className="flex items-center gap-3 p-5">
-              <div className="min-w-0 flex-1">
-                <p className="text-[15px] font-semibold">Download a copy</p>
-                <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
-                  Export your saved meal details as a portable JSON file.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={exportData}
-                className="press inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-muted px-3.5 text-[12px] font-bold text-foreground"
-              >
-                <Download className="size-4" strokeWidth={2} />
-                Export
-              </button>
-            </div>
-          </div>
-        </section>
+        </SettingsGroup>
 
         {user?.username ? (
-          <form onSubmit={changePw} className="surface-card mt-4 space-y-3 p-5">
-            <div>
-              <p className="text-[16px] font-bold">Change password</p>
-              <p className="mt-1 text-[14px] text-muted-foreground">Use at least 8 characters.</p>
-            </div>
-            <input
-              type="password"
-              value={currentPw}
-              onChange={(event) => setCurrentPw(event.target.value)}
-              placeholder="Current password"
-              autoComplete="current-password"
-              className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
-            />
-            <input
-              type="password"
-              value={nextPw}
-              onChange={(event) => setNextPw(event.target.value)}
-              placeholder="New password"
-              autoComplete="new-password"
-              className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
-            />
-            <button
-              type="submit"
-              disabled={changingPw}
-              className="press flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground text-[15px] font-semibold text-background disabled:opacity-60"
-            >
-              {changingPw ? <Loader2 className="size-4 animate-spin" strokeWidth={2.2} /> : null}
-              Save new password
-            </button>
-          </form>
+          <SettingsGroup title="Security">
+            <form onSubmit={changePw} className="space-y-3 p-5">
+              <div>
+                <p className="text-[16px] font-bold">Change password</p>
+                <p className="mt-1 text-[14px] text-muted-foreground">Use at least 8 characters.</p>
+              </div>
+              <input
+                type="password"
+                value={currentPw}
+                onChange={(event) => setCurrentPw(event.target.value)}
+                placeholder="Current password"
+                autoComplete="current-password"
+                className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+              />
+              <input
+                type="password"
+                value={nextPw}
+                onChange={(event) => setNextPw(event.target.value)}
+                placeholder="New password"
+                autoComplete="new-password"
+                className="h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none placeholder:text-subtle focus:border-accent"
+              />
+              <button
+                type="submit"
+                disabled={changingPw}
+                className="press flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground text-[15px] font-semibold text-background disabled:opacity-60"
+              >
+                {changingPw ? <Loader2 className="size-4 animate-spin" strokeWidth={2.2} /> : null}
+                Save new password
+              </button>
+            </form>
+          </SettingsGroup>
         ) : null}
 
-        <section className="mt-8" aria-labelledby="danger-zone-title">
-          <p id="danger-zone-title" className="section-label mb-3 text-destructive/80">
-            Danger zone
-          </p>
+        <SettingsGroup title="Danger zone" danger>
           <button
             type="button"
             onClick={reset}
-            className="surface-card press flex w-full items-center gap-4 border-destructive/15 p-5 text-left"
+            className="press flex w-full items-center gap-4 border-destructive/15 p-5 text-left"
           >
             <span className="grid size-11 shrink-0 place-items-center rounded-full bg-muted">
               <Trash2 className="size-[19px] text-destructive" strokeWidth={1.9} />
@@ -258,7 +233,7 @@ function SettingsPage() {
               </span>
             </span>
           </button>
-        </section>
+        </SettingsGroup>
 
         {auth === undefined ? (
           <p className="mt-6 flex items-center justify-center gap-2 text-[13px] text-subtle">
@@ -268,5 +243,22 @@ function SettingsPage() {
         ) : null}
       </Page>
     </AppShell>
+  );
+}
+
+function SettingsGroup({
+  title,
+  children,
+  danger = false,
+}: {
+  title: string;
+  children: React.ReactNode;
+  danger?: boolean;
+}) {
+  return (
+    <section className="mt-7" aria-label={title}>
+      <h2 className={`mb-3 text-[21px] font-bold ${danger ? "text-destructive" : ""}`}>{title}</h2>
+      <div className="surface-card overflow-hidden">{children}</div>
+    </section>
   );
 }

@@ -73,7 +73,7 @@ function MemoriesPage() {
         ) : null}
 
         <section className="mt-7">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <SummaryStat icon={UtensilsCrossed} label="Meals saved" value={`${meals.length}`} />
             <SummaryStat icon={CalendarDays} label="Days logged" value={`${loggedDays}`} />
             <SummaryStat icon={Wallet} label="Total spent" value={formatRupiah(totalSpend)} />
@@ -155,10 +155,10 @@ function SummaryStat({
   value: string;
 }) {
   return (
-    <div className="min-w-0 rounded-[20px] border border-border/50 bg-white p-3 shadow-[var(--shadow-card)]">
-      <Icon className="size-5 text-accent" />
-      <p className="mt-3 truncate text-[12px] text-muted-foreground">{label}</p>
-      <p className="mt-0.5 truncate text-[17px] font-bold">{value}</p>
+    <div className="min-w-0 rounded-[20px] border border-border/50 bg-white p-3 shadow-[var(--shadow-card)] sm:p-4">
+      <Icon className="size-5 text-accent sm:size-6" />
+      <p className="mt-3 truncate text-[11px] text-muted-foreground sm:text-[12px]">{label}</p>
+      <p className="mt-0.5 truncate text-[16px] font-bold sm:text-[17px]">{value}</p>
     </div>
   );
 }
