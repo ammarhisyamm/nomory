@@ -36,8 +36,14 @@ export function AppShell({ children }: { children: ReactNode }) {
   // another user's cached meals on shared devices).
   if (!auth?.user) {
     return (
-      <div className="grid min-h-screen place-items-center bg-background">
-        <NomoryMark className="size-20 animate-pulse text-[64px]" />
+      <div className="grid min-h-screen place-items-center bg-background px-6 text-center">
+        <div>
+          <NomoryMark className="mx-auto size-20 animate-pulse text-[64px]" />
+          <NomoryLogo className="mt-4 text-[30px]" />
+          <p className="mt-2 text-sm text-muted-foreground">
+            Your meals, remembered.
+          </p>
+        </div>
       </div>
     );
   }
