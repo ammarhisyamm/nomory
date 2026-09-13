@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Camera, ImagePlus, Loader2, RefreshCw, TriangleAlert } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/feedback";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { FoodSticker } from "@/components/food-sticker";
 import { MealForm, type MealFormValues } from "@/components/meal-form";

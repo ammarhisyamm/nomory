@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/feedback";
 import { startGoogleSignIn } from "@/lib/auth";
 
 export const Route = createFileRoute("/auth/google")({

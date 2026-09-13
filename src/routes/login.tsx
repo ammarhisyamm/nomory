@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Eye, EyeOff, Loader2, TriangleAlert } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/feedback";
 import { NomoryLogo } from "@/components/nomory-logo";
 import { getAuthStatus } from "@/lib/auth";
 import { getPasswordAuthStatus, signInWithPassword, signUpWithPassword } from "@/lib/password-auth";
