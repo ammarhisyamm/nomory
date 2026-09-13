@@ -1,9 +1,10 @@
 // Morsel service worker — cached app shell for offline-friendly loading.
-const CACHE = "morsel-v1";
+const CACHE = "nomory-v2";
 const SHELL = [
   "/",
   "/manifest.webmanifest",
   "/favicon.ico",
+  "/favicon.png",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/icon-maskable-512.png",
@@ -54,7 +55,8 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/assets/") ||
     url.pathname.startsWith("/icons/") ||
     url.pathname === "/manifest.webmanifest" ||
-    url.pathname === "/favicon.ico";
+    url.pathname === "/favicon.ico" ||
+    url.pathname === "/favicon.png";
 
   if (!cacheable) return;
 

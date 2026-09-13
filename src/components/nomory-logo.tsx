@@ -72,27 +72,5 @@ export function NomoryLogo({
  * sunny sparks. Used in nav, favicon, PWA icons.
  */
 export function NomoryMark({ className }: { className?: string }) {
-  return (
-    <span
-      className={cn(
-        "relative grid shrink-0 place-items-center overflow-hidden rounded-[28%] bg-nom",
-        className,
-      )}
-    >
-      <span className="font-display relative leading-none font-extrabold text-white">
-        n
-        <span
-          aria-hidden
-          className="absolute rounded-full bg-black"
-          style={{ width: "0.14em", height: "0.16em", left: "0.32em", top: "0.42em" }}
-        />
-        <span
-          aria-hidden
-          className="absolute rounded-full bg-black"
-          style={{ width: "0.14em", height: "0.16em", left: "0.62em", top: "0.4em" }}
-        />
-      </span>
-      <Sparks className="absolute top-[8%] right-[8%] w-[22%] text-sunny" />
-    </span>
-  );
+  return <img src="/icons/icon-192.png" alt="" aria-hidden="true" className={className} />;
 }
