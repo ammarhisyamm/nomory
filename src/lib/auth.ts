@@ -53,6 +53,7 @@ export const completeGoogleSignIn = createServerFn({ method: "POST" })
     const cfg = googleConfig();
     if (!cfg) return { ok: false, error: "Google sign-in isn't set up yet." };
     if (!consumeOAuthState(data.state)) {
+      console.error("google_oauth_state_invalid");
       return { ok: false, error: "This sign-in attempt expired. Try again." };
     }
     try {
@@ -76,7 +77,8 @@ export const completeGoogleSignIn = createServerFn({ method: "POST" })
       }
       await setSessionCookie(user);
       return { ok: true, needsOnboarding: !user.username };
-    } catch {
+    } catch (error) {
+      console.error("google_sign_in_failed", error instanceof Error ? error.message : String(error));
       return { ok: false, error: "Couldn't complete Google sign-in. Try again." };
     }
   });
