@@ -226,8 +226,14 @@ export function MealsProvider({ children }: { children: ReactNode }) {
         // captured while cloud sync was unavailable: the desktop could keep
         // showing it from IndexedDB while another device only saw D1.
         const localRows = await dbGetAll<Meal>(userId).catch(() => [] as Meal[]);
-        const cloudIds = new Set(res.meals.map((meal) => meal.id));
-        const localOnly = localRows.filter((meal) => !cloudIds.has(meal.id));
+        const cloudById = new Map(res.meals.map((meal) => [meal.id, meal]));
+        const localOnly = localRows.filter((meal) => {
+          const cloudMeal = cloudById.get(meal.id);
+          // Also retry local edits that happened after the cloud copy. This
+          // repairs updates made by an older build whose cloud write was
+          // still fire-and-forget when the user changed a photo.
+          return !cloudMeal || meal.updatedAt > cloudMeal.updatedAt;
+        });
         const uploaded = await Promise.all(
           localOnly.map(async (meal) => {
             try {
