@@ -52,6 +52,7 @@ function TodayPage() {
   return (
     <AppShell>
       <Page>
+        <p className="section-label mb-2">Nomory</p>
         <PageHeader title={`Good morning, ${displayName}.`} />
 
         <p className="mt-1 max-w-3xl text-[19px] leading-[1.45] text-muted-foreground">
