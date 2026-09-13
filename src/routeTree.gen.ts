@@ -15,9 +15,11 @@ import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MemoriesRouteImport } from './routes/memories'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthGoogleRouteImport } from './routes/auth.google'
 import { Route as MealIdRouteImport } from './routes/meal.$id'
 import { Route as MemoriesDateRouteImport } from './routes/memories.$date'
@@ -57,6 +59,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -70,6 +77,11 @@ const SearchRoute = SearchRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthGoogleRoute = AuthGoogleRouteImport.update({
@@ -120,9 +132,11 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/memories': typeof MemoriesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/memories/$date': typeof MemoriesDateRoute
@@ -139,9 +153,11 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/memories': typeof MemoriesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/memories/$date': typeof MemoriesDateRoute
@@ -159,9 +175,11 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/memories': typeof MemoriesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/memories/$date': typeof MemoriesDateRoute
@@ -180,9 +198,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/memories'
     | '/onboarding'
+    | '/privacy-policy'
     | '/profile'
     | '/search'
     | '/settings'
+    | '/terms'
     | '/auth/google'
     | '/meal/$id'
     | '/memories/$date'
@@ -199,9 +219,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/memories'
     | '/onboarding'
+    | '/privacy-policy'
     | '/profile'
     | '/search'
     | '/settings'
+    | '/terms'
     | '/auth/google'
     | '/meal/$id'
     | '/memories/$date'
@@ -218,9 +240,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/memories'
     | '/onboarding'
+    | '/privacy-policy'
     | '/profile'
     | '/search'
     | '/settings'
+    | '/terms'
     | '/auth/google'
     | '/meal/$id'
     | '/memories/$date'
@@ -238,9 +262,11 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MemoriesRoute: typeof MemoriesRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ProfileRoute: typeof ProfileRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
+  TermsRoute: typeof TermsRoute
   AuthGoogleRoute: typeof AuthGoogleRouteWithChildren
   MealIdRoute: typeof MealIdRoute
   SettingsHelpRoute: typeof SettingsHelpRoute
@@ -293,6 +319,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -312,6 +345,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/google': {
@@ -404,9 +444,11 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MemoriesRoute: MemoriesRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   ProfileRoute: ProfileRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
+  TermsRoute: TermsRoute,
   AuthGoogleRoute: AuthGoogleRouteWithChildren,
   MealIdRoute: MealIdRoute,
   SettingsHelpRoute: SettingsHelpRoute,
