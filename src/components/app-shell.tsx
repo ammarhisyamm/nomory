@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarDays, Images, Plus, Sparkles, User } from "lucide-react";
+import { CalendarDays, Images, Plus, Search, Settings, Sparkles, User } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { getAuthStatus } from "@/lib/auth";
@@ -11,6 +12,13 @@ const destinations = [
   { to: "/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/memories", label: "Memories", icon: Images },
   { to: "/profile", label: "Profile", icon: User },
+] as const;
+
+const mobileDestinations = [
+  { to: "/", label: "Home", icon: Sparkles },
+  { to: "/calendar", label: "Calendar", icon: CalendarDays },
+  { to: "/memories", label: "Memories", icon: Images },
+  { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -78,18 +86,18 @@ export function AppShell({ children }: { children: ReactNode }) {
         aria-label="Primary navigation"
         className="fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(10px,env(safe-area-inset-bottom))] lg:hidden"
       >
-        <div className="mx-auto flex max-w-md items-center gap-2 rounded-[28px] border border-white/75 bg-card/80 p-2 shadow-[0_-6px_30px_oklch(0.32_0.05_55/0.09),0_6px_18px_oklch(0.32_0.05_55/0.08)] backdrop-blur-2xl">
-          <div className="grid min-w-0 flex-1 grid-cols-4">
-            {destinations.map((d) => (
+        <div className="mx-auto flex max-w-md items-center gap-2">
+          <div className="grid min-w-0 flex-1 grid-cols-4 rounded-[28px] border border-white/80 bg-card/80 p-2 shadow-[0_-6px_30px_oklch(0.32_0.05_55/0.09),0_6px_18px_oklch(0.32_0.05_55/0.08)] backdrop-blur-2xl">
+            {mobileDestinations.map((d) => (
               <NavItem key={d.to} {...d} active={isActive(d.to)} />
             ))}
           </div>
           <Link
-            to="/add"
-            aria-label="Add meal"
-            className="press grid size-12 shrink-0 place-items-center rounded-full bg-accent text-accent-foreground shadow-[var(--shadow-sticker)] ring-2 ring-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            to="/search"
+            aria-label="Search meals"
+            className="press grid size-14 shrink-0 place-items-center rounded-full border border-white/80 bg-card/85 text-foreground shadow-[0_6px_24px_oklch(0.32_0.05_55/0.12)] backdrop-blur-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            <Plus className="size-6" strokeWidth={2.2} />
+            <Search className="size-6" strokeWidth={1.9} />
           </Link>
         </div>
       </nav>
@@ -97,17 +105,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   );
 }
 
-function NavItem({
-  to,
-  label,
-  icon: Icon,
-  active,
-}: {
-  to: string;
-  label: string;
-  icon: typeof Sparkles;
-  active: boolean;
-}) {
+function NavItem({ to, icon: Icon, active }: { to: string; icon: LucideIcon; active: boolean }) {
   return (
     <Link
       to={to}
@@ -117,7 +115,6 @@ function NavItem({
       )}
     >
       <Icon className={cn("size-[21px]", active && "text-accent")} strokeWidth={2} />
-      {label}
     </Link>
   );
 }
