@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { CalendarDays, ChevronRight, Search, UtensilsCrossed, Wallet } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
+import { FoodSticker } from "@/components/food-sticker";
 import { formatDateLabel, mealThumb, toDateKey, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/memories")({
@@ -124,11 +125,11 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
       </div>
       <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
         {previews.map((meal) => (
-          <img
+          <FoodSticker
             key={meal.id}
             src={mealThumb(meal)}
+            fallbackSrc={meal.processedImage || meal.originalImage}
             alt=""
-            loading="lazy"
             className="aspect-square w-full rounded-[18px] object-cover shadow-[var(--shadow-pill)] transition-transform group-hover:scale-[1.01]"
           />
         ))}

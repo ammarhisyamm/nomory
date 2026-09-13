@@ -132,10 +132,10 @@ function CalendarPage() {
                   <span>{Number(key.slice(-2))}</span>
                   {first ? (
                     <span className="relative">
-                      <img
+                      <FoodSticker
                         src={mealThumb(first)}
+                        fallbackSrc={first.processedImage || first.originalImage}
                         alt=""
-                        loading="lazy"
                         className="size-9 rounded-[10px] object-cover shadow-[var(--shadow-pill)] sm:size-12 sm:rounded-[13px]"
                       />
                       {items.length > 1 ? (
