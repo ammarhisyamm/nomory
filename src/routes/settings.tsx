@@ -51,7 +51,7 @@ function SettingsPage() {
 
   const sync = async () => {
     await syncNow();
-    toast(cloudEnabled ? "Synced with cloud" : "Sync finished");
+    toast.success(cloudEnabled ? "Your memories are synced." : "Sync complete.");
   };
 
   const reset = async () => {
@@ -64,13 +64,13 @@ function SettingsPage() {
     )
       return;
     await clearAll();
-    toast("Diary cleared");
+    toast.success("Your diary is clear.");
   };
 
   const signOutUser = async () => {
     await signOut();
     await queryClient.invalidateQueries({ queryKey: ["auth"] });
-    toast("Signed out");
+    toast.success("You’re signed out.");
   };
 
   const changePw = async (event: React.FormEvent) => {

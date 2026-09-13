@@ -169,6 +169,81 @@
   border: 1px solid var(--color-border);
 }
 
+/* Feedback is a compact status card: the gradient and illustration reinforce
+ * the state while the message remains readable without colour alone. */
+[data-sonner-toast][data-styled="true"] {
+  position: relative;
+  min-height: 72px;
+  overflow: visible !important;
+  border-radius: 22px !important;
+  padding: 19px 22px 19px 20px !important;
+  box-shadow: 0 14px 32px oklch(0.32 0.05 55 / 0.13) !important;
+  font-size: 15px !important;
+  font-weight: 650;
+}
+
+[data-sonner-toaster] {
+  --width: min(710px, calc(100vw - 2rem));
+}
+
+[data-sonner-toast][data-styled="true"]::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  border-radius: 22px 22px 0 0;
+  content: "";
+  background: linear-gradient(90deg, var(--accent), var(--sunny));
+}
+
+[data-sonner-toast][data-styled="true"][data-type="success"] {
+  background: linear-gradient(135deg, oklch(0.98 0.035 150), oklch(0.94 0.075 150)) !important;
+  border-color: oklch(0.75 0.16 150) !important;
+  color: oklch(0.38 0.14 150) !important;
+}
+
+[data-sonner-toast][data-styled="true"][data-type="success"]::before {
+  background: linear-gradient(90deg, oklch(0.7 0.2 150), oklch(0.82 0.18 130));
+}
+
+[data-sonner-toast][data-styled="true"][data-type="error"] {
+  background: linear-gradient(135deg, oklch(0.99 0.025 20), oklch(0.95 0.075 25)) !important;
+  border-color: oklch(0.78 0.16 25) !important;
+  color: oklch(0.42 0.17 25) !important;
+}
+
+[data-sonner-toast][data-styled="true"][data-type="error"]::before {
+  background: linear-gradient(90deg, oklch(0.68 0.22 25), oklch(0.78 0.19 45));
+}
+
+[data-sonner-toast][data-styled="true"][data-type="warning"],
+[data-sonner-toast][data-styled="true"][data-type="info"] {
+  background: linear-gradient(135deg, oklch(0.99 0.035 80), oklch(0.95 0.08 55)) !important;
+  border-color: oklch(0.8 0.15 70) !important;
+  color: oklch(0.43 0.12 55) !important;
+}
+
+[data-sonner-toast][data-styled="true"] [data-icon] {
+  width: 34px;
+  height: 34px;
+  margin-right: 8px;
+}
+
+[data-sonner-toast][data-styled="true"] [data-icon] img {
+  width: 34px;
+  height: 34px;
+}
+
+[data-sonner-toast][data-styled="true"] [data-close-button] {
+  top: -12px !important;
+  left: -12px !important;
+  right: auto !important;
+  width: 34px !important;
+  height: 34px !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 999px !important;
+  box-shadow: var(--shadow-pill);
+}
+
 @utility section-label {
   font-size: 0.75rem;
   line-height: 1rem;

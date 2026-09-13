@@ -18,6 +18,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
         warning: (
           <img src="/illustrations/toast-warning.png" alt="" className="size-7 object-contain" />
         ),
+        info: (
+          <img src="/illustrations/toast-warning.png" alt="" className="size-7 object-contain" />
+        ),
       }}
       richColors
       toastOptions={{

@@ -113,7 +113,7 @@ function AddMealPage() {
       );
       navigate({ to: "/" });
     } catch {
-      toast.error("Couldn't save this meal. Try again.");
+      toast.error("We couldn’t save this memory. Try again.");
     } finally {
       setSaving(false);
     }
