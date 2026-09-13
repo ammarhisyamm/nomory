@@ -134,7 +134,7 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
           />
         ))}
         {overflow ? (
-          <div className="grid aspect-square place-items-center rounded-[18px] bg-foreground text-[17px] font-bold text-background shadow-[var(--shadow-pill)]">
+          <div className="grid aspect-square w-full place-items-center rounded-[18px] border-[3px] border-card bg-foreground text-[17px] font-bold text-background shadow-[var(--shadow-sticker)]">
             +{overflow}
           </div>
         ) : null}

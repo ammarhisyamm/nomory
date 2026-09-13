@@ -222,20 +222,20 @@ export function MealsProvider({ children }: { children: ReactNode }) {
       if (res.cloud) {
         cloudRef.current = true;
         setCloudEnabled(true);
-        // Reconcile local-first saves too. This matters when a meal was
-        // captured while cloud sync was unavailable: the desktop could keep
-        // showing it from IndexedDB while another device only saw D1.
+        // Reconcile edits made on a device after the cloud copy. We do not
+        // auto-upload rows that only exist locally: old cache rows have no
+        // reliable outbox marker and could otherwise appear as phantom meals.
         const localRows = await dbGetAll<Meal>(userId).catch(() => [] as Meal[]);
         const cloudById = new Map(res.meals.map((meal) => [meal.id, meal]));
-        const localOnly = localRows.filter((meal) => {
+        const newerLocalEdits = localRows.filter((meal) => {
           const cloudMeal = cloudById.get(meal.id);
           // Also retry local edits that happened after the cloud copy. This
           // repairs updates made by an older build whose cloud write was
           // still fire-and-forget when the user changed a photo.
-          return !cloudMeal || meal.updatedAt > cloudMeal.updatedAt;
+          return Boolean(cloudMeal && meal.updatedAt > cloudMeal.updatedAt);
         });
         const uploaded = await Promise.all(
-          localOnly.map(async (meal) => {
+          newerLocalEdits.map(async (meal) => {
             try {
               const saved = await saveMealCloud({ data: meal });
               return saved.cloud && saved.meal ? saved.meal : null;

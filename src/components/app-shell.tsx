@@ -44,9 +44,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-background">
-      <div className="mx-auto flex w-full min-w-0 max-w-[1240px]">
+      <div className="mx-auto flex w-full min-w-0 max-w-[430px]">
         {/* Desktop rail */}
-        <aside className="sticky top-0 hidden h-screen w-[236px] shrink-0 flex-col gap-1 border-r border-border/70 px-5 py-8 lg:flex">
+        <aside className="hidden">
           <div className="mb-8 px-3">
             <NomoryLogo className="text-[26px]" withTagline />
           </div>
@@ -77,16 +77,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
         </aside>
 
-        <main className="w-full min-w-0 max-w-full flex-1 overflow-x-hidden pb-28 lg:pb-12">
-          {children}
-        </main>
+        <main className="w-full min-w-0 max-w-full flex-1 overflow-x-hidden pb-28">{children}</main>
       </div>
 
       {/* Mobile bottom nav */}
       <nav
         aria-label="Primary navigation"
         className={cn(
-          "fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(14px,env(safe-area-inset-bottom))] lg:hidden",
+          "fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(14px,env(safe-area-inset-bottom))]",
           hideMobileNav && "hidden",
         )}
       >
