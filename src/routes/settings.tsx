@@ -6,9 +6,12 @@ import {
   ArrowLeft,
   Cloud,
   CloudOff,
+  ChevronRight,
   Download,
+  HelpCircle,
   Loader2,
   LogOut,
+  MessageCircle,
   RefreshCw,
   ShieldCheck,
   Trash2,
@@ -115,7 +118,7 @@ function SettingsPage() {
           }
         />
 
-        <SettingsGroup title="Account">
+        <SettingsGroup title="General">
           <div className="flex items-center gap-4 p-5">
             <div className="min-w-0 flex-1">
               <p className="truncate text-[16px] font-bold">{user?.name ?? "On this device"}</p>
@@ -182,7 +185,7 @@ function SettingsPage() {
         </SettingsGroup>
 
         {user?.username ? (
-          <SettingsGroup title="Security">
+          <SettingsGroup title="Account security">
             <form onSubmit={changePw} className="space-y-3 p-5">
               <div>
                 <p className="text-[16px] font-bold">Change password</p>
@@ -215,6 +218,39 @@ function SettingsPage() {
             </form>
           </SettingsGroup>
         ) : null}
+
+        <SettingsGroup title="Support">
+          <a
+            href="mailto:support@nomory.site"
+            className="press flex items-center gap-3 p-5 text-left"
+          >
+            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-muted">
+              <HelpCircle className="size-5 text-foreground" strokeWidth={1.9} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-semibold">Help center</span>
+              <span className="mt-1 block text-[13px] leading-5 text-muted-foreground">
+                Learn how Nomory keeps your food memories safe.
+              </span>
+            </span>
+            <ChevronRight className="size-5 shrink-0 text-muted-foreground" strokeWidth={1.9} />
+          </a>
+          <a
+            href="mailto:support@nomory.site"
+            className="press flex items-center gap-3 border-t border-border/60 p-5 text-left"
+          >
+            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-muted">
+              <MessageCircle className="size-5 text-foreground" strokeWidth={1.9} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-semibold">Contact support</span>
+              <span className="mt-1 block text-[13px] leading-5 text-muted-foreground">
+                Have a question? We’re here to help.
+              </span>
+            </span>
+            <ChevronRight className="size-5 shrink-0 text-muted-foreground" strokeWidth={1.9} />
+          </a>
+        </SettingsGroup>
 
         <SettingsGroup title="Danger zone" danger>
           <button
