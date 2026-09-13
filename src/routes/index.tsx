@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Bookmark, Flame, Images, Plus } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
+import { NomoryLogo, NomoryMark } from "@/components/nomory-logo";
 import { EmptyState } from "@/components/empty-state";
 import { MealCard } from "@/components/meal-card";
 import { PageLoadingState } from "@/components/loading-state";
@@ -48,6 +49,8 @@ function TodayPage() {
   }, [navigate]);
 
   const displayName = formatDisplayName(user?.name || "there");
+
+  if (auth && !user) return <PublicNomoryHome />;
 
   return (
     <AppShell>
@@ -99,6 +102,34 @@ function TodayPage() {
         </section>
       </Page>
     </AppShell>
+  );
+}
+
+function PublicNomoryHome() {
+  return (
+    <div className="min-h-screen bg-background px-5 py-10">
+      <div className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-[430px] flex-col justify-between">
+        <div>
+          <NomoryLogo className="text-[32px]" />
+          <div className="mt-16">
+            <NomoryMark className="size-24 text-[76px]" />
+            <h1 className="mt-7 font-display text-[38px] leading-[1.04] font-extrabold tracking-tight">
+              Your meals, remembered.
+            </h1>
+            <p className="mt-4 max-w-sm text-[18px] leading-7 text-muted-foreground">
+              Nomory is a private food memory diary for saving meal photos, notes, places, and
+              the little moments around what you eat.
+            </p>
+          </div>
+        </div>
+        <Link
+          to="/login"
+          className="press mt-12 flex h-14 items-center justify-center rounded-full bg-accent px-6 text-base font-bold text-accent-foreground shadow-[var(--shadow-pill)]"
+        >
+          Sign in to Nomory
+        </Link>
+      </div>
+    </div>
   );
 }
 

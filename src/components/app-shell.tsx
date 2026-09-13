@@ -29,12 +29,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   const hideMobileNav = pathname === "/add";
 
   useEffect(() => {
-    if (auth && !auth.user) navigate({ to: "/login" });
-  }, [auth, navigate]);
+    if (auth && !auth.user && pathname !== "/") navigate({ to: "/login" });
+  }, [auth, navigate, pathname]);
 
   // Require login before showing any app content (also avoids a flash of
   // another user's cached meals on shared devices).
-  if (!auth?.user) {
+  if (!auth?.user && pathname !== "/") {
     return (
       <div className="grid min-h-screen place-items-center bg-background px-6 text-center">
         <div>
