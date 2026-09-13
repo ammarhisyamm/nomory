@@ -147,6 +147,9 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <div id="nomory-brand" className="sr-only">
+          Nomory is a private food memory diary for saving meals and photos.
+        </div>
         {children}
         <Scripts />
       </body>
