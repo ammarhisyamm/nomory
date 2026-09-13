@@ -1,5 +1,7 @@
 // Nomory service worker — cached app shell for offline-friendly loading.
-const CACHE = "nomory-v4";
+// Bump this whenever the app shell or route behavior changes so browsers
+// evict stale HTML/assets instead of mixing an older build with the current one.
+const CACHE = "nomory-v5";
 const SHELL = [
   "/",
   "/manifest.webmanifest",
