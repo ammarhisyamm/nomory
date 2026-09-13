@@ -21,6 +21,10 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as AuthGoogleRouteImport } from './routes/auth.google'
 import { Route as MealIdRouteImport } from './routes/meal.$id'
 import { Route as MemoriesDateRouteImport } from './routes/memories.$date'
+import { Route as SettingsHelpRouteImport } from './routes/settings_.help'
+import { Route as SettingsPrivacyDataRouteImport } from './routes/settings_.privacy-data'
+import { Route as SettingsPrivacyPolicyRouteImport } from './routes/settings_.privacy-policy'
+import { Route as SettingsSecurityRouteImport } from './routes/settings_.security'
 import { Route as AuthGoogleCallbackRouteImport } from './routes/auth.google.callback'
 
 const IndexRoute = IndexRouteImport.update({
@@ -83,6 +87,26 @@ const MemoriesDateRoute = MemoriesDateRouteImport.update({
   path: '/$date',
   getParentRoute: () => MemoriesRoute,
 } as any)
+const SettingsHelpRoute = SettingsHelpRouteImport.update({
+  id: '/settings_/help',
+  path: '/settings/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsPrivacyDataRoute = SettingsPrivacyDataRouteImport.update({
+  id: '/settings_/privacy-data',
+  path: '/settings/privacy-data',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsPrivacyPolicyRoute = SettingsPrivacyPolicyRouteImport.update({
+  id: '/settings_/privacy-policy',
+  path: '/settings/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsSecurityRoute = SettingsSecurityRouteImport.update({
+  id: '/settings_/security',
+  path: '/settings/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
@@ -102,6 +126,10 @@ export interface FileRoutesByFullPath {
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/memories/$date': typeof MemoriesDateRoute
+  '/settings/help': typeof SettingsHelpRoute
+  '/settings/privacy-data': typeof SettingsPrivacyDataRoute
+  '/settings/privacy-policy': typeof SettingsPrivacyPolicyRoute
+  '/settings/security': typeof SettingsSecurityRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -117,6 +145,10 @@ export interface FileRoutesByTo {
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/memories/$date': typeof MemoriesDateRoute
+  '/settings/help': typeof SettingsHelpRoute
+  '/settings/privacy-data': typeof SettingsPrivacyDataRoute
+  '/settings/privacy-policy': typeof SettingsPrivacyPolicyRoute
+  '/settings/security': typeof SettingsSecurityRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRoutesById {
@@ -133,6 +165,10 @@ export interface FileRoutesById {
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/memories/$date': typeof MemoriesDateRoute
+  '/settings_/help': typeof SettingsHelpRoute
+  '/settings_/privacy-data': typeof SettingsPrivacyDataRoute
+  '/settings_/privacy-policy': typeof SettingsPrivacyPolicyRoute
+  '/settings_/security': typeof SettingsSecurityRoute
   '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRouteTypes {
@@ -150,6 +186,10 @@ export interface FileRouteTypes {
     | '/auth/google'
     | '/meal/$id'
     | '/memories/$date'
+    | '/settings/help'
+    | '/settings/privacy-data'
+    | '/settings/privacy-policy'
+    | '/settings/security'
     | '/auth/google/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -165,6 +205,10 @@ export interface FileRouteTypes {
     | '/auth/google'
     | '/meal/$id'
     | '/memories/$date'
+    | '/settings/help'
+    | '/settings/privacy-data'
+    | '/settings/privacy-policy'
+    | '/settings/security'
     | '/auth/google/callback'
   id:
     | '__root__'
@@ -180,6 +224,10 @@ export interface FileRouteTypes {
     | '/auth/google'
     | '/meal/$id'
     | '/memories/$date'
+    | '/settings_/help'
+    | '/settings_/privacy-data'
+    | '/settings_/privacy-policy'
+    | '/settings_/security'
     | '/auth/google/callback'
   fileRoutesById: FileRoutesById
 }
@@ -195,6 +243,10 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   AuthGoogleRoute: typeof AuthGoogleRouteWithChildren
   MealIdRoute: typeof MealIdRoute
+  SettingsHelpRoute: typeof SettingsHelpRoute
+  SettingsPrivacyDataRoute: typeof SettingsPrivacyDataRoute
+  SettingsPrivacyPolicyRoute: typeof SettingsPrivacyPolicyRoute
+  SettingsSecurityRoute: typeof SettingsSecurityRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -283,6 +335,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MemoriesDateRouteImport
       parentRoute: typeof MemoriesRoute
     }
+    '/settings_/help': {
+      id: '/settings_/help'
+      path: '/settings/help'
+      fullPath: '/settings/help'
+      preLoaderRoute: typeof SettingsHelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings_/privacy-data': {
+      id: '/settings_/privacy-data'
+      path: '/settings/privacy-data'
+      fullPath: '/settings/privacy-data'
+      preLoaderRoute: typeof SettingsPrivacyDataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings_/privacy-policy': {
+      id: '/settings_/privacy-policy'
+      path: '/settings/privacy-policy'
+      fullPath: '/settings/privacy-policy'
+      preLoaderRoute: typeof SettingsPrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings_/security': {
+      id: '/settings_/security'
+      path: '/settings/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof SettingsSecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/google/callback': {
       id: '/auth/google/callback'
       path: '/callback'
@@ -329,6 +409,10 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   AuthGoogleRoute: AuthGoogleRouteWithChildren,
   MealIdRoute: MealIdRoute,
+  SettingsHelpRoute: SettingsHelpRoute,
+  SettingsPrivacyDataRoute: SettingsPrivacyDataRoute,
+  SettingsPrivacyPolicyRoute: SettingsPrivacyPolicyRoute,
+  SettingsSecurityRoute: SettingsSecurityRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

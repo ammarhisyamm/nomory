@@ -10,7 +10,7 @@ export function PageLoadingState({
   return (
     <div role="status" aria-live="polite" className="py-10">
       <span className="sr-only">{label}</span>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4">
         {Array.from({ length: rows }, (_, item) => (
           <div key={item} className="surface-card flex items-center gap-4 p-4">
             <Skeleton className="size-20 shrink-0 rounded-[22px]" />

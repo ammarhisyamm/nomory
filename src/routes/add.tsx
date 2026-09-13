@@ -168,10 +168,7 @@ function AddMealPage() {
         />
 
         <div>
-          <span
-            aria-hidden
-            className="mx-auto mb-1 block h-1 w-10 rounded-full bg-border/80 sm:hidden"
-          />
+          <span aria-hidden className="mx-auto mb-1 block h-1 w-10 rounded-full bg-border/80" />
 
           {step === "choose" ? (
             <>
@@ -190,7 +187,7 @@ function AddMealPage() {
                 }
               />
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3">
                 <button
                   type="button"
                   onClick={() => cameraRef.current?.click()}
@@ -313,7 +310,7 @@ function AddMealPage() {
                 </div>
               </section>
 
-              <section className="surface-card space-y-5 p-5 sm:p-6">
+              <section className="surface-card space-y-5 p-5">
                 <MealForm values={values} onChange={setValues} />
                 <button
                   type="button"

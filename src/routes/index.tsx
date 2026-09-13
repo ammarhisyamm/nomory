@@ -54,7 +54,7 @@ function TodayPage() {
       <Page>
         <PageHeader title={`Good morning, ${displayName}.`} />
 
-        <p className="mt-1 max-w-3xl text-[19px] leading-[1.45] text-muted-foreground sm:text-[24px]">
+        <p className="mt-1 max-w-3xl text-[19px] leading-[1.45] text-muted-foreground">
           You&apos;ve captured{" "}
           <InlineStat
             icon={Images}
@@ -134,7 +134,7 @@ function WeekStreak({ meals, streak }: { meals: { mealDate: string }[]; streak: 
 
   return (
     <section
-      className="mt-7 rounded-[28px] border border-border bg-card/65 px-4 py-5 shadow-[var(--shadow-card)] sm:px-6"
+      className="mt-7 rounded-[28px] border border-border bg-card/65 px-4 py-5 shadow-[var(--shadow-card)]"
       aria-label="Daily streak"
     >
       <div className="flex items-center justify-between gap-4">
@@ -150,7 +150,7 @@ function WeekStreak({ meals, streak }: { meals: { mealDate: string }[]; streak: 
           <Flame className="size-6" fill="currentColor" strokeWidth={1.8} />
         </span>
       </div>
-      <div className="mt-5 grid grid-cols-7 gap-1.5 sm:gap-3">
+      <div className="mt-5 grid grid-cols-7 gap-1.5">
         {days.map((day) => (
           <div key={day.key} className="min-w-0 text-center">
             <p
@@ -159,7 +159,7 @@ function WeekStreak({ meals, streak }: { meals: { mealDate: string }[]; streak: 
               {day.label}
             </p>
             <span
-              className={`mx-auto grid size-9 place-items-center rounded-full sm:size-10 ${day.active ? "bg-accent text-accent-foreground shadow-[var(--shadow-pill)]" : "border border-border bg-background text-subtle"}`}
+              className={`mx-auto grid size-9 place-items-center rounded-full ${day.active ? "bg-accent text-accent-foreground shadow-[var(--shadow-pill)]" : "border border-border bg-background text-subtle"}`}
               aria-label={`${day.label}: ${day.active ? "meal logged" : "no meal logged"}`}
             >
               {day.active ? <Flame className="size-4 fill-current" strokeWidth={2} /> : null}

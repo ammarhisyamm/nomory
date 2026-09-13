@@ -78,18 +78,18 @@ function Onboarding() {
   };
 
   return (
-    <div className="onboarding-page flex min-h-[100dvh] flex-col px-5 pt-[max(2rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-6 sm:pt-12 sm:pb-10">
+    <div className="onboarding-page mx-auto flex min-h-[100dvh] w-full max-w-[430px] flex-col px-5 pt-[max(2rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
         <div className="flex items-center justify-between gap-4">
-          <NomoryLogo className="text-[35px] sm:text-[38px]" />
+          <NomoryLogo className="text-[35px]" />
         </div>
 
         <div key={step.pill} className="onboarding-step flex flex-1 flex-col">
-          <div className="relative mt-8 grid min-h-[250px] place-items-center px-4 sm:min-h-[290px]">
+          <div className="relative mt-8 grid min-h-[250px] place-items-center px-4">
             <img
               src={step.image}
               alt={step.imageAlt}
-              className="onboarding-illustration max-h-[235px] w-auto max-w-[94%] object-contain sm:max-h-[270px]"
+              className="onboarding-illustration max-h-[235px] w-auto max-w-[94%] object-contain"
             />
           </div>
           <span className="mt-6 inline-flex w-fit text-[13px] font-bold">
@@ -98,7 +98,7 @@ function Onboarding() {
           <p className="onboarding-copy mt-5 text-[13px] font-bold tracking-[0.08em] text-muted-foreground uppercase">
             {step.detail}
           </p>
-          <h1 className="onboarding-copy font-display mt-2 text-balance text-[34px] leading-[1.04] font-extrabold tracking-tight sm:text-[38px]">
+          <h1 className="onboarding-copy font-display mt-2 text-balance text-[34px] leading-[1.04] font-extrabold tracking-tight">
             {step.title}
           </h1>
           <p className="onboarding-copy mt-4 max-w-[34rem] text-[16px] leading-[1.5] text-muted-foreground">
@@ -122,7 +122,7 @@ function Onboarding() {
           ))}
         </div>
 
-        <div className="mt-auto space-y-2 pt-7 sm:pt-9">
+        <div className="mt-auto space-y-2 pt-7">
           <button
             type="button"
             onClick={() => (last ? finish() : setIndex(index + 1))}

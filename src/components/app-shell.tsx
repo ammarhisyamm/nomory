@@ -88,7 +88,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           hideMobileNav && "hidden",
         )}
       >
-        <div className="mx-auto flex max-w-md items-center gap-2.5">
+        <div className="mx-auto flex max-w-[430px] items-center gap-2.5">
           <div className="grid min-h-[64px] min-w-0 flex-1 grid-cols-4 rounded-[28px] border border-white/80 bg-card/80 p-2 shadow-[var(--shadow-card)] backdrop-blur-2xl">
             {mobileDestinations.map((d) => (
               <NavItem
@@ -141,12 +141,12 @@ export function PageHeader({
   eyebrow?: ReactNode;
 }) {
   return (
-    <header className="flex min-w-0 items-start justify-between gap-3 pt-7 pb-6 sm:gap-4 sm:pt-9">
+    <header className="flex min-w-0 items-start justify-between gap-3 pt-7 pb-6">
       <div className="flex min-w-0 flex-1 items-start gap-3">
         {left ? <div className="shrink-0">{left}</div> : null}
         <div className="min-w-0 flex-1">
           {eyebrow}
-          <h1 className="font-display break-words text-[29px] leading-[1.08] font-extrabold tracking-tight sm:text-[34px]">
+          <h1 className="font-display break-words text-[29px] leading-[1.08] font-extrabold tracking-tight">
             {title}
           </h1>
           {subtitle ? (
@@ -160,9 +160,5 @@ export function PageHeader({
 }
 
 export function Page({ children }: { children: ReactNode }) {
-  return (
-    <div className="mx-auto w-full min-w-0 max-w-full overflow-x-hidden px-4 sm:px-6 lg:px-8">
-      {children}
-    </div>
-  );
+  return <div className="mx-auto w-full min-w-0 max-w-full overflow-x-hidden px-4">{children}</div>;
 }

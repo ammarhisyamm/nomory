@@ -23,8 +23,10 @@ export interface D1Database {
 
 export interface R2Bucket {
   get(key: string): Promise<R2Object | null>;
-  list(options?: { prefix?: string; limit?: number }): Promise<{
+  list(options?: { prefix?: string; limit?: number; cursor?: string }): Promise<{
     objects: Array<{ key: string; uploaded?: Date }>;
+    truncated?: boolean;
+    cursor?: string;
   }>;
   put(
     key: string,

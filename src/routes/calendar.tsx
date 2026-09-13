@@ -73,7 +73,7 @@ function CalendarPage() {
       <Page>
         <PageHeader title="Calendar" subtitle="Your meals, day by day." />
 
-        <div className="surface-card min-w-0 max-w-full rounded-[28px] p-4 sm:p-6">
+        <div className="surface-card min-w-0 max-w-full rounded-[28px] p-4">
           <div className="mb-6 flex items-center justify-between gap-3">
             <h2 className="font-display text-[22px] font-extrabold capitalize">
               {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
@@ -82,7 +82,7 @@ function CalendarPage() {
               <button
                 type="button"
                 onClick={goToday}
-                className="press hidden h-11 rounded-full bg-muted px-4 text-[13px] font-semibold text-muted-foreground sm:block"
+                className="press hidden h-11 rounded-full bg-muted px-4 text-[13px] font-semibold text-muted-foreground"
               >
                 Today
               </button>
@@ -105,13 +105,13 @@ function CalendarPage() {
             </div>
           </div>
 
-          <div className="mb-3 grid grid-cols-7 text-center text-[11px] font-bold text-muted-foreground sm:text-[12px]">
+          <div className="mb-3 grid grid-cols-7 text-center text-[11px] font-bold text-muted-foreground">
             {WEEKDAYS.map((d, i) => (
               <span key={`${d}-${i}`}>{d}</span>
             ))}
           </div>
 
-          <div className="grid min-w-0 grid-cols-7 gap-1 sm:gap-2">
+          <div className="grid min-w-0 grid-cols-7 gap-1">
             {cells.map((key, i) => {
               if (!key) return <span key={`empty-${i}`} />;
               const items = byDate.get(key) ?? [];
@@ -123,7 +123,7 @@ function CalendarPage() {
                   type="button"
                   onClick={() => setSelected(key)}
                   className={cn(
-                    "press relative flex min-w-0 aspect-auto min-h-[70px] flex-col items-center justify-start gap-1 rounded-[15px] p-1 text-[10px] font-bold transition-colors sm:min-h-[94px] sm:gap-1.5 sm:rounded-[18px] sm:p-1.5 sm:text-[12px]",
+                    "press relative flex min-w-0 aspect-auto min-h-[70px] flex-col items-center justify-start gap-1 rounded-[15px] p-1 text-[10px] font-bold transition-colors",
                     isSelected
                       ? "bg-accent-soft text-accent shadow-[var(--shadow-pill)]"
                       : "hover:bg-muted",
@@ -136,7 +136,7 @@ function CalendarPage() {
                         src={mealThumb(first)}
                         fallbackSrc={first.processedImage || first.originalImage}
                         alt=""
-                        className="size-9 rounded-[10px] object-cover shadow-[var(--shadow-pill)] sm:size-12 sm:rounded-[13px]"
+                        className="size-9 rounded-[10px] object-cover shadow-[var(--shadow-pill)]"
                       />
                       {items.length > 1 ? (
                         <span className="absolute -right-1.5 -bottom-1 grid size-4 place-items-center rounded-full bg-accent text-[9px] text-accent-foreground">

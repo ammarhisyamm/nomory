@@ -223,7 +223,7 @@ function MealDetailPage() {
               src={mealImage(meal)}
               fallbackSrc={mealImageFallback(meal)}
               alt={meal.mealName || "Saved meal"}
-              className={cn("size-48 sm:size-56", replacing && "opacity-50")}
+              className={cn("size-48", replacing && "opacity-50")}
               rounded="rounded-[36px]"
             />
             {replacing ? (
@@ -348,7 +348,7 @@ function DeleteMemoryModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-foreground/20 p-0 backdrop-blur-[3px] sm:items-center sm:p-5"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-foreground/20 p-0 backdrop-blur-[3px]"
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget && !deleting) onClose();
@@ -359,7 +359,7 @@ function DeleteMemoryModal({
         aria-modal="true"
         aria-labelledby="delete-memory-title"
         aria-describedby="delete-memory-description"
-        className="delete-modal relative w-full max-w-[500px] overflow-hidden rounded-t-[32px] bg-card px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-9 text-center shadow-[0_-16px_50px_oklch(0.32_0.05_55/0.18)] sm:rounded-[32px] sm:pb-7"
+        className="delete-modal relative w-full max-w-[430px] overflow-hidden rounded-t-[32px] bg-card px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-9 text-center shadow-[0_-16px_50px_oklch(0.32_0.05_55/0.18)]"
       >
         <div aria-hidden className="delete-gradient absolute inset-x-0 top-0 h-32 opacity-90" />
         <button
@@ -371,10 +371,7 @@ function DeleteMemoryModal({
         >
           <X className="size-5" />
         </button>
-        <span
-          aria-hidden
-          className="relative mx-auto mb-2 block h-1 w-10 rounded-full bg-border sm:hidden"
-        />
+        <span aria-hidden className="relative mx-auto mb-2 block h-1 w-10 rounded-full bg-border" />
         <div className="relative mx-auto grid size-24 place-items-center">
           <img src="/illustrations/toast-warning.png" alt="" className="size-24 object-contain" />
         </div>
@@ -393,7 +390,7 @@ function DeleteMemoryModal({
         >
           “{mealName}” will be removed from your diary. This can&apos;t be undone.
         </p>
-        <div className="relative mt-7 grid gap-2 sm:grid-cols-2">
+        <div className="relative mt-7 grid gap-2">
           <button
             type="button"
             onClick={onClose}

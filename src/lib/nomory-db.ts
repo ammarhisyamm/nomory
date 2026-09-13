@@ -154,6 +154,18 @@ export async function listMeals(db: D1Database, userId: string): Promise<Meal[]>
   return (res.results ?? []).map(rowToMeal);
 }
 
+export async function getMeal(db: D1Database, userId: string, id: string): Promise<Meal | null> {
+  const row = await db
+    .prepare(
+      `SELECT id, user_id, meal_name, meal_type, note, location, price, rating, meal_date, meal_time,
+              original_image, processed_image, thumbnail_image, use_original, created_at, updated_at
+       FROM meals WHERE id = ? AND user_id = ? LIMIT 1`,
+    )
+    .bind(id, userId)
+    .first<MealRow>();
+  return row ? rowToMeal(row) : null;
+}
+
 export async function upsertMeal(db: D1Database, userId: string, meal: Meal): Promise<void> {
   await db
     .prepare(

@@ -149,7 +149,7 @@ export function MealsProvider({ children }: { children: ReactNode }) {
   const [cloudEnabled, setCloudEnabled] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const cloudRef = useRef(false);
-  const migratedRef = useRef<Set<string>>(new Set());
+  const mutationVersionRef = useRef(0);
   const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const userId = auth?.user?.id ?? null;
   const userIdRef = useRef<string | null>(null);
@@ -167,27 +167,14 @@ export function MealsProvider({ children }: { children: ReactNode }) {
     const ns = userId ?? undefined;
     (async () => {
       try {
-        let rows = await dbGetAll<Meal>(ns);
-        // One-time adoption: meals saved before first login live in the
-        // legacy shared store — move them into this account and push them
-        // to the cloud in the background.
-        if (userId && rows.length === 0 && !migratedRef.current.has(userId)) {
-          migratedRef.current.add(userId);
-          const legacy = await dbGetAll<Meal>(undefined).catch(() => [] as Meal[]);
-          if (legacy.length > 0) {
-            await Promise.allSettled(legacy.map((m) => dbPut(m, userId)));
-            rows = legacy;
-            void Promise.allSettled(
-              legacy.map((m) => saveMealCloud({ data: m }).catch(() => undefined)),
-            );
-            void dbClear(undefined).catch(() => undefined);
-          }
-        }
-        if (alive) setMeals(sortMeals(rows));
+        const rows = await dbGetAll<Meal>(ns);
+        // A signed-in screen waits for the authoritative cloud snapshot;
+        // cached rows are used only as an offline fallback in syncNow.
+        if (alive && !userId) setMeals(sortMeals(rows));
       } catch {
         // Empty cache — cloud sync below still runs when signed in.
       } finally {
-        if (alive) setReady(true);
+        if (alive && !userId) setReady(true);
       }
     })();
     return () => {
@@ -195,27 +182,9 @@ export function MealsProvider({ children }: { children: ReactNode }) {
     };
   }, [userId]);
 
-  const mergeCloudMeals = useCallback(
-    async (cloudMeals: Meal[]) => {
-      let merged: Meal[] = [];
-      setMeals((prev) => {
-        const byId = new Map(prev.map((m) => [m.id, m]));
-        for (const cm of cloudMeals) {
-          const local = byId.get(cm.id);
-          if (!local || cm.updatedAt >= local.updatedAt) byId.set(cm.id, cm);
-        }
-        merged = sortMeals([...byId.values()]);
-        return merged;
-      });
-      // Refresh the on-device cache so offline mode shows cloud meals too.
-      const ns = userId ?? undefined;
-      await Promise.allSettled(merged.map((m) => dbPut(m, ns)));
-    },
-    [userId],
-  );
-
   const syncNow = useCallback(async () => {
     if (!userId) return;
+    const syncVersion = mutationVersionRef.current;
     setSyncing(true);
     try {
       const res = await listMealsCloud();
@@ -244,20 +213,35 @@ export function MealsProvider({ children }: { children: ReactNode }) {
             }
           }),
         );
-        await mergeCloudMeals([
-          ...res.meals,
-          ...uploaded.filter((meal): meal is Meal => Boolean(meal)),
-        ]);
+        const authoritative = new Map(res.meals.map((meal) => [meal.id, meal]));
+        for (const meal of uploaded) if (meal) authoritative.set(meal.id, meal);
+        const snapshot = sortMeals([...authoritative.values()]);
+        // Signed-in accounts use D1 as their source of truth. IndexedDB is
+        // only an offline cache, so stale/local-only rows must not survive
+        // and later appear as phantom meals in one browser.
+        // Never let a slower refresh overwrite a save/delete that started
+        // after this snapshot request.
+        if (syncVersion === mutationVersionRef.current) {
+          await dbClear(userId);
+          await Promise.all(snapshot.map((meal) => dbPut(meal, userId)));
+          setMeals(snapshot);
+        }
       } else {
         cloudRef.current = false;
         setCloudEnabled(false);
+        const cached = await dbGetAll<Meal>(userId).catch(() => [] as Meal[]);
+        setMeals(sortMeals(cached));
       }
     } catch {
-      // Offline or cloud unavailable — local IndexedDB stays the source.
+      // Offline fallback: show the last complete cloud snapshot cached on
+      // this device, without trying to upload or reinterpret its contents.
+      const cached = await dbGetAll<Meal>(userId).catch(() => [] as Meal[]);
+      setMeals(sortMeals(cached));
     } finally {
       setSyncing(false);
+      setReady(true);
     }
-  }, [userId, mergeCloudMeals]);
+  }, [userId]);
 
   useEffect(() => {
     if (!userId) {
@@ -281,12 +265,9 @@ export function MealsProvider({ children }: { children: ReactNode }) {
 
   const saveMeal = useCallback(
     async (meal: Meal) => {
+      mutationVersionRef.current += 1;
       const ns = userId ?? undefined;
-      await dbPut(meal, ns);
-      setMeals((prev) => sortMeals([...prev.filter((m) => m.id !== meal.id), meal]));
-      // Wait for the cloud write-through. A local-first fire-and-forget write
-      // made one device look updated while another device still read D1.
-      if (cloudRef.current || userId) {
+      if (userId) {
         const res = await saveMealCloud({ data: meal });
         if (!res.cloud || !res.meal) {
           cloudRef.current = false;
@@ -297,28 +278,35 @@ export function MealsProvider({ children }: { children: ReactNode }) {
         setCloudEnabled(true);
         await dbPut(res.meal, ns);
         setMeals((prev) => sortMeals([...prev.filter((m) => m.id !== meal.id), res.meal!]));
+        return;
       }
+      await dbPut(meal, ns);
+      setMeals((prev) => sortMeals([...prev.filter((m) => m.id !== meal.id), meal]));
     },
     [userId],
   );
 
   const removeMeal = useCallback(
     async (id: string) => {
+      mutationVersionRef.current += 1;
+      if (userId) {
+        const result = await deleteMealCloud({ data: { id } });
+        if (!result.cloud) throw new Error("Cloud delete unavailable");
+      }
       await dbDelete(id, userId ?? undefined);
       setMeals((prev) => prev.filter((m) => m.id !== id));
-      if (cloudRef.current) {
-        deleteMealCloud({ data: { id } }).catch(() => undefined);
-      }
     },
     [userId],
   );
 
   const clearAll = useCallback(async () => {
+    mutationVersionRef.current += 1;
+    if (userIdRef.current) {
+      const result = await clearMealsCloud();
+      if (!result.cloud) throw new Error("Cloud clear unavailable");
+    }
     await dbClear(userIdRef.current ?? undefined);
     setMeals([]);
-    if (cloudRef.current) {
-      clearMealsCloud().catch(() => undefined);
-    }
   }, []);
 
   const streak = useMemo(() => calculateStreak(meals), [meals]);

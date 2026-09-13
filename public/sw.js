@@ -1,5 +1,5 @@
-// Morsel service worker — cached app shell for offline-friendly loading.
-const CACHE = "nomory-v3";
+// Nomory service worker — cached app shell for offline-friendly loading.
+const CACHE = "nomory-v4";
 const SHELL = [
   "/",
   "/manifest.webmanifest",

@@ -1,12 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Flame, Images, LogIn, Settings, UtensilsCrossed } from "lucide-react";
+import { LogIn, Settings } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { FoodSticker } from "@/components/food-sticker";
-import { StatPill } from "@/components/pills";
 import { getAuthStatus } from "@/lib/auth";
-import { mealThumb, toDateKey, useMeals } from "@/lib/meals";
+import { mealThumb, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
@@ -27,8 +26,7 @@ export const Route = createFileRoute("/profile")({
 });
 
 function ProfilePage() {
-  const { meals, streak, mealsByDate, ready } = useMeals();
-  const todayCount = mealsByDate(toDateKey(new Date())).length;
+  const { meals, ready } = useMeals();
   const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const user = auth?.user ?? null;
   const initial = (user?.name || user?.email || "N").charAt(0).toUpperCase();
@@ -68,7 +66,9 @@ function ProfilePage() {
               {user?.name || (user?.username ? `@${user.username}` : "My Nomory diary")}
             </p>
             <p className="mt-1 truncate text-[14px] text-muted-foreground">
-              {user?.email || (user ? "Nomory account" : "Saved privately on this device.")}
+              {user?.username
+                ? `@${user.username}`
+                : user?.email || "Saved privately on this device."}
             </p>
           </div>
         </section>
@@ -95,13 +95,7 @@ function ProfilePage() {
           </a>
         ) : null}
 
-        <div className="mt-5 flex flex-wrap gap-2">
-          <StatPill icon={Images} label={`${meals.length} memories`} />
-          <StatPill icon={UtensilsCrossed} label={`${todayCount} today`} />
-          <StatPill icon={Flame} label={`${streak} day streak`} />
-        </div>
-
-        <section className="mt-8" aria-labelledby="saved-meals-title">
+        <section className="mt-7" aria-labelledby="saved-meals-title">
           <div className="mb-4 flex items-center justify-between gap-4">
             <h2 id="saved-meals-title" className="text-[22px] font-bold">
               Saved meals

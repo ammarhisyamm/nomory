@@ -112,7 +112,7 @@ function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background px-6 pt-16 pb-10">
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
+      <div className="mx-auto flex w-full max-w-[430px] flex-1 flex-col">
         <div className="mt-8 flex flex-col items-center text-center">
           <NomoryLogo className="text-[44px]" withTagline />
           <h1 className="font-display mt-6 text-[30px] leading-tight font-extrabold tracking-tight">

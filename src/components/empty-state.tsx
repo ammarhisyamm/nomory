@@ -25,8 +25,8 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "enter-card flex w-full min-w-0 max-w-full flex-col items-center px-5 text-center sm:px-6",
-        compact ? "py-8" : "py-10 sm:py-12",
+        "enter-card flex w-full min-w-0 max-w-full flex-col items-center px-5 text-center",
+        compact ? "py-8" : "py-10",
       )}
     >
       <img
@@ -40,7 +40,7 @@ export function EmptyState({
           }[kind]
         }
         alt=""
-        className={cn("w-auto object-contain drop-shadow-sm", compact ? "h-28" : "h-36 sm:h-40")}
+        className={cn("w-auto object-contain drop-shadow-sm", compact ? "h-28" : "h-36")}
       />
       <h3 className="mt-2 max-w-full break-words text-[20px] font-extrabold">{title}</h3>
       <p className="mt-2 max-w-sm text-[15px] leading-6 text-muted-foreground">{description}</p>

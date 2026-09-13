@@ -9,12 +9,27 @@ import { getSessionUser } from "./auth-server";
 import {
   clearMeals,
   deleteMeal,
+  getMeal,
   listMeals,
   sanitizeMeal,
   storeMealImage,
   upsertMeal,
 } from "./nomory-db";
 import type { Meal } from "./meals";
+
+async function removeObjectsByPrefix(
+  bucket: NonNullable<ReturnType<typeof getCloudEnv>["IMAGES"]>,
+  prefix: string,
+  keep = new Set<string>(),
+) {
+  let cursor: string | undefined;
+  do {
+    const listed = await bucket.list({ prefix, limit: 1000, ...(cursor ? { cursor } : {}) });
+    const keys = listed.objects.map((item) => item.key).filter((key) => !keep.has(key));
+    if (keys.length) await bucket.delete(keys);
+    cursor = listed.truncated ? listed.cursor : undefined;
+  } while (cursor);
+}
 
 const mealSchema = z.object({
   id: z.string().min(1).max(64),
@@ -100,10 +115,13 @@ export const saveMealCloud = createServerFn({ method: "POST" })
       originalImage,
       processedImage,
       thumbnailImage,
-      updatedAt: Date.now(),
+      // Keep the client's edit timestamp for conflict ordering. Giving an
+      // older, slower upload a newer server timestamp can overwrite the
+      // photo that was actually selected last on another device.
+      updatedAt: clean.updatedAt,
     };
     await upsertMeal(env.DB, user.id, meal);
-    return { cloud: true, meal };
+    return { cloud: true, meal: await getMeal(env.DB, user.id, meal.id) };
   });
 
 export const deleteMealCloud = createServerFn({ method: "POST" })
@@ -113,18 +131,8 @@ export const deleteMealCloud = createServerFn({ method: "POST" })
     const user = await getSessionUser();
     if (!env.DB || !user) return { cloud: false };
     await deleteMeal(env.DB, user.id, data.id);
-    // Best-effort R2 cleanup — old photo URLs simply stop being referenced.
-    const prefix = [
-      `meals/${user.id}/${data.id}-original`,
-      `meals/${user.id}/${data.id}-processed`,
-      `meals/${user.id}/${data.id}-thumbnail`,
-    ];
     if (env.IMAGES) {
-      await Promise.allSettled(
-        prefix.flatMap((p) =>
-          [`${p}.jpg`, `${p}.png`, `${p}.webp`].map((k) => env.IMAGES!.delete(k)),
-        ),
-      );
+      await removeObjectsByPrefix(env.IMAGES, `meals/${user.id}/${data.id}-`);
     }
     return { cloud: true };
   });
@@ -135,6 +143,7 @@ export const clearMealsCloud = createServerFn({ method: "POST" }).handler(
     const user = await getSessionUser();
     if (!env.DB || !user) return { cloud: false };
     await clearMeals(env.DB, user.id);
+    if (env.IMAGES) await removeObjectsByPrefix(env.IMAGES, `meals/${user.id}/`);
     return { cloud: true };
   },
 );

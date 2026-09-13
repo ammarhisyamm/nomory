@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 export function StatPill({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
   return (
-    <div className="flex min-h-11 min-w-0 items-center justify-center gap-2 rounded-2xl bg-card px-3 shadow-[var(--shadow-pill)] sm:justify-start sm:rounded-full sm:px-4">
+    <div className="flex min-h-11 min-w-0 items-center justify-center gap-2 rounded-2xl bg-card px-3 shadow-[var(--shadow-pill)]">
       <Icon className="size-[17px] text-accent" strokeWidth={2} />
       <span className="truncate text-[13.5px] font-semibold">{label}</span>
     </div>

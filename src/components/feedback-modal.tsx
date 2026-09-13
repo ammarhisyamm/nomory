@@ -60,7 +60,7 @@ export function FeedbackModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-foreground/18 p-0 backdrop-blur-[3px] sm:items-center sm:p-5"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-foreground/18 p-0 backdrop-blur-[3px]"
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) setFeedback(null);
@@ -71,7 +71,7 @@ export function FeedbackModal() {
         aria-modal="true"
         aria-labelledby="feedback-title"
         aria-describedby="feedback-message"
-        className={`feedback-modal relative w-full max-w-[500px] overflow-hidden rounded-t-[32px] bg-card px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-9 text-center shadow-[0_-16px_50px_oklch(0.32_0.05_55/0.18)] sm:rounded-[32px] sm:pb-7 ${feedback.kind}`}
+        className={`feedback-modal relative w-full max-w-[430px] overflow-hidden rounded-t-[32px] bg-card px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-9 text-center shadow-[0_-16px_50px_oklch(0.32_0.05_55/0.18)] ${feedback.kind}`}
       >
         <div aria-hidden className="feedback-gradient absolute inset-x-0 top-0 h-32 opacity-90" />
         <button
@@ -82,10 +82,7 @@ export function FeedbackModal() {
         >
           <X className="size-5" strokeWidth={2} />
         </button>
-        <span
-          aria-hidden
-          className="relative mx-auto mb-2 block h-1 w-10 rounded-full bg-border sm:hidden"
-        />
+        <span aria-hidden className="relative mx-auto mb-2 block h-1 w-10 rounded-full bg-border" />
         <div className="relative mx-auto grid size-24 place-items-center">
           <img src={copy.image} alt="" className="size-24 object-contain" />
         </div>

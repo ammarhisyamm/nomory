@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export function FoodSticker({
@@ -16,6 +16,10 @@ export function FoodSticker({
 }) {
   const [failed, setFailed] = useState(false);
   const [fallbackFailed, setFallbackFailed] = useState(false);
+  useEffect(() => {
+    setFailed(false);
+    setFallbackFailed(false);
+  }, [src, fallbackSrc]);
   const imageSrc = !failed ? src : !fallbackFailed && fallbackSrc ? fallbackSrc : "";
   return (
     <img
