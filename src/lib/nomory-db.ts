@@ -168,7 +168,7 @@ export async function upsertMeal(db: D1Database, userId: string, meal: Meal): Pr
          original_image=excluded.original_image, processed_image=excluded.processed_image,
          thumbnail_image=excluded.thumbnail_image,
          use_original=excluded.use_original, updated_at=excluded.updated_at
-       WHERE user_id = ?`,
+       WHERE user_id = ? AND excluded.updated_at >= meals.updated_at`,
     )
     .bind(
       meal.id,

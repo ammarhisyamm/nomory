@@ -260,6 +260,15 @@ export function MealsProvider({ children }: { children: ReactNode }) {
       return;
     }
     void syncNow();
+    const refreshWhenActive = () => {
+      if (document.visibilityState === "visible") void syncNow();
+    };
+    window.addEventListener("focus", refreshWhenActive);
+    document.addEventListener("visibilitychange", refreshWhenActive);
+    return () => {
+      window.removeEventListener("focus", refreshWhenActive);
+      document.removeEventListener("visibilitychange", refreshWhenActive);
+    };
   }, [userId, syncNow]);
 
   const saveMeal = useCallback(
@@ -267,26 +276,19 @@ export function MealsProvider({ children }: { children: ReactNode }) {
       const ns = userId ?? undefined;
       await dbPut(meal, ns);
       setMeals((prev) => sortMeals([...prev.filter((m) => m.id !== meal.id), meal]));
-      // Cloud write-through (fire-and-forget): server uploads photos to R2
-      // when configured and returns the meal with remote URLs.
+      // Wait for the cloud write-through. A local-first fire-and-forget write
+      // made one device look updated while another device still read D1.
       if (cloudRef.current || userId) {
-        saveMealCloud({ data: meal })
-          .then(async (res) => {
-            if (!res.cloud) {
-              if (userId) {
-                cloudRef.current = false;
-                setCloudEnabled(false);
-              }
-              return;
-            }
-            cloudRef.current = true;
-            setCloudEnabled(true);
-            if (res.meal) {
-              await dbPut(res.meal, ns);
-              setMeals((prev) => sortMeals([...prev.filter((m) => m.id !== meal.id), res.meal!]));
-            }
-          })
-          .catch(() => undefined);
+        const res = await saveMealCloud({ data: meal });
+        if (!res.cloud || !res.meal) {
+          cloudRef.current = false;
+          setCloudEnabled(false);
+          throw new Error("Cloud sync unavailable");
+        }
+        cloudRef.current = true;
+        setCloudEnabled(true);
+        await dbPut(res.meal, ns);
+        setMeals((prev) => sortMeals([...prev.filter((m) => m.id !== meal.id), res.meal!]));
       }
     },
     [userId],
