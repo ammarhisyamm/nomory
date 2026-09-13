@@ -210,7 +210,26 @@ export function MealsProvider({ children }: { children: ReactNode }) {
       if (res.cloud) {
         cloudRef.current = true;
         setCloudEnabled(true);
-        await mergeCloudMeals(res.meals);
+        // Reconcile local-first saves too. This matters when a meal was
+        // captured while cloud sync was unavailable: the desktop could keep
+        // showing it from IndexedDB while another device only saw D1.
+        const localRows = await dbGetAll<Meal>(userId).catch(() => [] as Meal[]);
+        const cloudIds = new Set(res.meals.map((meal) => meal.id));
+        const localOnly = localRows.filter((meal) => !cloudIds.has(meal.id));
+        const uploaded = await Promise.all(
+          localOnly.map(async (meal) => {
+            try {
+              const saved = await saveMealCloud({ data: meal });
+              return saved.cloud && saved.meal ? saved.meal : null;
+            } catch {
+              return null;
+            }
+          }),
+        );
+        await mergeCloudMeals([
+          ...res.meals,
+          ...uploaded.filter((meal): meal is Meal => Boolean(meal)),
+        ]);
       } else {
         cloudRef.current = false;
         setCloudEnabled(false);
