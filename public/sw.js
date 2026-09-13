@@ -1,14 +1,14 @@
 // Morsel service worker — cached app shell for offline-friendly loading.
-const CACHE = "nomory-v2";
+const CACHE = "nomory-v3";
 const SHELL = [
   "/",
   "/manifest.webmanifest",
   "/favicon.ico",
-  "/favicon.png",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
-  "/icons/icon-maskable-512.png",
-  "/icons/apple-touch-icon.png",
+  "/favicon.png?v=3",
+  "/icons/icon-192.png?v=3",
+  "/icons/icon-512.png?v=3",
+  "/icons/icon-maskable-512.png?v=3",
+  "/icons/apple-touch-icon.png?v=3",
 ];
 
 self.addEventListener("install", (event) => {
