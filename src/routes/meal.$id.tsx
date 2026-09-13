@@ -158,7 +158,7 @@ function MealDetailPage() {
           <PageHeader
             title="Edit memory"
             subtitle="Update the details you want to remember."
-            right={
+            left={
               <button
                 type="button"
                 aria-label="Cancel editing"
@@ -203,7 +203,7 @@ function MealDetailPage() {
         <PageHeader
           title={meal.mealName || typeLabel}
           subtitle={`${formatDateLabel(meal.mealDate)} · ${formatTimeLabel(meal.mealTime)}`}
-          right={
+          left={
             <button
               type="button"
               aria-label="Back"

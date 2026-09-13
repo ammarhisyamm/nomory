@@ -20,6 +20,7 @@ const mealSchema = z.object({
   id: z.string().min(1).max(64),
   originalImage: z.string().max(12_000_000).default(""),
   processedImage: z.string().max(12_000_000).default(""),
+  thumbnailImage: z.string().max(2_000_000).default(""),
   useOriginal: z.boolean().default(false),
   mealName: z.string().max(120).default(""),
   mealType: z.enum(["breakfast", "lunch", "dinner", "snack", "drink"]).default("snack"),
@@ -68,7 +69,7 @@ export const saveMealCloud = createServerFn({ method: "POST" })
     if (!clean) return { cloud: false, meal: null };
     // Upload dataURL photos to R2 when configured; otherwise the values
     // pass through and are stored inline in D1.
-    const [originalImage, processedImage] = await Promise.all([
+    const [originalImage, processedImage, thumbnailImage] = await Promise.all([
       storeMealImage(
         env.IMAGES,
         env.R2_PUBLIC_URL,
@@ -85,8 +86,22 @@ export const saveMealCloud = createServerFn({ method: "POST" })
         "processed",
         clean.processedImage,
       ),
+      storeMealImage(
+        env.IMAGES,
+        env.R2_PUBLIC_URL,
+        user.id,
+        clean.id,
+        "thumbnail",
+        clean.thumbnailImage || clean.processedImage,
+      ),
     ]);
-    const meal: Meal = { ...clean, originalImage, processedImage, updatedAt: Date.now() };
+    const meal: Meal = {
+      ...clean,
+      originalImage,
+      processedImage,
+      thumbnailImage,
+      updatedAt: Date.now(),
+    };
     await upsertMeal(env.DB, user.id, meal);
     return { cloud: true, meal };
   });
@@ -102,6 +117,7 @@ export const deleteMealCloud = createServerFn({ method: "POST" })
     const prefix = [
       `meals/${user.id}/${data.id}-original`,
       `meals/${user.id}/${data.id}-processed`,
+      `meals/${user.id}/${data.id}-thumbnail`,
     ];
     if (env.IMAGES) {
       await Promise.allSettled(

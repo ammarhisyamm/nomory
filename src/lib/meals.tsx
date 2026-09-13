@@ -19,6 +19,8 @@ export type Meal = {
   id: string;
   originalImage: string;
   processedImage: string;
+  /** 240px variant for list views; empty on meals saved before it existed. */
+  thumbnailImage: string;
   useOriginal: boolean;
   mealName: string;
   mealType: MealType;
@@ -60,12 +62,20 @@ export function toTimeKey(d: Date) {
   return `${`${d.getHours()}`.padStart(2, "0")}:${`${d.getMinutes()}`.padStart(2, "0")}`;
 }
 
-export function mealImage(meal: Meal) {
-  const value = meal.useOriginal ? meal.originalImage : meal.processedImage;
+function rewriteLegacyHost(value: string) {
   const legacyHost = "https://pub-9ac9781ada9641ffb736141d7132a2eb.r2.dev/";
   return value.startsWith(legacyHost)
     ? `https://nomory.site/media/${value.slice(legacyHost.length)}`
     : value;
+}
+
+export function mealImage(meal: Meal) {
+  return rewriteLegacyHost(meal.useOriginal ? meal.originalImage : meal.processedImage);
+}
+
+/** Small 240px variant for grids/lists — falls back gracefully for old meals. */
+export function mealThumb(meal: Meal) {
+  return rewriteLegacyHost(meal.thumbnailImage || meal.processedImage || meal.originalImage);
 }
 
 export function formatDateLabel(dateKey: string, opts?: Intl.DateTimeFormatOptions) {
@@ -305,6 +315,7 @@ export function useMeals() {
 export type MealDraft = {
   original: string;
   processed: string;
+  thumbnail: string;
 };
 
 let draft: MealDraft | null = null;

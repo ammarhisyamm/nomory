@@ -26,6 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const isActive = (to: string) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
+  const hideMobileNav = pathname === "/add";
 
   useEffect(() => {
     if (auth && !auth.user) navigate({ to: "/login" });
@@ -84,7 +85,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Mobile bottom nav */}
       <nav
         aria-label="Primary navigation"
-        className="fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(10px,env(safe-area-inset-bottom))] lg:hidden"
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(10px,env(safe-area-inset-bottom))] lg:hidden",
+          hideMobileNav && "hidden",
+        )}
       >
         <div className="mx-auto flex max-w-md items-center gap-2">
           <div className="grid min-w-0 flex-1 grid-cols-4 rounded-[28px] border border-white/80 bg-card/80 p-2 shadow-[0_-6px_30px_oklch(0.32_0.05_55/0.09),0_6px_18px_oklch(0.32_0.05_55/0.08)] backdrop-blur-2xl">
@@ -111,7 +115,9 @@ function NavItem({ to, icon: Icon, active }: { to: string; icon: LucideIcon; act
       to={to}
       className={cn(
         "relative flex min-h-12 flex-col items-center justify-center gap-1 rounded-[20px] text-[10px] font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-        active ? "bg-accent-soft text-foreground" : "text-muted-foreground",
+        active
+          ? "bg-white/65 text-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.8),var(--shadow-pill)] backdrop-blur-md"
+          : "text-muted-foreground",
       )}
     >
       <Icon className={cn("size-[21px]", active && "text-accent")} strokeWidth={2} />
@@ -122,24 +128,29 @@ function NavItem({ to, icon: Icon, active }: { to: string; icon: LucideIcon; act
 export function PageHeader({
   title,
   subtitle,
+  left,
   right,
   eyebrow,
 }: {
   title: string;
   subtitle?: string;
+  left?: ReactNode;
   right?: ReactNode;
   eyebrow?: ReactNode;
 }) {
   return (
     <header className="flex min-w-0 items-start justify-between gap-3 pt-7 pb-6 sm:gap-4 sm:pt-9">
-      <div className="min-w-0 flex-1">
-        {eyebrow}
-        <h1 className="font-display break-words text-[29px] leading-[1.08] font-extrabold tracking-tight sm:text-[34px]">
-          {title}
-        </h1>
-        {subtitle ? (
-          <p className="mt-2 max-w-xl text-[15px] leading-6 text-muted-foreground">{subtitle}</p>
-        ) : null}
+      <div className="flex min-w-0 flex-1 items-start gap-3">
+        {left ? <div className="shrink-0">{left}</div> : null}
+        <div className="min-w-0 flex-1">
+          {eyebrow}
+          <h1 className="font-display break-words text-[29px] leading-[1.08] font-extrabold tracking-tight sm:text-[34px]">
+            {title}
+          </h1>
+          {subtitle ? (
+            <p className="mt-2 max-w-xl text-[15px] leading-6 text-muted-foreground">{subtitle}</p>
+          ) : null}
+        </div>
       </div>
       {right ? <div className="shrink-0">{right}</div> : null}
     </header>

@@ -175,7 +175,7 @@ function AddMealPage() {
               <PageHeader
                 title="Add a meal"
                 subtitle="Take a photo or upload one from your gallery."
-                right={
+                left={
                   <button
                     type="button"
                     aria-label="Back to today"

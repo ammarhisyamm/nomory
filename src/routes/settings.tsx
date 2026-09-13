@@ -76,7 +76,7 @@ function SettingsPage() {
         <PageHeader
           title="Settings"
           subtitle="Manage your account and diary."
-          right={
+          left={
             <Link
               to="/profile"
               aria-label="Back to profile"

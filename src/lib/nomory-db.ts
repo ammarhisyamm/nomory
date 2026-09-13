@@ -18,6 +18,7 @@ export type MealRow = {
   meal_time: string;
   original_image: string;
   processed_image: string;
+  thumbnail_image: string;
   use_original: number;
   created_at: number;
   updated_at: number;
@@ -53,6 +54,13 @@ function extFor(contentType: string) {
 }
 
 /**
+ * D1 bound-parameter ceiling is 1MB per value — inline (no-R2) storage
+ * must stay under it. Client-compressed JPEGs land well below; anything
+ * larger is dropped rather than risking a failed INSERT.
+ */
+const INLINE_MAX_CHARS = 950_000;
+
+/**
  * Persist one photo. Returns a public R2 URL when the IMAGES binding and
  * R2_PUBLIC_URL are configured, otherwise returns the dataURL unchanged
  * so it can be stored directly in D1 (V1 fallback, fine for compressed
@@ -63,16 +71,28 @@ export async function storeMealImage(
   publicBase: string | undefined,
   userId: string,
   mealId: string,
-  kind: "original" | "processed",
+  kind: "original" | "processed" | "thumbnail",
   value: string,
 ): Promise<string> {
   if (!value || isRemoteUrl(value)) return value;
-  if (!bucket || !publicBase || !isDataUrl(value)) return value;
+  if (!bucket || !publicBase || !isDataUrl(value)) {
+    // Inline mode: originals are redundant weight (the processed sticker
+    // is what renders by default) — skip storing huge ones in D1.
+    if (kind === "original" && value.length > INLINE_MAX_CHARS) return "";
+    if (value.length > INLINE_MAX_CHARS) return "";
+    return value;
+  }
   const decoded = dataUrlToBytes(value);
   if (!decoded) return value;
   const key = `meals/${userId}/${mealId}-${kind}.${extFor(decoded.contentType)}`;
   await bucket.put(key, decoded.bytes, {
-    httpMetadata: { contentType: decoded.contentType },
+    httpMetadata: {
+      contentType: decoded.contentType,
+      // Keys are unique per meal+variant and never edited in place, so
+      // every object is immutable — let Cloudflare edge cache it for a
+      // year. At 1000+ users this keeps photo traffic off R2 origin.
+      cacheControl: "public, max-age=31536000, immutable",
+    },
   });
   return `${publicBase.replace(/\/$/, "")}/${key}`;
 }
@@ -84,6 +104,7 @@ export function sanitizeMeal(input: Meal): Meal | null {
     id: input.id.slice(0, 64),
     originalImage: typeof input.originalImage === "string" ? input.originalImage : "",
     processedImage: typeof input.processedImage === "string" ? input.processedImage : "",
+    thumbnailImage: typeof input.thumbnailImage === "string" ? input.thumbnailImage : "",
     useOriginal: Boolean(input.useOriginal),
     mealName: String(input.mealName ?? "").slice(0, 120),
     mealType,
@@ -101,8 +122,9 @@ export function sanitizeMeal(input: Meal): Meal | null {
 export function rowToMeal(row: MealRow): Meal {
   return {
     id: row.id,
-    originalImage: row.original_image || "",
+    originalImage: row.original_image || row.processed_image || "",
     processedImage: row.processed_image || row.original_image || "",
+    thumbnailImage: row.thumbnail_image || row.processed_image || row.original_image || "",
     useOriginal: row.use_original === 1,
     mealName: row.meal_name || "",
     mealType: (MEAL_TYPES.has(row.meal_type) ? row.meal_type : "snack") as MealType,
@@ -121,7 +143,7 @@ export async function listMeals(db: D1Database, userId: string): Promise<Meal[]>
   const res = await db
     .prepare(
       `SELECT id, user_id, meal_name, meal_type, note, location, price, rating, meal_date, meal_time,
-              original_image, processed_image, use_original, created_at, updated_at
+              original_image, processed_image, thumbnail_image, use_original, created_at, updated_at
        FROM meals WHERE user_id = ? ORDER BY meal_date DESC, meal_time DESC LIMIT 2000`,
     )
     .bind(userId)
@@ -133,14 +155,15 @@ export async function upsertMeal(db: D1Database, userId: string, meal: Meal): Pr
   await db
     .prepare(
       `INSERT INTO meals (id, user_id, meal_name, meal_type, note, location, price, rating, meal_date,
-                          meal_time, original_image, processed_image, use_original,
+                          meal_time, original_image, processed_image, thumbnail_image, use_original,
                           created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
          meal_name=excluded.meal_name, meal_type=excluded.meal_type, note=excluded.note,
          location=excluded.location, meal_date=excluded.meal_date, meal_time=excluded.meal_time,
          price=excluded.price, rating=excluded.rating,
          original_image=excluded.original_image, processed_image=excluded.processed_image,
+         thumbnail_image=excluded.thumbnail_image,
          use_original=excluded.use_original, updated_at=excluded.updated_at
        WHERE user_id = ?`,
     )
@@ -157,6 +180,7 @@ export async function upsertMeal(db: D1Database, userId: string, meal: Meal): Pr
       meal.mealTime,
       meal.originalImage,
       meal.processedImage,
+      meal.thumbnailImage,
       meal.useOriginal ? 1 : 0,
       meal.createdAt,
       meal.updatedAt,

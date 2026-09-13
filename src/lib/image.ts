@@ -4,6 +4,8 @@
 export type ProcessedPhoto = {
   original: string;
   processed: string;
+  /** Tiny 240px variant for list views — keeps grids cheap at scale. */
+  thumbnail: string;
   /** False when the sticker crop failed and the original photo was kept. */
   cutout: boolean;
 };
@@ -122,18 +124,26 @@ export async function processPhoto(file: File): Promise<ProcessedPhoto> {
     const { x, y, side } = findSubjectSquare(img);
     // Tighten slightly on the subject for the sticker crop.
     const inset = side * 0.05;
-    const processed = drawToDataUrl(
-      img,
-      x + inset,
-      y + inset,
-      side - inset * 2,
-      side - inset * 2,
-      720,
-      0.88,
-    );
-    return { original, processed, cutout: true };
+    const cropX = x + inset;
+    const cropY = y + inset;
+    const cropSide = side - inset * 2;
+    const processed = drawToDataUrl(img, cropX, cropY, cropSide, cropSide, 720, 0.88);
+    // 240px thumbnail from the same framing — list views never need more
+    // (96px stickers at 2x DPR = 192px), and it cuts grid bandwidth ~90%.
+    const thumbnail = drawToDataUrl(img, cropX, cropY, cropSide, cropSide, 240, 0.78);
+    return { original, processed, thumbnail, cutout: true };
   } catch {
     // Never block saving because the cutout failed — keep the original photo.
-    return { original, processed: original, cutout: false };
+    const side = Math.min(img.width, img.height);
+    const thumbnail = drawToDataUrl(
+      img,
+      (img.width - side) / 2,
+      (img.height - side) / 2,
+      side,
+      side,
+      240,
+      0.78,
+    );
+    return { original, processed: original, thumbnail, cutout: false };
   }
 }
