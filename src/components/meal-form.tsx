@@ -1,4 +1,4 @@
-import { MapPin, MessageSquarePlus, Star } from "lucide-react";
+import { Check, MapPin, MessageSquarePlus, Star } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { MEAL_TYPES, type Meal, type MealType } from "@/lib/meals";
@@ -28,7 +28,7 @@ export function mealToForm(meal: Meal): MealFormValues {
 }
 
 const fieldClass =
-  "h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none shadow-[var(--shadow-card)] transition-[border-color,box-shadow] placeholder:text-subtle focus:border-accent focus:ring-2 focus:ring-accent/10";
+  "input-soft h-12 px-4 text-[15px]";
 
 function formatPrice(value: string) {
   if (!value) return "";
@@ -64,14 +64,16 @@ export function MealForm({
               key={type.value}
               type="button"
               onClick={() => set("mealType", type.value)}
+              data-selected={values.mealType === type.value}
               className={cn(
-                "press h-11 rounded-full text-[13.5px] font-semibold",
-                values.mealType === type.value
-                  ? "bg-foreground text-background"
-                  : "bg-muted text-muted-foreground",
+                "meal-type-option relative text-[13.5px] font-semibold",
+                values.mealType === type.value ? "text-accent" : "text-muted-foreground",
               )}
             >
-              {type.label}
+              <span>{type.label}</span>
+              {values.mealType === type.value ? (
+                <Check className="absolute top-3 right-3 size-4 text-accent" strokeWidth={2.5} />
+              ) : null}
             </button>
           ))}
         </div>
@@ -140,15 +142,16 @@ export function MealForm({
           <MessageSquarePlus className="size-4" />
           {showNote ? "Hide note" : "Add a note"}
         </button>
-        {showNote ? (
+        <div className="note-reveal" data-open={showNote} aria-hidden={!showNote}>
           <textarea
             rows={3}
-            className="mt-3 min-h-24 w-full resize-y rounded-[14px] border border-input bg-card px-4 py-3 text-[15px] leading-[1.45] outline-none shadow-[var(--shadow-card)] transition-[border-color,box-shadow] placeholder:text-subtle focus:border-accent focus:ring-2 focus:ring-accent/10"
+            tabIndex={showNote ? 0 : -1}
+            className="input-soft mt-3 min-h-24 resize-y px-4 py-3 text-[15px] leading-[1.45]"
             placeholder="What do you want to remember?"
             value={values.note}
             onChange={(e) => set("note", e.target.value)}
           />
-        ) : null}
+        </div>
       </div>
 
       <Field label="Location">

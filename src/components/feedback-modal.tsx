@@ -60,7 +60,7 @@ export function FeedbackModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-foreground/18 p-0 backdrop-blur-[3px]"
+      className="modal-backdrop-in fixed inset-0 z-[100] flex items-end justify-center bg-foreground/18 p-0 backdrop-blur-[3px]"
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) setFeedback(null);
@@ -71,7 +71,7 @@ export function FeedbackModal() {
         aria-modal="true"
         aria-labelledby="feedback-title"
         aria-describedby="feedback-message"
-        className={`feedback-modal relative w-full max-w-[430px] overflow-hidden rounded-t-[32px] bg-card px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-9 text-center shadow-[0_-16px_50px_oklch(0.32_0.05_55/0.18)] ${feedback.kind}`}
+        className={`feedback-modal sheet-in relative w-full max-w-[430px] overflow-hidden rounded-t-[32px] bg-card px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-9 text-center shadow-[0_-16px_50px_oklch(0.32_0.05_55/0.18)] ${feedback.kind}`}
       >
         <div aria-hidden className="feedback-gradient absolute inset-x-0 top-0 h-32 opacity-90" />
         <button

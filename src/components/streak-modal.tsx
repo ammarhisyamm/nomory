@@ -34,7 +34,7 @@ export function StreakModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[110] flex items-end justify-center bg-foreground/25 p-0 backdrop-blur-[4px]"
+      className="modal-backdrop-in fixed inset-0 z-[110] flex items-end justify-center bg-foreground/25 p-0 backdrop-blur-[4px]"
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) setStreak(null);
@@ -44,7 +44,7 @@ export function StreakModal() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="streak-title"
-        className="streak-modal relative w-full max-w-[430px] overflow-hidden rounded-t-[32px] bg-card px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-8 shadow-[0_-16px_50px_oklch(0.32_0.05_55/0.2)]"
+        className="streak-modal sheet-in relative w-full max-w-[430px] overflow-hidden rounded-t-[32px] bg-card px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-8 shadow-[0_-16px_50px_oklch(0.32_0.05_55/0.2)]"
       >
         <div aria-hidden className="streak-gradient absolute inset-x-0 top-0 h-48" />
         <span aria-hidden className="relative mx-auto mb-1 block h-1 w-10 rounded-full bg-border" />

@@ -40,7 +40,7 @@ function SecurityPage() {
             value={current}
             onChange={(e) => setCurrent(e.target.value)}
             autoComplete="current-password"
-            className="input-soft mt-2 h-13 w-full px-4 font-normal"
+            className="input-soft mt-2 h-13 px-4 font-normal"
           />
         </label>
         <label className="block text-[14px] font-semibold">
@@ -50,7 +50,7 @@ function SecurityPage() {
             value={next}
             onChange={(e) => setNext(e.target.value)}
             autoComplete="new-password"
-            className="input-soft mt-2 h-13 w-full px-4 font-normal"
+            className="input-soft mt-2 h-13 px-4 font-normal"
           />
         </label>
         <button

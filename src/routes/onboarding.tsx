@@ -124,7 +124,7 @@ function Onboarding() {
                 autoCorrect="off"
                 spellCheck={false}
                 maxLength={20}
-                className="input-soft mt-2 h-13 w-full px-4 font-normal"
+                className="input-soft mt-2 h-13 px-4 font-normal"
               />
             </label>
             {usernameError ? <p className="mt-3 text-[13px] font-medium text-destructive">{usernameError}</p> : null}

@@ -25,7 +25,7 @@ export const Route = createFileRoute("/login")({
 type Mode = "login" | "register";
 
 const inputClass =
-  "h-12 w-full rounded-[14px] border border-input bg-card px-4 text-[15px] outline-none shadow-[var(--shadow-card)] placeholder:text-subtle focus:border-accent focus:ring-2 focus:ring-accent/10";
+  "input-soft h-12 px-4 text-[15px]";
 
 function LoginPage() {
   const navigate = useNavigate();

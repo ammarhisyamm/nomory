@@ -105,7 +105,7 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
       to="/memories/$date"
       params={{ date }}
       aria-label={`Open memories from ${formatDateLabel(date, { dateStyle: "full" })}`}
-      className="press enter-card group block border-b border-border/70 px-1 pb-7 last:border-b-0 last:pb-0"
+      className="memory-group press enter-card group block border-b border-border/70 px-1 pb-7 last:border-b-0 last:pb-0"
     >
       <div className="mb-4 flex items-center justify-between gap-3">
         <div>
@@ -119,7 +119,7 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
         </div>
         {overflow ? (
           <ChevronRight
-            className="size-6 shrink-0 text-foreground transition-transform group-hover:translate-x-0.5"
+            className="memory-chevron size-6 shrink-0 text-foreground"
             strokeWidth={1.8}
             aria-hidden="true"
           />
@@ -132,7 +132,7 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
             src={mealThumb(meal)}
             fallbackSrc={meal.processedImage || meal.originalImage}
             alt=""
-            className="aspect-square w-full rounded-[18px] object-cover shadow-[var(--shadow-pill)] transition-transform group-hover:scale-[1.01]"
+            className="memory-preview-image aspect-square w-full rounded-[18px] object-cover shadow-[var(--shadow-pill)]"
           />
         ))}
         {overflow ? (

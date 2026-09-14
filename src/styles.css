@@ -187,6 +187,29 @@
 }
 
 @layer components {
+  .input-soft {
+    width: 100%;
+    border: 1px solid var(--color-input);
+    border-radius: 14px;
+    background: var(--color-card);
+    color: var(--color-foreground);
+    box-shadow: 0 1px 2px oklch(0.25 0.02 145 / 0.08);
+    transition: border-color 160ms ease-out, box-shadow 160ms ease-out;
+  }
+
+  .input-soft::placeholder {
+    color: var(--color-subtle);
+    opacity: 0.82;
+  }
+
+  .input-soft:focus {
+    border-color: var(--color-accent);
+    box-shadow:
+      0 1px 2px oklch(0.25 0.02 145 / 0.08),
+      0 0 0 2px oklch(0.665 0.212 38 / 0.12);
+    outline: none;
+  }
+
   /* Nomory primary action: warm orange gloss with restrained elevation. */
   .primary-button {
     background: linear-gradient(180deg, #ff8a63 0%, #ff6b35 100%) !important;
@@ -319,6 +342,27 @@
   background: linear-gradient(180deg, oklch(0.94 0.08 25 / 0.9), transparent 90%);
 }
 
+.meal-type-option {
+  min-height: 84px;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background: var(--color-card);
+  padding: 14px;
+  text-align: left;
+  box-shadow: var(--shadow-card);
+  transition: border-color 160ms ease-out, background-color 160ms ease-out, transform 160ms ease-out;
+}
+
+.meal-type-option[data-selected="true"] {
+  border: 2px solid var(--color-accent);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.meal-type-option:active {
+  transform: scale(0.98);
+}
+
 @utility section-label {
   font-size: 0.75rem;
   line-height: 1rem;
@@ -335,9 +379,8 @@
 
 @utility press {
   transition:
-    transform 160ms ease,
-    box-shadow 160ms ease,
-    background-color 160ms ease;
+    transform 160ms ease-out,
+    opacity 160ms ease-out;
   &:active {
     transform: scale(0.98);
   }
@@ -358,6 +401,46 @@
 
 @utility pop-in {
   animation: pop-in 260ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.modal-backdrop-in {
+  animation: modal-backdrop-in 220ms ease-out both;
+}
+
+.sheet-in {
+  animation: sheet-in 320ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.note-reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 220ms ease-out, opacity 160ms ease-out;
+}
+
+.note-reveal[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.note-reveal > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .memory-chevron,
+  .memory-preview-image {
+    transition: transform 160ms ease-out;
+  }
+
+  .memory-group:hover .memory-chevron {
+    transform: translateX(2px);
+  }
+
+  .memory-group:hover .memory-preview-image {
+    transform: scale(1.01);
+  }
 }
 
 @keyframes enter-card {
@@ -390,6 +473,26 @@
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
