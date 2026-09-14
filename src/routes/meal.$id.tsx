@@ -2,11 +2,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
-  CalendarDays,
   Loader2,
   MapPin,
   Pencil,
   RefreshCw,
+  Star,
   Trash2,
   X,
 } from "lucide-react";
@@ -202,9 +202,9 @@ function MealDetailPage() {
           }}
         />
 
-        <PageHeader
-          title={meal.mealName || typeLabel}
-          subtitle={`${formatDateLabel(meal.mealDate)} · ${formatTimeLabel(meal.mealTime)}`}
+          <PageHeader
+            title={meal.mealName || typeLabel}
+            subtitle={typeLabel}
           left={
             <button
               type="button"
@@ -248,24 +248,47 @@ function MealDetailPage() {
           ) : null}
         </section>
 
-        {meal.note ? (
-          <section className="surface-card mt-4 p-5">
-            <p className="mb-2 text-[13px] font-semibold text-muted-foreground">Note</p>
-            <p className="text-[15px] leading-[1.5]">{meal.note}</p>
-          </section>
-        ) : null}
-
-        {meal.location ? (
-          <section className="surface-card mt-4 flex items-center gap-3 p-5">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
-              <MapPin className="size-[18px]" strokeWidth={1.9} />
-            </span>
-            <div className="min-w-0">
-              <p className="text-[13px] font-semibold text-muted-foreground">Location</p>
-              <p className="mt-1 truncate text-[15px]">{meal.location}</p>
+        <section className="surface-card mt-4 p-5" aria-label="Meal details">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+            <DetailItem label="Date" value={formatDateLabel(meal.mealDate)} />
+            <DetailItem label="Time" value={formatTimeLabel(meal.mealTime)} />
+            <DetailItem label="Price" value={meal.price ? formatPrice(meal.price) : "—"} />
+            <div>
+              <p className="text-[13px] font-semibold text-muted-foreground">Rating</p>
+              <div className="mt-1 flex items-center gap-0.5 text-sunny" aria-label={meal.rating ? `${meal.rating} out of 5 stars` : "Not rated"}>
+                {meal.rating ? (
+                  Array.from({ length: 5 }, (_, index) => (
+                    <Star
+                      key={index}
+                      className="size-4"
+                      fill={index < meal.rating ? "currentColor" : "none"}
+                      strokeWidth={1.8}
+                    />
+                  ))
+                ) : (
+                  <span className="text-[15px] text-subtle">—</span>
+                )}
+              </div>
             </div>
-          </section>
-        ) : null}
+          </div>
+        </section>
+
+        <section className="surface-card mt-4 p-5">
+          <p className="mb-2 text-[13px] font-semibold text-muted-foreground">Note</p>
+          <p className={cn("text-[15px] leading-[1.5]", !meal.note && "text-subtle")}>{meal.note || "No note added"}</p>
+        </section>
+
+        <section className="surface-card mt-4 flex items-center gap-3 p-5">
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
+            <MapPin className="size-[18px]" strokeWidth={1.9} />
+          </span>
+          <div className="min-w-0">
+            <p className="text-[13px] font-semibold text-muted-foreground">Location</p>
+            <p className={cn("mt-1 truncate text-[15px]", !meal.location && "text-subtle")}>
+              {meal.location || "No location added"}
+            </p>
+          </div>
+        </section>
 
         <div className="mt-4 grid gap-2">
           <button
@@ -295,11 +318,6 @@ function MealDetailPage() {
           </button>
         </div>
 
-        <p className="mt-6 flex items-center justify-center gap-2 text-center text-[13px] text-subtle">
-          <CalendarDays className="size-4" strokeWidth={1.9} />
-          Saved {formatDateLabel(meal.mealDate)} at {formatTimeLabel(meal.mealTime)}
-        </p>
-
         <DeleteMemoryModal
           open={deleteOpen}
           mealName={meal.mealName || typeLabel}
@@ -309,6 +327,19 @@ function MealDetailPage() {
       </Page>
     </AppShell>
   );
+}
+
+function DetailItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[13px] font-semibold text-muted-foreground">{label}</p>
+      <p className="mt-1 text-[15px]">{value}</p>
+    </div>
+  );
+}
+
+function formatPrice(value: number) {
+  return new Intl.NumberFormat("id-ID").format(value);
 }
 
 function DeleteMemoryModal({
