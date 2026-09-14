@@ -152,7 +152,7 @@ function CalendarPage() {
 
           <Link
             to="/add"
-            className="press mt-5 flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-accent px-5 text-[15px] font-bold text-accent-foreground shadow-[var(--shadow-pill)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="primary-button press mt-5 flex min-h-14 items-center justify-center gap-2 rounded-2xl px-5 text-[15px] font-bold text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <Plus className="size-5" strokeWidth={2.2} />
             Add a meal

@@ -76,7 +76,7 @@ function ProfilePage() {
         {!user ? (
           <Link
             to="/login"
-            className="press mt-4 flex h-14 w-full items-center justify-center gap-3 rounded-[20px] bg-accent text-[15px] font-semibold text-accent-foreground"
+            className="primary-button press mt-4 flex h-14 w-full items-center justify-center gap-3 rounded-[20px] text-[15px] font-semibold text-accent-foreground"
           >
             <LogIn className="size-5" strokeWidth={2} />
             Sign in or create an account

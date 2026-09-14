@@ -124,7 +124,7 @@ function PublicNomoryHome() {
         </div>
         <Link
           to="/login"
-          className="press mt-12 flex h-14 items-center justify-center rounded-full bg-accent px-6 text-base font-bold text-accent-foreground shadow-[var(--shadow-pill)]"
+          className="primary-button press mt-12 flex h-14 items-center justify-center rounded-full px-6 text-base font-bold text-accent-foreground"
         >
           Sign in to Nomory
         </Link>

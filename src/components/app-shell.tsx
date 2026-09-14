@@ -76,7 +76,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
           <Link
             to="/add"
-            className="press mt-5 flex h-12 items-center justify-center gap-2 rounded-2xl bg-accent text-[15px] font-bold text-accent-foreground shadow-[var(--shadow-pill)]"
+            className="primary-button press mt-5 flex h-12 items-center justify-center gap-2 rounded-2xl text-[15px] font-bold text-accent-foreground"
           >
             <Plus className="size-[19px]" strokeWidth={2.2} />
             Add Meal

@@ -36,7 +36,7 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/"
-            className="press inline-flex h-12 items-center justify-center rounded-full bg-accent px-6 text-[15px] font-bold text-accent-foreground"
+            className="primary-button press inline-flex h-12 items-center justify-center rounded-full px-6 text-[15px] font-bold text-accent-foreground"
           >
             Back to today
           </Link>
@@ -73,7 +73,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="press inline-flex h-12 items-center justify-center rounded-full bg-accent px-5 text-[15px] font-bold text-accent-foreground"
+            className="primary-button press inline-flex h-12 items-center justify-center rounded-full px-5 text-[15px] font-bold text-accent-foreground"
           >
             Try again
           </button>

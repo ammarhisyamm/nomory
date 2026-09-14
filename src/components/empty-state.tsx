@@ -49,7 +49,7 @@ export function EmptyState({
           {cta ? (
             <Link
               to={to}
-              className="press flex h-12 items-center rounded-full bg-accent px-6 text-[15px] font-bold text-accent-foreground shadow-[var(--shadow-pill)]"
+              className="primary-button press flex h-12 items-center rounded-full px-6 text-[15px] font-bold text-accent-foreground"
             >
               {cta}
             </Link>

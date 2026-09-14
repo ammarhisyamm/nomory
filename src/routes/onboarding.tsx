@@ -131,7 +131,7 @@ function Onboarding() {
             <button
               type="submit"
               disabled={!username.trim() || savingUsername}
-              className="press mt-6 h-14 w-full rounded-full bg-accent text-[16px] font-semibold text-accent-foreground disabled:opacity-50"
+              className="primary-button press mt-6 h-14 w-full rounded-full text-[16px] font-semibold text-accent-foreground disabled:opacity-50"
             >
               {savingUsername ? "Saving…" : "Continue"}
             </button>
@@ -184,7 +184,7 @@ function Onboarding() {
           <button
             type="button"
             onClick={() => (last ? finish() : setIndex(index + 1))}
-            className="press h-14 w-full rounded-full bg-accent text-[16px] font-semibold text-accent-foreground"
+            className="primary-button press h-14 w-full rounded-full text-[16px] font-semibold text-accent-foreground"
           >
             {last ? "Start my food diary" : "Continue"}
           </button>
