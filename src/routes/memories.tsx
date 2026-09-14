@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { CalendarDays, ChevronRight, Search, UtensilsCrossed, Wallet } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { FoodSticker } from "@/components/food-sticker";
-import { formatDateLabel, mealThumb, toDateKey, useMeals } from "@/lib/meals";
+import { MEAL_TYPES, formatDateLabel, mealThumb, toDateKey, useMeals } from "@/lib/meals";
 
 export const Route = createFileRoute("/memories")({
   head: () => ({
@@ -81,7 +81,7 @@ function MemoriesPage() {
             <SummaryStat icon={Wallet} label="Total spent" value={formatRupiah(totalSpend)} />
           </div>
 
-          <div className="mt-10 space-y-8">
+          <div className="mt-8 space-y-6">
             {groups.map(([date, items]) => (
               <DayGroup key={date} date={date} items={items} />
             ))}
@@ -93,6 +93,7 @@ function MemoriesPage() {
 }
 
 function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useMeals>["meals"] }) {
+  const [flippedMealId, setFlippedMealId] = useState<string | null>(null);
   const previews = items.length > 4 ? items.slice(0, 3) : items;
   const overflow = items.length > 4 ? items.length - 3 : 0;
   const names = items
@@ -101,13 +102,13 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
     .join(", ");
 
   return (
-    <Link
-      to="/memories/$date"
-      params={{ date }}
-      aria-label={`Open memories from ${formatDateLabel(date, { dateStyle: "full" })}`}
-      className="memory-group press enter-card group block border-b border-border/70 px-1 pb-7 last:border-b-0 last:pb-0"
-    >
-      <div className="mb-4 flex items-center justify-between gap-3">
+    <article className="memory-group enter-card block border-b border-border/70 px-1 pb-5 last:border-b-0 last:pb-0">
+      <Link
+        to="/memories/$date"
+        params={{ date }}
+        aria-label={`Open memories from ${formatDateLabel(date, { dateStyle: "full" })}`}
+        className="press mb-4 flex items-center justify-between gap-3 rounded-xl text-left"
+      >
         <div>
           <h3 className="font-display text-[21px] font-extrabold leading-tight">
             {formatDateLabel(date, { weekday: "long", month: "short", day: "numeric" })}
@@ -124,15 +125,14 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
             aria-hidden="true"
           />
         ) : null}
-      </div>
+      </Link>
       <div className="grid grid-cols-4 gap-2.5">
         {previews.map((meal) => (
-          <FoodSticker
+          <FlipMealPreview
             key={meal.id}
-            src={mealThumb(meal)}
-            fallbackSrc={meal.processedImage || meal.originalImage}
-            alt=""
-            className="memory-preview-image aspect-square w-full rounded-[18px] object-cover shadow-[var(--shadow-pill)]"
+            meal={meal}
+            flipped={flippedMealId === meal.id}
+            onFlip={() => setFlippedMealId((current) => (current === meal.id ? null : meal.id))}
           />
         ))}
         {overflow ? (
@@ -150,7 +150,40 @@ function DayGroup({ date, items }: { date: string; items: ReturnType<typeof useM
         {names || "Saved meals"}
         {items.length > 3 ? " …" : ""}
       </p>
-    </Link>
+    </article>
+  );
+}
+
+function FlipMealPreview({
+  meal,
+  flipped,
+  onFlip,
+}: {
+  meal: ReturnType<typeof useMeals>["meals"][number];
+  flipped: boolean;
+  onFlip: () => void;
+}) {
+  return (
+    <div className="memory-flip" data-flipped={flipped}>
+      <div className="memory-flip-inner">
+        <button type="button" className="memory-flip-face memory-flip-front" onClick={onFlip} aria-label={`Show details for ${meal.mealName || "saved meal"}`}>
+          <FoodSticker
+            src={mealThumb(meal)}
+            fallbackSrc={meal.processedImage || meal.originalImage}
+            alt=""
+            className="memory-preview-image size-full rounded-[18px] object-cover shadow-[var(--shadow-pill)]"
+          />
+        </button>
+        <button type="button" className="memory-flip-face memory-flip-back" onClick={onFlip} aria-label={`Hide details for ${meal.mealName || "saved meal"}`}>
+          <span className="line-clamp-2 text-[12px] font-bold leading-tight">{meal.mealName || "Saved meal"}</span>
+          <span className="mt-1 text-[10px] text-muted-foreground">
+            {MEAL_TYPES.find((type) => type.value === meal.mealType)?.label ?? "Meal"}
+          </span>
+          <span className="mt-2 text-[11px] font-semibold text-accent">{meal.price ? formatPrice(meal.price) : "No price"}</span>
+          <span className="mt-1 text-[10px] text-sunny">{meal.rating ? `${meal.rating}/5 ★` : "Not rated"}</span>
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -178,4 +211,8 @@ function formatRupiah(value: number) {
     currency: "IDR",
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+function formatPrice(value: number) {
+  return new Intl.NumberFormat("id-ID").format(value);
 }

@@ -366,6 +366,50 @@
   transform: scale(0.98);
 }
 
+.memory-flip {
+  min-width: 0;
+  aspect-ratio: 1;
+  perspective: 900px;
+}
+
+.memory-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.memory-flip[data-flipped="true"] .memory-flip-inner {
+  transform: rotateY(180deg);
+}
+
+.memory-flip-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 18px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.memory-flip-front {
+  background: transparent;
+}
+
+.memory-flip-back {
+  transform: rotateY(180deg);
+  padding: 12px;
+  text-align: center;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-pill);
+}
+
 @utility section-label {
   font-size: 0.75rem;
   line-height: 1rem;
