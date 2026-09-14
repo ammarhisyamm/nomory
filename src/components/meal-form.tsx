@@ -47,7 +47,7 @@ export function MealForm({
     onChange({ ...values, [key]: value });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <Field label="Meal name">
         <input
           className={fieldClass}
