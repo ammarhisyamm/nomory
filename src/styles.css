@@ -545,6 +545,7 @@
   }
 }
 
+
 /* Superseded landing-page rules kept inactive while the new page uses website.css. */
 @media (width < 0px) {
 /* Marketing page: a lighter, photo-first expression of the Nomory system. */
@@ -918,5 +919,52 @@
 
   .memory-detail-flip[data-open="true"] {
     transform: rotateY(180deg);
+  }
+}
+
+/* Hero art direction: keep the supplied mockup visible below a quiet, readable copy area. */
+.website-hero {
+  min-height: min(920px, 100dvh);
+  place-items: stretch;
+  background: #fffdf9;
+}
+
+.website-hero-image {
+  object-position: center bottom;
+}
+
+.website-hero-copy {
+  align-self: start;
+  justify-self: center;
+  width: min(calc(100% - 40px), 650px);
+  margin: clamp(74px, 11vh, 132px) 0 0;
+  text-align: center;
+}
+
+.website-hero-copy h1 {
+  max-width: 650px;
+  margin-inline: auto;
+}
+
+.website-hero-body {
+  margin-inline: auto;
+}
+
+.website-hero-copy .website-primary-button {
+  margin-inline: auto;
+}
+
+@media (max-width: 640px) {
+  .website-hero {
+    min-height: 760px;
+  }
+
+  .website-hero-image {
+    object-position: center bottom;
+  }
+
+  .website-hero-copy {
+    width: min(calc(100% - 32px), 430px);
+    margin-top: 64px;
   }
 }

@@ -47,7 +47,7 @@ function WebsiteLandingPage() {
     </nav>
 
     <section className="website-hero" aria-labelledby="website-hero-title">
-      <img className="website-hero-image" src="/website-hero-diary.png" alt="A food diary filled with meal photographs beside a sunny table" />
+      <img className="website-hero-image" src="/website-hero-mockup.png" alt="Nomory app mockup surrounded by cheerful food memory characters" />
       <div className="website-hero-copy">
         <h1 id="website-hero-title">Your meals, remembered.</h1>
         <p className="website-hero-body">Capture what you eat, save the little details, and look back anytime.</p>
