@@ -20,6 +20,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as WebsiteRouteImport } from './routes/website'
 import { Route as AuthGoogleRouteImport } from './routes/auth.google'
 import { Route as MealIdRouteImport } from './routes/meal.$id'
 import { Route as MemoriesDateRouteImport } from './routes/memories.$date'
@@ -84,6 +85,11 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WebsiteRoute = WebsiteRouteImport.update({
+  id: '/website',
+  path: '/website',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthGoogleRoute = AuthGoogleRouteImport.update({
   id: '/auth/google',
   path: '/auth/google',
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/website': typeof WebsiteRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/memories/$date': typeof MemoriesDateRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/website': typeof WebsiteRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/memories/$date': typeof MemoriesDateRoute
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/terms': typeof TermsRoute
+  '/website': typeof WebsiteRoute
   '/auth/google': typeof AuthGoogleRouteWithChildren
   '/meal/$id': typeof MealIdRoute
   '/memories/$date': typeof MemoriesDateRoute
@@ -203,6 +212,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/terms'
+    | '/website'
     | '/auth/google'
     | '/meal/$id'
     | '/memories/$date'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/terms'
+    | '/website'
     | '/auth/google'
     | '/meal/$id'
     | '/memories/$date'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/terms'
+    | '/website'
     | '/auth/google'
     | '/meal/$id'
     | '/memories/$date'
@@ -267,6 +279,7 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
   TermsRoute: typeof TermsRoute
+  WebsiteRoute: typeof WebsiteRoute
   AuthGoogleRoute: typeof AuthGoogleRouteWithChildren
   MealIdRoute: typeof MealIdRoute
   SettingsHelpRoute: typeof SettingsHelpRoute
@@ -352,6 +365,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/website': {
+      id: '/website'
+      path: '/website'
+      fullPath: '/website'
+      preLoaderRoute: typeof WebsiteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/google': {
@@ -449,6 +469,7 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
   TermsRoute: TermsRoute,
+  WebsiteRoute: WebsiteRoute,
   AuthGoogleRoute: AuthGoogleRouteWithChildren,
   MealIdRoute: MealIdRoute,
   SettingsHelpRoute: SettingsHelpRoute,
