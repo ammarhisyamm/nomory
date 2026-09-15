@@ -372,6 +372,10 @@
   transition: transform 160ms var(--ease-out), filter 160ms ease;
 }
 
+.memory-thumb-button[data-selected="true"] {
+  opacity: 0;
+}
+
 .memory-thumb-button:active {
   transform: scale(0.96);
 }
@@ -386,6 +390,7 @@
   opacity: 0;
   background: rgb(24 22 20 / 0);
   backdrop-filter: blur(0);
+  perspective: 1200px;
   transition: opacity 180ms var(--ease-out), background-color 180ms var(--ease-out), backdrop-filter 180ms var(--ease-out);
 }
 
@@ -396,8 +401,12 @@
 }
 
 .memory-detail-card {
-  position: relative;
+  position: fixed;
+  top: 50%;
+  left: 50%;
   width: min(100%, 350px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 0.76);
   border-radius: 28px;
@@ -405,7 +414,7 @@
   background: var(--color-card);
   box-shadow: 0 22px 58px rgb(20 18 16 / 0.28);
   opacity: 0;
-  transform: translateY(16px) scale(0.94) rotateY(-88deg);
+  transform: translate(-50%, -50%) translate(var(--memory-origin-x), var(--memory-origin-y)) scale(var(--memory-origin-scale)) rotateY(-88deg);
   transform-origin: center;
   transform-style: preserve-3d;
   transition: transform 460ms var(--ease-drawer), opacity 180ms var(--ease-out);
@@ -414,7 +423,7 @@
 
 .memory-detail-card[data-open="true"] {
   opacity: 1;
-  transform: translateY(0) scale(1) rotateY(0);
+  transform: translate(-50%, -50%) translate(0, 0) scale(1) rotateY(0);
 }
 
 @utility section-label {
@@ -614,11 +623,11 @@
   }
 
   .memory-detail-card {
-    transform: translateY(8px) scale(0.98);
+    transform: translate(-50%, -50%) translate(var(--memory-origin-x), var(--memory-origin-y)) scale(var(--memory-origin-scale));
     transition: opacity 180ms var(--ease-out), transform 180ms var(--ease-out) !important;
   }
 
   .memory-detail-card[data-open="true"] {
-    transform: translateY(0) scale(1);
+    transform: translate(-50%, -50%) translate(0, 0) scale(1);
   }
 }

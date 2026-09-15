@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import { CalendarDays, ChevronRight, MapPin, Search, Star, UtensilsCrossed, Wallet, X } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/memories")({
 
 function MemoriesPage() {
   const { meals, ready } = useMeals();
-  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
+  const [selectedMeal, setSelectedMeal] = useState<{ meal: Meal; origin: DOMRect } | null>(null);
 
   const groups = useMemo(() => {
     const map = new Map<string, typeof meals>();
@@ -94,11 +94,17 @@ function MemoriesPage() {
 
           <div className="mt-8 space-y-6">
             {groups.map(([date, items]) => (
-              <DayGroup key={date} date={date} items={items} onSelectMeal={setSelectedMeal} />
+              <DayGroup
+                key={date}
+                date={date}
+                items={items}
+                selectedMealId={selectedMeal?.meal.id ?? null}
+                onSelectMeal={(meal, origin) => setSelectedMeal({ meal, origin })}
+              />
             ))}
           </div>
         </section>
-        <MemoryFlipDialog meal={selectedMeal} onClose={() => setSelectedMeal(null)} />
+        <MemoryFlipDialog selection={selectedMeal} onClose={() => setSelectedMeal(null)} />
       </Page>
     </AppShell>
   );
@@ -107,11 +113,13 @@ function MemoriesPage() {
 function DayGroup({
   date,
   items,
+  selectedMealId,
   onSelectMeal,
 }: {
   date: string;
   items: ReturnType<typeof useMeals>["meals"];
-  onSelectMeal: (meal: Meal) => void;
+  selectedMealId: string | null;
+  onSelectMeal: (meal: Meal, origin: DOMRect) => void;
 }) {
   const previews = items.length > 4 ? items.slice(0, 3) : items;
   const overflow = items.length > 4 ? items.length - 3 : 0;
@@ -150,7 +158,8 @@ function DayGroup({
           <FlipMealPreview
             key={meal.id}
             meal={meal}
-            onSelect={() => onSelectMeal(meal)}
+            selected={selectedMealId === meal.id}
+            onSelect={(origin) => onSelectMeal(meal, origin)}
           />
         ))}
         {overflow ? (
@@ -174,16 +183,19 @@ function DayGroup({
 
 function FlipMealPreview({
   meal,
+  selected,
   onSelect,
 }: {
   meal: Meal;
-  onSelect: () => void;
+  selected: boolean;
+  onSelect: (origin: DOMRect) => void;
 }) {
   return (
     <button
       type="button"
       className="memory-thumb-button press relative aspect-square min-w-0 rounded-[18px] text-left"
-      onClick={onSelect}
+      data-selected={selected}
+      onClick={(event) => onSelect(event.currentTarget.getBoundingClientRect())}
       aria-label={`Open ${meal.mealName || "saved meal"} details`}
     >
       <FoodSticker
@@ -196,15 +208,22 @@ function FlipMealPreview({
   );
 }
 
-function MemoryFlipDialog({ meal, onClose }: { meal: Meal | null; onClose: () => void }) {
+function MemoryFlipDialog({
+  selection,
+  onClose,
+}: {
+  selection: { meal: Meal; origin: DOMRect } | null;
+  onClose: () => void;
+}) {
   const [visible, setVisible] = useState(false);
+  const meal = selection?.meal ?? null;
   const close = useCallback(() => {
     setVisible(false);
-    window.setTimeout(onClose, 360);
+    window.setTimeout(onClose, 480);
   }, [onClose]);
 
   useEffect(() => {
-    if (!meal) {
+    if (!selection) {
       setVisible(false);
       return;
     }
@@ -217,10 +236,19 @@ function MemoryFlipDialog({ meal, onClose }: { meal: Meal | null; onClose: () =>
       cancelAnimationFrame(frame);
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [meal, close]);
+  }, [selection, close]);
 
-  if (!meal) return null;
+  if (!selection || !meal) return null;
   const typeLabel = MEAL_TYPES.find((type) => type.value === meal.mealType)?.label ?? "Meal";
+  const targetWidth = Math.min(350, window.innerWidth - 48);
+  const originX = selection.origin.left + selection.origin.width / 2 - window.innerWidth / 2;
+  const originY = selection.origin.top + selection.origin.height / 2 - window.innerHeight / 2;
+  const originScale = selection.origin.width / targetWidth;
+  const cardStyle = {
+    "--memory-origin-x": `${originX}px`,
+    "--memory-origin-y": `${originY}px`,
+    "--memory-origin-scale": originScale,
+  } as CSSProperties;
 
   return (
     <div
@@ -236,6 +264,7 @@ function MemoryFlipDialog({ meal, onClose }: { meal: Meal | null; onClose: () =>
         aria-modal="true"
         aria-labelledby="memory-detail-title"
         className="memory-detail-card"
+        style={cardStyle}
         data-open={visible}
         onClick={close}
       >
