@@ -534,6 +534,8 @@
   }
 }
 
+/* Superseded landing-page rules kept inactive while the new page uses website.css. */
+@media (width < 0px) {
 /* Marketing page: a lighter, photo-first expression of the Nomory system. */
 .website-page {
   --website-ink: oklch(0.19 0.01 55);
@@ -722,6 +724,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .website-page *, .website-page *::before, .website-page *::after { animation: none !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
 }
 
 @utility pop-in {
