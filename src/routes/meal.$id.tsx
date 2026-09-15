@@ -1,15 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import {
-  ArrowLeft,
-  Loader2,
-  MapPin,
-  Pencil,
-  RefreshCw,
-  Star,
-  Trash2,
-  X,
-} from "lucide-react";
+import { ArrowLeft, Loader2, MapPin, Pencil, RefreshCw, Star, Trash2, X } from "lucide-react";
 import { toast } from "@/lib/feedback";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
@@ -83,8 +74,6 @@ function MealDetailPage() {
   }
 
   const typeLabel = MEAL_TYPES.find((t) => t.value === meal.mealType)?.label ?? "Meal";
-  const hasBothPhotos = meal.originalImage !== meal.processedImage;
-
   const startEdit = () => {
     setValues(mealToForm(meal));
     setEditing(true);
@@ -114,11 +103,6 @@ function MealDetailPage() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const togglePhoto = async () => {
-    if (!meal) return;
-    await saveMeal({ ...meal, useOriginal: !meal.useOriginal, updatedAt: Date.now() });
   };
 
   const changePhoto = async (file: File | undefined) => {
@@ -202,9 +186,9 @@ function MealDetailPage() {
           }}
         />
 
-          <PageHeader
-            title={meal.mealName || typeLabel}
-            subtitle={typeLabel}
+        <PageHeader
+          title={meal.mealName || typeLabel}
+          subtitle={typeLabel}
           left={
             <button
               type="button"
@@ -236,16 +220,6 @@ function MealDetailPage() {
           <span className="mt-5 rounded-full bg-accent-soft px-4 py-1.5 text-[13px] font-semibold text-accent">
             {typeLabel}
           </span>
-
-          {hasBothPhotos ? (
-            <button
-              type="button"
-              onClick={togglePhoto}
-              className="press mt-4 text-[13.5px] font-semibold text-muted-foreground underline underline-offset-4"
-            >
-              {meal.useOriginal ? "View food sticker" : "View original photo"}
-            </button>
-          ) : null}
         </section>
 
         <section className="surface-card mt-4 p-5" aria-label="Meal details">
@@ -255,7 +229,10 @@ function MealDetailPage() {
             <DetailItem label="Price" value={meal.price ? formatPrice(meal.price) : "—"} />
             <div>
               <p className="text-[13px] font-semibold text-muted-foreground">Rating</p>
-              <div className="mt-1 flex items-center gap-0.5 text-sunny" aria-label={meal.rating ? `${meal.rating} out of 5 stars` : "Not rated"}>
+              <div
+                className="mt-1 flex items-center gap-0.5 text-sunny"
+                aria-label={meal.rating ? `${meal.rating} out of 5 stars` : "Not rated"}
+              >
                 {meal.rating ? (
                   Array.from({ length: 5 }, (_, index) => (
                     <Star
@@ -275,7 +252,9 @@ function MealDetailPage() {
 
         <section className="surface-card mt-4 p-5">
           <p className="mb-2 text-[13px] font-semibold text-muted-foreground">Note</p>
-          <p className={cn("text-[15px] leading-[1.5]", !meal.note && "text-subtle")}>{meal.note || "No note added"}</p>
+          <p className={cn("text-[15px] leading-[1.5]", !meal.note && "text-subtle")}>
+            {meal.note || "No note added"}
+          </p>
         </section>
 
         <section className="surface-card mt-4 flex items-center gap-3 p-5">
