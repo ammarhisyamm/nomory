@@ -58,7 +58,7 @@
   align-items: center;
   width: min(calc(100% - 40px), 650px);
   margin: 0 auto;
-  padding-top: clamp(112px, 15vh, 170px);
+  padding-top: clamp(56px, 7vh, 88px);
   text-align: center;
 }
 
@@ -94,6 +94,6 @@
 
   .website-hero-copy {
     width: min(calc(100% - 32px), 430px);
-    padding-top: 72px;
+    padding-top: 48px;
   }
 }
