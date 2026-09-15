@@ -71,7 +71,7 @@ function WebsiteLandingPage() {
     </section>
 
     <section className="website-footer-zone">
-      <div className="website-section-shell website-final-cta"><div><p className="website-eyebrow">Start with your next meal</p><h2>Make room for the meals you will want to remember.</h2><p>One photo is all it takes to begin your diary.</p></div><Link to="/login" className="website-primary-button website-final-button">Start your food diary <ArrowRight className="size-5" /></Link></div>
+      <div className="website-section-shell website-final-cta"><div className="website-final-copy"><p className="website-eyebrow">Start with tonight</p><h2>Start remembering <span>your meals.</span></h2><p>One photo is all it takes.</p></div><div className="website-footer-visual" aria-hidden="true"><div className="website-footer-image-tile"><Camera className="size-10" strokeWidth={1.8} /></div><span className="website-footer-plus"><Plus className="size-6" strokeWidth={2.4} /></span></div><Link to="/login" className="website-primary-button website-final-button">Save your first meal <ArrowRight className="size-5" /></Link></div>
       <footer className="website-footer website-section-shell"><div className="website-footer-brand"><NomoryLogo className="text-[25px]" /><span>Your meals, remembered.</span></div><div className="website-footer-links"><Link to="/privacy-policy">Privacy &amp; Policy</Link><Link to="/login">Get started</Link></div></footer>
     </section>
   </main>;
