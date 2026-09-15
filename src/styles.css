@@ -968,3 +968,33 @@
     margin-top: 64px;
   }
 }
+
+/* Final landing polish: give the hero copy room above the artwork and let the
+ * feature illustrations sit directly on the white cards. */
+.website-hero-copy {
+  display: flex;
+  align-items: center;
+  padding-top: clamp(96px, 13vh, 156px);
+  text-align: center;
+}
+
+.website-hero-copy h1,
+.website-hero-copy p,
+.website-hero-copy a {
+  text-align: center;
+}
+
+.website-feature-preview,
+.website-preview-photo,
+.website-preview-details,
+.website-preview-calendar {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@media (max-width: 640px) {
+  .website-hero-copy {
+    padding-top: 34px;
+  }
+}
