@@ -38,10 +38,11 @@ const questions = [
 ] as const;
 
 function WebsiteLandingPage() {
-  return <main className="website-page min-h-[100dvh] overflow-hidden">
+  return <main id="main-content" className="website-page min-h-[100dvh] overflow-hidden">
+    <a className="website-skip-link" href="#features">Skip to content</a>
     <nav className="website-nav" aria-label="Main navigation">
       <Link to="/website" className="website-logo" aria-label="Nomory home"><NomoryLogo className="text-[28px]" /></Link>
-      <div className="website-nav-links"><a href="#features">Features</a><a href="#how-it-works">How it works</a><a href="#questions">Q&A</a></div>
+      <div className="website-nav-links"><a href="#features">Features</a><a href="#how-it-works">How it works</a><a href="#questions">FAQ</a></div>
       <Link to="/login" className="website-nav-cta">Get started <ArrowRight className="size-4" /></Link>
     </nav>
 
@@ -54,24 +55,24 @@ function WebsiteLandingPage() {
       </div>
     </section>
 
-    <section id="features" className="website-section-shell website-section website-features-section">
-      <div className="website-section-heading"><h2>Keep the parts that make a meal yours.</h2><p>Nomory gives the little details a place to live, without turning food into a chore.</p></div>
+    <section id="features" aria-labelledby="features-title" className="website-section-shell website-section website-features-section">
+      <div className="website-section-heading"><h2 id="features-title">Keep the parts that make a meal yours.</h2><p>Nomory gives the little details a place to live, without turning food into a chore.</p></div>
       <div className="website-feature-grid">{features.map((feature) => <FeatureCard key={feature.title} {...feature} />)}</div>
     </section>
 
-    <section id="how-it-works" className="website-section-shell website-section website-how-section">
-      <div className="website-section-heading website-how-heading"><h2>Three small moments, kept.</h2><p>From the first photo to a memory you can return to, everything stays easy.</p></div>
+    <section id="how-it-works" aria-labelledby="how-title" className="website-section-shell website-section website-how-section">
+      <div className="website-section-heading website-how-heading"><h2 id="how-title">Three small moments, kept.</h2><p>From the first photo to a memory you can return to, everything stays easy.</p></div>
       <div className="website-how-grid">{steps.map((step, index) => <HowStep key={step.title} {...step} stepNumber={String(index + 1).padStart(2, "0")} />)}</div>
     </section>
 
-    <section id="questions" className="website-section-shell website-section website-questions-section">
-      <div className="website-questions-intro"><h2>A diary should feel easy to keep.</h2><p>Everything you need to know before you start saving your next meal.</p></div>
+    <section id="questions" aria-labelledby="questions-title" className="website-section-shell website-section website-questions-section">
+      <div className="website-questions-intro"><h2 id="questions-title">A diary should feel easy to keep.</h2><p>Everything you need to know before you start saving your next meal.</p></div>
       <div className="website-faq-list">{questions.map((item) => <details className="website-faq-item" key={item.question}><summary><span>{item.question}</span><span className="website-faq-toggle" aria-hidden="true"><Plus className="size-4" /></span></summary><p>{item.answer}</p></details>)}</div>
     </section>
 
     <section className="website-footer-zone">
       <div className="website-section-shell website-final-cta"><div className="website-final-copy"><h2>Start remembering <span>your meals.</span></h2><p>One photo is all it takes.</p></div><div className="website-footer-visual" aria-hidden="true"><div className="website-footer-image-tile"><Camera className="size-10" strokeWidth={1.8} /></div><span className="website-footer-plus"><Plus className="size-6" strokeWidth={2.4} /></span></div><Link to="/login" className="website-primary-button website-final-button">Save your first meal <ArrowRight className="size-5" /></Link></div>
-      <footer className="website-footer website-section-shell"><div className="website-footer-brand"><NomoryLogo className="text-[25px]" /><span>Your meals, remembered.</span></div><div className="website-footer-links"><Link to="/privacy-policy">Privacy &amp; Policy</Link><Link to="/login">Get started</Link></div></footer>
+      <footer className="website-footer website-section-shell" aria-label="Footer"><div className="website-footer-brand"><NomoryLogo className="text-[25px]" /><span>Your meals, remembered.</span></div><div className="website-footer-links"><Link to="/privacy-policy">Privacy &amp; Policy</Link><Link to="/login">Get started</Link></div></footer>
     </section>
   </main>;
 }
