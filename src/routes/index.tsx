@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Bookmark, Flame, Images, Plus } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -37,6 +37,7 @@ function TodayPage() {
   const user = auth?.user ?? null;
   const todayKey = toDateKey(new Date());
   const todayMeals = mealsByDate(todayKey);
+  const [greeting, setGreeting] = useState("Good morning");
   useEffect(() => {
     if (typeof window === "undefined") return;
     // Migrate the old Morsel flag forward.
@@ -48,6 +49,13 @@ function TodayPage() {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    const updateGreeting = () => setGreeting(getTimeGreeting(new Date()));
+    updateGreeting();
+    const interval = window.setInterval(updateGreeting, 60_000);
+    return () => window.clearInterval(interval);
+  }, []);
+
   const displayName = formatDisplayName(user?.name || "there");
 
   if (auth && !user) return <PublicNomoryHome />;
@@ -56,7 +64,7 @@ function TodayPage() {
     <AppShell>
       <Page>
         <p className="section-label mb-2">Nomory</p>
-        <PageHeader title={`Good morning, ${displayName}.`} />
+        <PageHeader title={`${greeting}, ${displayName}.`} />
 
         <p className="mt-1 max-w-3xl text-[19px] leading-[1.45] text-muted-foreground">
           You&apos;ve captured{" "}
@@ -105,6 +113,13 @@ function TodayPage() {
   );
 }
 
+function getTimeGreeting(date: Date) {
+  const hour = date.getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 function PublicNomoryHome() {
   return (
     <div className="min-h-screen bg-background px-5 py-10">
@@ -117,8 +132,8 @@ function PublicNomoryHome() {
               Your meals, remembered.
             </h1>
             <p className="mt-4 max-w-sm text-[18px] leading-7 text-muted-foreground">
-              Nomory is a private food memory diary for saving meal photos, notes, places, and
-              the little moments around what you eat.
+              Nomory is a private food memory diary for saving meal photos, notes, places, and the
+              little moments around what you eat.
             </p>
           </div>
         </div>
