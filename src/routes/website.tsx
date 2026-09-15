@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Camera, LockKeyhole, MapPin, NotebookPen, Plus } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, BookOpen, Camera, NotebookPen, Plus } from "lucide-react";
+import { FoodSticker } from "@/components/food-sticker";
 import { NomoryLogo } from "@/components/nomory-logo";
+import { MEAL_TYPES, type MealType } from "@/lib/meals";
 import "@/website.css";
 
 export const Route = createFileRoute("/website")({
@@ -19,7 +22,6 @@ const features = [
   { title: "Capture a meal", description: "Take a photo in the moment or choose one from your gallery.", icon: Camera, preview: "photo", className: "website-feature-capture" },
   { title: "Keep the details", description: "Save a note, rating, price, location, or leave it beautifully simple.", icon: NotebookPen, preview: "details", className: "website-feature-details" },
   { title: "Find it again", description: "Calendar and Memories keep every meal easy to revisit.", icon: BookOpen, preview: "calendar", className: "website-feature-calendar" },
-  { title: "Yours to keep", description: "Your diary stays personal, ready whenever you want to look back.", icon: LockKeyhole, preview: "private", className: "website-feature-private" },
 ] as const;
 
 const steps = [
@@ -80,10 +82,10 @@ function FeatureCard({ title, description, icon: Icon, preview, className }: (ty
 }
 
 function FeaturePreview({ type }: { type: (typeof features)[number]["preview"] }) {
-  if (type === "photo") return <div className="website-feature-preview website-preview-photo" aria-hidden="true"><div className="website-preview-photo-window" /><span>Ready when you are</span></div>;
-  if (type === "details") return <div className="website-feature-preview website-preview-details" aria-hidden="true"><span>Lunch</span><i /><i /><div><MapPin className="size-3.5" /> Jakarta</div></div>;
+  if (type === "photo") return <div className="website-feature-preview website-preview-photo"><img src="/illustrations/capture-photo.png" alt="Nomory meal capture illustration" /></div>;
+  if (type === "details") return <div className="website-feature-preview website-preview-details"><img src="/illustrations/add-meal-mascot.png" alt="Nomory meal details illustration" /></div>;
   if (type === "calendar") return <div className="website-feature-preview website-preview-calendar" aria-hidden="true"><strong>September</strong><div>{["M", "T", "W", "T", "F", "S", "S"].map((day, index) => <span key={`${day}-${index}`} className={index === 2 || index === 5 ? "is-saved" : ""}>{day}</span>)}</div></div>;
-  return <div className="website-feature-preview website-preview-private" aria-hidden="true"><LockKeyhole className="size-7" /><span>Your diary stays yours.</span></div>;
+  return null;
 }
 
 function HowStep({ title, description, icon: Icon, preview }: (typeof steps)[number]) {
@@ -91,7 +93,12 @@ function HowStep({ title, description, icon: Icon, preview }: (typeof steps)[num
 }
 
 function HowPreview({ type }: { type: (typeof steps)[number]["preview"] }) {
-  if (type === "capture") return <div className="website-how-preview website-how-capture" aria-hidden="true"><Camera className="size-5" /><span>Choose a photo</span><div /></div>;
-  if (type === "save") return <div className="website-how-preview website-how-save" aria-hidden="true"><span>Meal type</span><strong>Lunch</strong><span>Location</span><strong>Jakarta</strong></div>;
-  return <div className="website-how-preview website-how-remember" aria-hidden="true"><strong>Sunday, Sep 13</strong><span>Matcha ube</span><span>Mie ayam</span><span>Saved meal</span></div>;
+  if (type === "capture") return <div className="website-how-preview website-how-capture"><FoodSticker src="/illustrations/capture-photo.png" alt="A meal ready to save" className="size-[68px]" rounded="rounded-[20px]" /><span>Choose a photo</span></div>;
+  if (type === "save") return <MealTypePreview />;
+  return <div className="website-how-preview website-how-remember"><div className="website-mini-memory-stack"><FoodSticker src="/illustrations/upload-gallery.png" alt="Saved meal memory" className="size-12" rounded="rounded-[16px]" /><FoodSticker src="/illustrations/capture-photo.png" alt="Saved meal memory" className="size-12" rounded="rounded-[16px]" /><FoodSticker src="/illustrations/empty-memories.png" alt="Saved meal memory" className="size-12" rounded="rounded-[16px]" /></div><strong>Sunday, Sep 13</strong><span>3 meals saved</span></div>;
+}
+
+function MealTypePreview() {
+  const [selected, setSelected] = useState<MealType>("lunch");
+  return <div className="website-how-preview website-how-save" aria-label="Meal type selection preview">{MEAL_TYPES.slice(0, 4).map((type) => <button key={type.value} type="button" onClick={() => setSelected(type.value)} data-selected={selected === type.value} className="meal-type-option text-[11px] font-semibold">{type.label}</button>)}</div>;
 }
