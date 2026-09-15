@@ -44,3 +44,56 @@
 @media(max-width:640px){.website-page{padding-bottom:0}}
 .website-how-grid{gap:14px;margin-top:34px}.website-how-card{min-height:0;padding:24px;border-radius:24px}.website-how-card-top{margin-bottom:22px}.website-how-arrow{display:none}.website-how-card>p{min-height:48px}.website-how-preview{margin-top:20px}
 @media(max-width:800px){.website-how-grid{gap:14px;margin-top:32px}.website-how-card{min-height:0;padding:23px}.website-how-card>p{min-height:0}}
+
+/* Keep the hero centered across the full viewport, not inside the old split grid. */
+.website-hero {
+  grid-template-columns: 1fr;
+  place-items: stretch;
+  min-height: min(920px, 100dvh);
+}
+
+.website-hero-copy {
+  align-self: start;
+  justify-self: center;
+  align-items: center;
+  width: min(calc(100% - 40px), 650px);
+  margin: 0 auto;
+  padding-top: clamp(112px, 15vh, 170px);
+  text-align: center;
+}
+
+.website-hero-copy h1,
+.website-hero-copy p,
+.website-hero-copy a {
+  text-align: center;
+}
+
+.website-hero-copy h1 {
+  max-width: 650px;
+  margin-inline: auto;
+}
+
+.website-hero-body,
+.website-hero-copy .website-primary-button {
+  margin-inline: auto;
+}
+
+.website-feature-preview,
+.website-preview-photo,
+.website-preview-details,
+.website-preview-calendar {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@media(max-width:640px){
+  .website-hero {
+    min-height: 760px;
+  }
+
+  .website-hero-copy {
+    width: min(calc(100% - 32px), 430px);
+    padding-top: 72px;
+  }
+}
