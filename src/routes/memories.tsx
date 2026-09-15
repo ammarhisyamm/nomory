@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
-import { CalendarDays, ChevronRight, MapPin, Search, Star, UtensilsCrossed, Wallet, X } from "lucide-react";
+import { CalendarDays, ChevronRight, MapPin, Search, Star, UtensilsCrossed, Wallet } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { FoodSticker } from "@/components/food-sticker";
@@ -286,19 +286,8 @@ function MemoryFlipDialog({
             />
           </div>
           <div className="memory-detail-face memory-detail-back">
-            <button
-              type="button"
-              className="press absolute right-3 top-3 z-10 grid size-9 place-items-center rounded-full bg-card/88 text-muted-foreground shadow-[var(--shadow-pill)] backdrop-blur"
-              onClick={(event) => {
-                event.stopPropagation();
-                close();
-              }}
-              aria-label="Close meal details"
-            >
-              <X className="size-4" strokeWidth={2.2} />
-            </button>
             <p className="text-[11px] font-bold tracking-[0.14em] text-accent uppercase">Food memory</p>
-            <h2 id="memory-detail-title" className="mt-1 pr-8 font-display text-[24px] font-extrabold leading-tight">
+            <h2 id="memory-detail-title" className="mt-1 font-display text-[24px] font-extrabold leading-tight">
               {meal.mealName || "Saved meal"}
             </h2>
             <p className="mt-1 text-[13px] text-muted-foreground">{typeLabel}</p>

@@ -430,7 +430,7 @@
 .memory-detail-card[data-closing="true"] {
   opacity: 1;
   transform: translate(-50%, -50%) translate(var(--memory-origin-x), var(--memory-origin-y)) scale(var(--memory-origin-scale));
-  /* No special close animation: this is the open transform in reverse. */
+  transition-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .memory-detail-flip {
@@ -444,7 +444,7 @@
 }
 
 .memory-detail-flip[data-closing="true"] {
-  /* Keep the same 760ms transition so rotateY reverses naturally. */
+  transition-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .memory-detail-face {
