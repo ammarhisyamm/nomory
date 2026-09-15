@@ -61,7 +61,7 @@ function WebsiteLandingPage() {
 
     <section id="how-it-works" className="website-section-shell website-section website-how-section">
       <div className="website-section-heading website-how-heading"><h2>Three small moments, kept.</h2><p>From the first photo to a memory you can return to, everything stays easy.</p></div>
-      <div className="website-how-grid">{steps.map((step) => <HowStep key={step.title} {...step} />)}</div>
+      <div className="website-how-grid">{steps.map((step, index) => <HowStep key={step.title} {...step} stepNumber={String(index + 1).padStart(2, "0")} />)}</div>
     </section>
 
     <section id="questions" className="website-section-shell website-section website-questions-section">
@@ -83,12 +83,12 @@ function FeatureCard({ title, description, icon: Icon, preview, className }: (ty
 function FeaturePreview({ type }: { type: (typeof features)[number]["preview"] }) {
   if (type === "photo") return <div className="website-feature-preview website-preview-photo"><img src="/illustrations/capture-photo.png" alt="Nomory meal capture illustration" /></div>;
   if (type === "details") return <div className="website-feature-preview website-preview-details"><img src="/illustrations/keep-details-calendar.png" alt="Nomory meal details illustration" /></div>;
-  if (type === "calendar") return <div className="website-feature-preview website-preview-calendar" aria-hidden="true"><strong>September</strong><div>{["M", "T", "W", "T", "F", "S", "S"].map((day, index) => <span key={`${day}-${index}`} className={index === 2 || index === 5 ? "is-saved" : ""}>{day}</span>)}</div></div>;
+  if (type === "calendar") return <div className="website-feature-preview website-preview-calendar"><img src="/illustrations/find-again-details.png" alt="Nomory saved meal details illustration" /></div>;
   return null;
 }
 
-function HowStep({ title, description, icon: Icon, preview }: (typeof steps)[number]) {
-  return <article className="website-how-card"><div className="website-how-card-top"><div className="website-icon-tile"><Icon className="size-5" strokeWidth={2.2} /></div><ArrowRight className="website-how-arrow size-5" /></div><h3>{title}</h3><p>{description}</p><HowPreview type={preview} /></article>;
+function HowStep({ title, description, preview, stepNumber }: Omit<(typeof steps)[number], "icon"> & { stepNumber: string }) {
+  return <article className="website-how-card"><div className="website-how-card-top"><div className="website-step-number">{stepNumber}</div><ArrowRight className="website-how-arrow size-5" /></div><h3>{title}</h3><p>{description}</p><HowPreview type={preview} /></article>;
 }
 
 function HowPreview({ type }: { type: (typeof steps)[number]["preview"] }) {
