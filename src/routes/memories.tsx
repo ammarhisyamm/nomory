@@ -221,7 +221,9 @@ function MemoryFlipDialog({
   const close = useCallback(() => {
     setVisible(false);
     setClosing(true);
-    window.setTimeout(onClose, 860);
+    // Close with the exact reverse of the open transition. Keep the
+    // overlay mounted until the card finishes returning to its thumbnail.
+    window.setTimeout(onClose, 760);
   }, [onClose]);
 
   useEffect(() => {
