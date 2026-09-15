@@ -40,3 +40,5 @@
 
 .website-skip-link{position:fixed;z-index:40;top:12px;left:12px;transform:translateY(-160%);padding:10px 14px;border-radius:12px;background:var(--website-ink);color:#fff;font-size:.85rem;font-weight:800;transition:transform 180ms var(--ease-out)}.website-skip-link:focus{transform:translateY(0)}.website-page a:focus-visible,.website-page button:focus-visible,.website-page summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px}.website-page a:focus:not(:focus-visible),.website-page button:focus:not(:focus-visible),.website-page summary:focus:not(:focus-visible){outline:0}
 .website-footer-zone{border-top:0}.website-final-cta{grid-template-columns:minmax(0,1fr) auto}.website-footer{border-top:0}
+.website-page{padding-bottom:0}.website-feature-card,.website-feature-capture,.website-feature-details,.website-feature-calendar,.website-feature-private{background:#fff}
+@media(max-width:640px){.website-page{padding-bottom:0}}
