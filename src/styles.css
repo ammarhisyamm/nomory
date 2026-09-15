@@ -260,6 +260,17 @@
     color: white;
     filter: drop-shadow(0 1px 1px rgb(20 18 16 / 0.24));
   }
+
+  .form-location-icon {
+    display: grid;
+    place-items: center;
+    color: var(--color-muted-foreground);
+  }
+
+  .form-location-icon svg {
+    color: currentColor;
+    filter: none;
+  }
 }
 
 @utility font-display {

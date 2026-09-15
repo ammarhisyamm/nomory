@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   ChevronRight,
@@ -9,13 +10,14 @@ import {
   KeyRound,
   Loader2,
   LogOut,
+  Save,
   Trash2,
 } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { getAuthStatus } from "@/lib/auth";
 import { toast } from "@/lib/feedback";
 import { useMeals } from "@/lib/meals";
-import { signOut } from "@/lib/password-auth";
+import { signOut, updateProfileName } from "@/lib/password-auth";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -32,6 +34,11 @@ function SettingsPage() {
   const queryClient = useQueryClient();
   const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const user = auth?.user ?? null;
+  const [displayName, setDisplayName] = useState("");
+  const [savingName, setSavingName] = useState(false);
+  useEffect(() => {
+    if (user?.name) setDisplayName(user.name);
+  }, [user?.id, user?.name]);
   const signOutUser = async () => {
     await signOut();
     await queryClient.invalidateQueries({ queryKey: ["auth"] });
@@ -46,6 +53,25 @@ function SettingsPage() {
       toast.error("Your diary wasn’t cleared. Check your connection and try again.");
     }
   };
+  const saveName = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!user?.username) return;
+    if (displayName.trim().length < 2) {
+      toast.error("Name must be at least 2 characters.");
+      return;
+    }
+    setSavingName(true);
+    try {
+      const result = await updateProfileName({ data: { name: displayName } });
+      if (!result.ok) return toast.error(result.error ?? "Couldn’t update your name.");
+      await queryClient.invalidateQueries({ queryKey: ["auth"] });
+      toast.success("Your display name is updated.", { title: "Profile updated" });
+    } catch {
+      toast.error("Couldn’t update your name. Try again.");
+    } finally {
+      setSavingName(false);
+    }
+  };
   return (
     <AppShell>
       <Page>
@@ -55,7 +81,36 @@ function SettingsPage() {
           left={<BackToProfile />}
         />
         <SettingsGroup title="General">
-          <div className="flex items-center gap-4 p-5">
+          {user?.username ? (
+            <form onSubmit={saveName} className="space-y-3 p-5">
+              <label className="block text-[13px] font-bold" htmlFor="settings-display-name">
+                Display name
+              </label>
+              <input
+                id="settings-display-name"
+                className="input-soft h-12 px-4 text-[15px] font-normal"
+                value={displayName}
+                onChange={(event) => setDisplayName(event.target.value)}
+                autoComplete="name"
+                maxLength={40}
+              />
+              <button
+                type="submit"
+                disabled={savingName}
+                className="primary-button press flex h-12 w-full items-center justify-center gap-2 rounded-full text-[14px] font-semibold text-accent-foreground disabled:opacity-60"
+              >
+                {savingName ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Save className="size-4" />
+                )}
+                Save name
+              </button>
+            </form>
+          ) : null}
+          <div
+            className={`flex items-center gap-4 p-5 ${user?.username ? "border-t border-border/60" : ""}`}
+          >
             <div className="min-w-0 flex-1">
               <p className="truncate text-[16px] font-bold">
                 {user?.username ? `@${user.username}` : (user?.name ?? "Nomory account")}
@@ -64,14 +119,7 @@ function SettingsPage() {
                 {cloudEnabled ? "Synced across your devices" : "Stored on this device"}
               </p>
             </div>
-            <button
-              type="button"
-              onClick={signOutUser}
-              className="press grid size-11 shrink-0 place-items-center rounded-full bg-muted"
-              aria-label="Sign out"
-            >
-              <LogOut className="size-[18px]" strokeWidth={1.9} />
-            </button>
+            <span className="text-[13px] text-muted-foreground">Account</span>
           </div>
         </SettingsGroup>
         <SettingsGroup title="Account">
@@ -122,6 +170,18 @@ function SettingsPage() {
                 photos.
               </span>
             </span>
+          </button>
+        </SettingsGroup>
+        <SettingsGroup title="Session">
+          <button
+            type="button"
+            onClick={signOutUser}
+            className="press flex w-full items-center gap-4 p-5 text-left"
+          >
+            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-muted">
+              <LogOut className="size-[18px]" strokeWidth={1.9} />
+            </span>
+            <span className="text-[15px] font-semibold">Log out</span>
           </button>
         </SettingsGroup>
         {auth === undefined ? (

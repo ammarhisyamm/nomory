@@ -18,17 +18,34 @@ import {
   setGoogleUsername,
   upsertGoogleAccount,
 } from "./google-accounts";
-import { findUserByUsername, normalizeUsername, usernameSchema } from "./password-users";
+import {
+  findUserById,
+  findUserByUsername,
+  normalizeUsername,
+  usernameSchema,
+} from "./password-users";
 
 export type AuthStatus = {
   googleConfigured: boolean;
   user: SessionUser | null;
 };
 
-export const getAuthStatus = createServerFn().handler(async (): Promise<AuthStatus> => ({
-  googleConfigured: Boolean(googleConfig()),
-  user: await getSessionUser(),
-}));
+export const getAuthStatus = createServerFn().handler(async (): Promise<AuthStatus> => {
+  const session = await getSessionUser();
+  const db = getCloudEnv().DB;
+  if (session?.provider === "password" && db) {
+    const storedUser = await findUserById(db, session.id);
+    if (
+      storedUser &&
+      (storedUser.username !== session.username || storedUser.name !== session.name)
+    ) {
+      const syncedUser = { ...session, username: storedUser.username, name: storedUser.name };
+      await setSessionCookie(syncedUser);
+      return { googleConfigured: Boolean(googleConfig()), user: syncedUser };
+    }
+  }
+  return { googleConfigured: Boolean(googleConfig()), user: session };
+});
 
 export const startGoogleSignIn = createServerFn({ method: "POST" })
   .validator(z.object({ origin: z.string().url() }))
@@ -49,39 +66,44 @@ export const completeGoogleSignIn = createServerFn({ method: "POST" })
       state: z.string().min(1),
     }),
   )
-  .handler(async ({ data }): Promise<{ ok: boolean; needsOnboarding?: boolean; error?: string }> => {
-    const cfg = googleConfig();
-    if (!cfg) return { ok: false, error: "Google sign-in isn't set up yet." };
-    if (!consumeOAuthState(data.state)) {
-      console.error("google_oauth_state_invalid");
-      return { ok: false, error: "This sign-in attempt expired. Try again." };
-    }
-    try {
-      const signedInUser = await exchangeCodeForUser(
-        cfg.clientId,
-        cfg.clientSecret,
-        data.code,
-        data.redirectUri,
-      );
-      const db = getCloudEnv().DB;
-      let user = signedInUser;
-      if (db) {
-        const account = await upsertGoogleAccount(db, {
-          googleId: signedInUser.id,
-          email: signedInUser.email,
-          name: signedInUser.name,
-          picture: signedInUser.picture,
-          now: Date.now(),
-        });
-        user = { ...signedInUser, ...(account.username ? { username: account.username } : {}) };
+  .handler(
+    async ({ data }): Promise<{ ok: boolean; needsOnboarding?: boolean; error?: string }> => {
+      const cfg = googleConfig();
+      if (!cfg) return { ok: false, error: "Google sign-in isn't set up yet." };
+      if (!consumeOAuthState(data.state)) {
+        console.error("google_oauth_state_invalid");
+        return { ok: false, error: "This sign-in attempt expired. Try again." };
       }
-      await setSessionCookie(user);
-      return { ok: true, needsOnboarding: !user.username };
-    } catch (error) {
-      console.error("google_sign_in_failed", error instanceof Error ? error.message : String(error));
-      return { ok: false, error: "Couldn't complete Google sign-in. Try again." };
-    }
-  });
+      try {
+        const signedInUser = await exchangeCodeForUser(
+          cfg.clientId,
+          cfg.clientSecret,
+          data.code,
+          data.redirectUri,
+        );
+        const db = getCloudEnv().DB;
+        let user = signedInUser;
+        if (db) {
+          const account = await upsertGoogleAccount(db, {
+            googleId: signedInUser.id,
+            email: signedInUser.email,
+            name: signedInUser.name,
+            picture: signedInUser.picture,
+            now: Date.now(),
+          });
+          user = { ...signedInUser, ...(account.username ? { username: account.username } : {}) };
+        }
+        await setSessionCookie(user);
+        return { ok: true, needsOnboarding: !user.username };
+      } catch (error) {
+        console.error(
+          "google_sign_in_failed",
+          error instanceof Error ? error.message : String(error),
+        );
+        return { ok: false, error: "Couldn't complete Google sign-in. Try again." };
+      }
+    },
+  );
 
 export const completeGoogleUsername = createServerFn({ method: "POST" })
   .validator(z.object({ username: usernameSchema }))

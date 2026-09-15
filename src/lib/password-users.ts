@@ -87,6 +87,18 @@ export async function updatePasswordHash(
     .run();
 }
 
+export async function updateUserName(
+  db: D1Database,
+  id: string,
+  name: string,
+  now: number,
+): Promise<void> {
+  await db
+    .prepare(`UPDATE users SET name = ?, updated_at = ? WHERE id = ?`)
+    .bind(name, now, id)
+    .run();
+}
+
 export async function createUser(
   db: D1Database,
   input: { id: string; username: string; name: string; passwordHash: string; now: number },

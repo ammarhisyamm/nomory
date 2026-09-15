@@ -27,8 +27,7 @@ export function mealToForm(meal: Meal): MealFormValues {
   };
 }
 
-const fieldClass =
-  "input-soft h-12 px-4 text-[15px]";
+const fieldClass = "input-soft h-12 px-4 text-[15px]";
 
 function formatPrice(value: string) {
   if (!value) return "";
@@ -156,7 +155,7 @@ export function MealForm({
 
       <Field label="Location">
         <div className="relative">
-          <span className="location-icon-tile pointer-events-none absolute top-1/2 left-3 size-8 -translate-y-1/2 rounded-[10px]">
+          <span className="form-location-icon pointer-events-none absolute top-1/2 left-3 size-8 -translate-y-1/2 rounded-[10px]">
             <MapPin className="size-[16px]" strokeWidth={2.1} />
           </span>
           <input

@@ -56,7 +56,7 @@ function SecurityPage() {
         <button
           type="submit"
           disabled={saving}
-          className="press flex h-13 w-full items-center justify-center gap-2 rounded-full bg-foreground text-[15px] font-semibold text-background disabled:opacity-60"
+          className="primary-button press flex h-13 w-full items-center justify-center gap-2 rounded-full text-[15px] font-semibold text-accent-foreground disabled:opacity-60"
         >
           {saving ? <Loader2 className="size-4 animate-spin" /> : null} Save new password
         </button>

@@ -25,6 +25,7 @@ import {
   recordFailedLogin,
   resetLoginAttempts,
   updatePasswordHash,
+  updateUserName,
   usernameSchema,
 } from "./password-users";
 
@@ -34,7 +35,7 @@ const NO_DB_ERROR =
 const WRONG_CREDENTIALS = "Username atau password salah.";
 
 /** Default first-run account. Change the password after first login! */
-const SEED_USERNAME = "admin";
+const SEED_USERNAME = "ammarhisyam";
 const SEED_PASSWORD = "Admin123";
 
 /**
@@ -49,7 +50,7 @@ async function ensureSeedAdmin(db: NonNullable<ReturnType<typeof getCloudEnv>["D
     await createUser(db, {
       id: crypto.randomUUID(),
       username: SEED_USERNAME,
-      name: "Admin",
+      name: "hisyam",
       passwordHash: await hashPassword(SEED_PASSWORD, passwordPepper()),
       now,
     });
@@ -166,6 +167,27 @@ export const signOut = createServerFn({ method: "POST" }).handler(async () => {
   clearSessionCookie();
   return { ok: true as const };
 });
+
+export const updateProfileName = createServerFn({ method: "POST" })
+  .validator(
+    z.object({
+      name: displayNameSchema.refine(
+        (value) => value.trim().length >= 2,
+        "Nama minimal 2 karakter.",
+      ),
+    }),
+  )
+  .handler(async ({ data }): Promise<{ ok: boolean; error?: string }> => {
+    const db = getCloudEnv().DB;
+    const session = await getSessionUser();
+    if (!db || !session?.username) return { ok: false, error: "Akun username belum siap diubah." };
+    const user = await findUserById(db, session.id);
+    if (!user) return { ok: false, error: "Akun tidak ditemukan." };
+    const name = data.name.trim().slice(0, 40);
+    await updateUserName(db, user.id, name, Date.now());
+    await setSessionCookie({ ...session, name });
+    return { ok: true };
+  });
 
 export const changePassword = createServerFn({ method: "POST" })
   .validator(
