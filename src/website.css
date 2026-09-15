@@ -42,3 +42,5 @@
 .website-footer-zone{border-top:0}.website-final-cta{grid-template-columns:minmax(0,1fr) auto}.website-footer{border-top:0}
 .website-page{padding-bottom:0}.website-feature-card,.website-feature-capture,.website-feature-details,.website-feature-calendar,.website-feature-private{background:#fff}.website-final-cta{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center}.website-final-copy{display:flex;align-items:center;flex-direction:column}.website-final-copy h2{margin-inline:auto}.website-final-button{margin-inline:auto}
 @media(max-width:640px){.website-page{padding-bottom:0}}
+.website-how-grid{gap:14px;margin-top:34px}.website-how-card{min-height:0;padding:24px;border-radius:24px}.website-how-card-top{margin-bottom:22px}.website-how-arrow{display:none}.website-how-card>p{min-height:48px}.website-how-preview{margin-top:20px}
+@media(max-width:800px){.website-how-grid{gap:14px;margin-top:32px}.website-how-card{min-height:0;padding:23px}.website-how-card>p{min-height:0}}
