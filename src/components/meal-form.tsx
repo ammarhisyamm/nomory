@@ -156,10 +156,9 @@ export function MealForm({
 
       <Field label="Location">
         <div className="relative">
-          <MapPin
-            className="pointer-events-none absolute top-1/2 left-4 size-[18px] -translate-y-1/2 text-subtle"
-            strokeWidth={1.9}
-          />
+          <span className="location-icon-tile pointer-events-none absolute top-1/2 left-3 size-8 -translate-y-1/2 rounded-[10px]">
+            <MapPin className="size-[16px]" strokeWidth={2.1} />
+          </span>
           <input
             className={`${fieldClass} pl-11`}
             placeholder="Home, cafe, or restaurant"

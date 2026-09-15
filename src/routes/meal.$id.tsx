@@ -279,7 +279,7 @@ function MealDetailPage() {
         </section>
 
         <section className="surface-card mt-4 flex items-center gap-3 p-5">
-          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
+          <span className="location-icon-tile size-10 rounded-[13px]">
             <MapPin className="size-[18px]" strokeWidth={1.9} />
           </span>
           <div className="min-w-0">

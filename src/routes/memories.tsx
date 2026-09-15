@@ -314,7 +314,7 @@ function MemoryFlipDialog({
                 <p className="mt-1 line-clamp-2 text-[13px] leading-5">{meal.note || "No note added"}</p>
               </div>
               <div className="col-span-2 flex items-center gap-2 border-t border-border/70 pt-3">
-                <span className="grid size-7 place-items-center rounded-full bg-accent-soft text-accent"><MapPin className="size-3.5" /></span>
+                <span className="location-icon-tile size-7 rounded-[9px]"><MapPin className="size-3.5" /></span>
                 <div className="min-w-0">
                   <p className="text-[11px] font-semibold text-muted-foreground">Location</p>
                   <p className="truncate text-[13px]">{meal.location || "No location added"}</p>
