@@ -48,7 +48,6 @@ function WebsiteLandingPage() {
     <section className="website-hero" aria-labelledby="website-hero-title">
       <img className="website-hero-image" src="/website-hero-diary.png" alt="A food diary filled with meal photographs beside a sunny table" />
       <div className="website-hero-copy">
-        <p className="website-eyebrow">Your visual food diary</p>
         <h1 id="website-hero-title">Your meals, remembered.</h1>
         <p className="website-hero-body">Capture what you eat, save the little details, and look back anytime.</p>
         <Link to="/login" className="website-primary-button">Start your food diary <ArrowRight className="size-5" /></Link>
@@ -56,7 +55,7 @@ function WebsiteLandingPage() {
     </section>
 
     <section id="features" className="website-section-shell website-section website-features-section">
-      <div className="website-section-heading"><p className="website-eyebrow">Made for everyday meals</p><h2>Keep the parts that make a meal yours.</h2><p>Nomory gives the little details a place to live, without turning food into a chore.</p></div>
+      <div className="website-section-heading"><h2>Keep the parts that make a meal yours.</h2><p>Nomory gives the little details a place to live, without turning food into a chore.</p></div>
       <div className="website-feature-grid">{features.map((feature) => <FeatureCard key={feature.title} {...feature} />)}</div>
     </section>
 
@@ -66,12 +65,12 @@ function WebsiteLandingPage() {
     </section>
 
     <section id="questions" className="website-section-shell website-section website-questions-section">
-      <div className="website-questions-intro"><p className="website-eyebrow">Questions, answered</p><h2>A diary should feel easy to keep.</h2><p>Everything you need to know before you start saving your next meal.</p></div>
+      <div className="website-questions-intro"><h2>A diary should feel easy to keep.</h2><p>Everything you need to know before you start saving your next meal.</p></div>
       <div className="website-faq-list">{questions.map((item) => <details className="website-faq-item" key={item.question}><summary><span>{item.question}</span><span className="website-faq-toggle" aria-hidden="true"><Plus className="size-4" /></span></summary><p>{item.answer}</p></details>)}</div>
     </section>
 
     <section className="website-footer-zone">
-      <div className="website-section-shell website-final-cta"><div className="website-final-copy"><p className="website-eyebrow">Start with tonight</p><h2>Start remembering <span>your meals.</span></h2><p>One photo is all it takes.</p></div><div className="website-footer-visual" aria-hidden="true"><div className="website-footer-image-tile"><Camera className="size-10" strokeWidth={1.8} /></div><span className="website-footer-plus"><Plus className="size-6" strokeWidth={2.4} /></span></div><Link to="/login" className="website-primary-button website-final-button">Save your first meal <ArrowRight className="size-5" /></Link></div>
+      <div className="website-section-shell website-final-cta"><div className="website-final-copy"><h2>Start remembering <span>your meals.</span></h2><p>One photo is all it takes.</p></div><div className="website-footer-visual" aria-hidden="true"><div className="website-footer-image-tile"><Camera className="size-10" strokeWidth={1.8} /></div><span className="website-footer-plus"><Plus className="size-6" strokeWidth={2.4} /></span></div><Link to="/login" className="website-primary-button website-final-button">Save your first meal <ArrowRight className="size-5" /></Link></div>
       <footer className="website-footer website-section-shell"><div className="website-footer-brand"><NomoryLogo className="text-[25px]" /><span>Your meals, remembered.</span></div><div className="website-footer-links"><Link to="/privacy-policy">Privacy &amp; Policy</Link><Link to="/login">Get started</Link></div></footer>
     </section>
   </main>;
@@ -83,7 +82,7 @@ function FeatureCard({ title, description, icon: Icon, preview, className }: (ty
 
 function FeaturePreview({ type }: { type: (typeof features)[number]["preview"] }) {
   if (type === "photo") return <div className="website-feature-preview website-preview-photo"><img src="/illustrations/capture-photo.png" alt="Nomory meal capture illustration" /></div>;
-  if (type === "details") return <div className="website-feature-preview website-preview-details"><img src="/illustrations/add-meal-mascot.png" alt="Nomory meal details illustration" /></div>;
+  if (type === "details") return <div className="website-feature-preview website-preview-details"><img src="/illustrations/keep-details-calendar.png" alt="Nomory meal details illustration" /></div>;
   if (type === "calendar") return <div className="website-feature-preview website-preview-calendar" aria-hidden="true"><strong>September</strong><div>{["M", "T", "W", "T", "F", "S", "S"].map((day, index) => <span key={`${day}-${index}`} className={index === 2 || index === 5 ? "is-saved" : ""}>{day}</span>)}</div></div>;
   return null;
 }
