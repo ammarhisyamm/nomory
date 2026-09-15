@@ -221,7 +221,7 @@ function MemoryFlipDialog({
   const close = useCallback(() => {
     setVisible(false);
     setClosing(true);
-    window.setTimeout(onClose, 540);
+    window.setTimeout(onClose, 860);
   }, [onClose]);
 
   useEffect(() => {

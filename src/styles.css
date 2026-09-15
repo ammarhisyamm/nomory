@@ -404,7 +404,7 @@
   opacity: 0;
   background: rgb(24 22 20 / 0);
   backdrop-filter: blur(0);
-  transition-duration: 420ms;
+  transition-duration: 640ms;
 }
 
 .memory-detail-card {
@@ -417,7 +417,7 @@
   transform: translate(-50%, -50%) translate(var(--memory-origin-x), var(--memory-origin-y)) scale(var(--memory-origin-scale));
   transform-origin: center;
   transform-style: preserve-3d;
-  transition: transform 520ms var(--ease-drawer), opacity 180ms var(--ease-out);
+  transition: transform 760ms cubic-bezier(0.22, 0.75, 0.24, 1), opacity 220ms var(--ease-out);
   will-change: transform, opacity;
 }
 
@@ -429,16 +429,23 @@
 .memory-detail-card[data-closing="true"] {
   opacity: 1;
   transform: translate(-50%, -50%) translate(var(--memory-origin-x), var(--memory-origin-y)) scale(var(--memory-origin-scale));
+  transition-duration: 860ms;
+  transition-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .memory-detail-flip {
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 520ms var(--ease-drawer);
+  transition: transform 760ms cubic-bezier(0.22, 0.75, 0.24, 1);
 }
 
 .memory-detail-flip[data-open="true"] {
   transform: rotateY(180deg);
+}
+
+.memory-detail-flip[data-closing="true"] {
+  transition-duration: 860ms;
+  transition-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .memory-detail-face {
