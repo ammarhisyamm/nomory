@@ -400,6 +400,12 @@
   backdrop-filter: blur(5px);
 }
 
+.memory-detail-overlay[data-closing="true"] {
+  opacity: 1;
+  background: rgb(24 22 20 / 0.44);
+  backdrop-filter: blur(5px);
+}
+
 .memory-detail-card {
   position: fixed;
   top: 50%;
@@ -424,6 +430,11 @@
 .memory-detail-card[data-open="true"] {
   opacity: 1;
   transform: translate(-50%, -50%) translate(0, 0) scale(1) rotateY(0);
+}
+
+.memory-detail-card[data-closing="true"] {
+  opacity: 1;
+  transform: translate(-50%, -50%) translate(var(--memory-origin-x), var(--memory-origin-y)) scale(var(--memory-origin-scale)) rotateY(-88deg);
 }
 
 @utility section-label {
@@ -629,5 +640,10 @@
 
   .memory-detail-card[data-open="true"] {
     transform: translate(-50%, -50%) translate(0, 0) scale(1);
+  }
+
+  .memory-detail-card[data-closing="true"] {
+    opacity: 1;
+    transform: translate(-50%, -50%) translate(var(--memory-origin-x), var(--memory-origin-y)) scale(var(--memory-origin-scale));
   }
 }

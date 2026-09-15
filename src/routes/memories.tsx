@@ -216,17 +216,21 @@ function MemoryFlipDialog({
   onClose: () => void;
 }) {
   const [visible, setVisible] = useState(false);
+  const [closing, setClosing] = useState(false);
   const meal = selection?.meal ?? null;
   const close = useCallback(() => {
     setVisible(false);
+    setClosing(true);
     window.setTimeout(onClose, 480);
   }, [onClose]);
 
   useEffect(() => {
     if (!selection) {
       setVisible(false);
+      setClosing(false);
       return;
     }
+    setClosing(false);
     const frame = requestAnimationFrame(() => setVisible(true));
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") close();
@@ -254,6 +258,7 @@ function MemoryFlipDialog({
     <div
       className="memory-detail-overlay"
       data-open={visible}
+      data-closing={closing}
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) close();
@@ -266,6 +271,7 @@ function MemoryFlipDialog({
         className="memory-detail-card"
         style={cardStyle}
         data-open={visible}
+        data-closing={closing}
         onClick={close}
       >
         <button
