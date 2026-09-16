@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "@/lib/feedback";
 import { z } from "zod";
-import { completeGoogleSignIn } from "@/lib/auth";
+import { completeGoogleSignIn, finishGoogleSignIn } from "@/lib/auth";
 
 const searchSchema = z.object({
   code: z.string().optional(),
@@ -12,6 +12,39 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/auth/google/callback")({
+  server: {
+    handlers: {
+      GET: async ({ request }) => {
+        const url = new URL(request.url);
+        const code = url.searchParams.get("code");
+        const state = url.searchParams.get("state");
+        const error = url.searchParams.get("error");
+        if (error || !code || !state) {
+          return new Response(null, {
+            status: 302,
+            headers: { location: new URL("/login", url).toString() },
+          });
+        }
+        const result = await finishGoogleSignIn({
+          code,
+          state,
+          redirectUri: `${url.origin}/auth/google/callback`,
+        });
+        if (!result.ok) {
+          return new Response(null, {
+            status: 302,
+            headers: { location: new URL("/login", url).toString() },
+          });
+        }
+        return new Response(null, {
+          status: 302,
+          headers: {
+            location: new URL(result.needsOnboarding ? "/onboarding" : "/", url).toString(),
+          },
+        });
+      },
+    },
+  },
   validateSearch: searchSchema,
   head: () => ({
     meta: [{ title: "Signing in — Nomory" }],
