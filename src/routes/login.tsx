@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Eye, EyeOff, Loader2, TriangleAlert } from "lucide-react";
@@ -24,8 +24,7 @@ export const Route = createFileRoute("/login")({
 
 type Mode = "login" | "register";
 
-const inputClass =
-  "input-soft h-12 px-4 text-[15px]";
+const inputClass = "input-soft h-12 px-4 text-[15px]";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -270,6 +269,28 @@ function LoginPage() {
             {mode === "login" ? "Masuk" : "Buat akun"}
           </button>
         </form>
+
+        {auth?.googleConfigured ? (
+          <>
+            <div className="my-4 flex items-center gap-3 text-[12px] font-semibold text-subtle">
+              <span className="h-px flex-1 bg-border" />
+              <span>atau</span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+            <Link
+              to="/auth/google"
+              className="surface-card press flex h-14 w-full items-center justify-center gap-3 rounded-[20px] text-[15px] font-semibold"
+            >
+              <span
+                className="grid size-6 place-items-center rounded-full border border-border bg-card text-[15px] font-bold text-[#4285F4]"
+                aria-hidden="true"
+              >
+                G
+              </span>
+              Continue with Google
+            </Link>
+          </>
+        ) : null}
 
         <p className="mt-6 text-center text-[13px] leading-relaxed text-subtle">
           Password disimpan sebagai hash aman dan tidak pernah terlihat oleh siapa pun.
