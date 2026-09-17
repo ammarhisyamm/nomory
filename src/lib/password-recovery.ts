@@ -10,6 +10,7 @@ import {
   findUserByRecoveryEmail,
   updatePasswordHash,
   updateRecoveryEmail,
+  passwordSchema,
 } from "./password-users";
 
 const emailSchema = z.string().trim().toLowerCase().email().max(254);
