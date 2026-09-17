@@ -161,3 +161,67 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Hero artwork keeps a generous, readable white safe zone above the phone. */
+.website-hero {
+  min-height: min(980px, 100dvh);
+  background: #fffdfa;
+}
+
+.website-hero-image {
+  inset: auto 0 0;
+  z-index: -1;
+  width: 100%;
+  height: 78%;
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+.website-hero-copy {
+  width: min(calc(100% - 40px), 720px);
+  padding-top: clamp(72px, 9vh, 118px);
+}
+
+.website-hero h1 {
+  max-width: 680px;
+  font-size: clamp(3rem, 5vw, 56px);
+  line-height: .98;
+}
+
+.website-hero-body {
+  max-width: 570px;
+  margin-top: 22px;
+  font-size: clamp(1rem, 1.7vw, 1.2rem);
+}
+
+.website-hero-copy .website-primary-button {
+  margin-top: 36px;
+}
+
+@media (max-width: 640px) {
+  .website-hero {
+    min-height: 780px;
+  }
+
+  .website-hero-image {
+    height: 70%;
+    object-position: center bottom;
+  }
+
+  .website-hero-copy {
+    width: min(calc(100% - 32px), 430px);
+    padding-top: 62px;
+  }
+
+  .website-hero h1 {
+    font-size: clamp(2.9rem, 13vw, 4rem);
+  }
+
+  .website-hero-body {
+    margin-top: 20px;
+  }
+
+  .website-hero-copy .website-primary-button {
+    margin-top: 36px;
+  }
+}

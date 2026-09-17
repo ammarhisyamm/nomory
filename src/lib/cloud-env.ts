@@ -48,6 +48,8 @@ export type CloudflareEnv = {
   DB?: D1Database;
   IMAGES?: R2Bucket;
   R2_PUBLIC_URL?: string;
+  APP_ORIGIN?: string;
+  EMAIL_FROM?: string;
 };
 
 const GLOBAL_KEY = "__NOMORY_ENV";

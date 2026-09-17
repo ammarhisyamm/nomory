@@ -15,6 +15,8 @@
     }
   ],
   "vars": {
-    "R2_PUBLIC_URL": "https://nomory.site/media"
+    "R2_PUBLIC_URL": "https://nomory.site/media",
+    "APP_ORIGIN": "https://nomory.site",
+    "EMAIL_FROM": "Nomory <hello@nomory.site>"
   }
 }

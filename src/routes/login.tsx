@@ -251,6 +251,17 @@ function LoginPage() {
             </div>
           </div>
 
+          {mode === "login" ? (
+            <div className="-mt-1 text-right">
+              <Link
+                to="/forgot-password"
+                className="text-[13px] font-semibold text-accent underline-offset-4 hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+          ) : null}
+
           {error ? (
             <p
               role="alert"

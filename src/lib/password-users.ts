@@ -31,6 +31,7 @@ export type UserRow = {
   username: string;
   name: string;
   password_hash: string;
+  recovery_email: string | null;
   failed_attempts: number;
   locked_until: number;
   created_at: number;
@@ -51,7 +52,7 @@ export async function findUserByUsername(
 ): Promise<UserRow | null> {
   const row = await db
     .prepare(
-      `SELECT id, username, name, password_hash, failed_attempts, locked_until,
+      `SELECT id, username, name, password_hash, recovery_email, failed_attempts, locked_until,
               created_at, updated_at FROM users WHERE username = ?`,
     )
     .bind(username)
@@ -62,12 +63,67 @@ export async function findUserByUsername(
 export async function findUserById(db: D1Database, id: string): Promise<UserRow | null> {
   const row = await db
     .prepare(
-      `SELECT id, username, name, password_hash, failed_attempts, locked_until,
+      `SELECT id, username, name, password_hash, recovery_email, failed_attempts, locked_until,
               created_at, updated_at FROM users WHERE id = ?`,
     )
     .bind(id)
     .first<UserRow>();
   return row ?? null;
+}
+
+export async function updateRecoveryEmail(
+  db: D1Database,
+  id: string,
+  email: string,
+  now: number,
+): Promise<void> {
+  await db
+    .prepare(`UPDATE users SET recovery_email = ?, updated_at = ? WHERE id = ?`)
+    .bind(email, now, id)
+    .run();
+}
+
+export async function findUserByRecoveryEmail(
+  db: D1Database,
+  email: string,
+): Promise<UserRow | null> {
+  const row = await db
+    .prepare(
+      `SELECT id, username, name, password_hash, recovery_email, failed_attempts, locked_until,
+              created_at, updated_at FROM users WHERE recovery_email = ?`,
+    )
+    .bind(email)
+    .first<UserRow>();
+  return row ?? null;
+}
+
+export async function createPasswordResetToken(
+  db: D1Database,
+  input: { tokenHash: string; userId: string; expiresAt: number; createdAt: number },
+): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO password_reset_tokens (token_hash, user_id, expires_at, created_at)
+       VALUES (?, ?, ?, ?)`,
+    )
+    .bind(input.tokenHash, input.userId, input.expiresAt, input.createdAt)
+    .run();
+}
+
+export async function consumePasswordResetToken(
+  db: D1Database,
+  tokenHash: string,
+  now: number,
+): Promise<{ userId: string } | null> {
+  const row = await db
+    .prepare(
+      `UPDATE password_reset_tokens SET used_at = ?
+       WHERE token_hash = ? AND used_at IS NULL AND expires_at > ?
+       RETURNING user_id`,
+    )
+    .bind(now, tokenHash, now)
+    .first<{ user_id: string }>();
+  return row?.user_id ? { userId: row.user_id } : null;
 }
 
 export async function countUsers(db: D1Database): Promise<number> {
