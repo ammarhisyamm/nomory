@@ -8,6 +8,8 @@
   color: var(--website-ink);
 }
 
+/* Shared section rhythm is appended below the legacy rules. */
+
 .website-section-shell {
   width: min(100% - 48px, 1120px);
   margin-inline: auto;
@@ -1840,5 +1842,48 @@
   .website-features-section .website-preview-details,
   .website-features-section .website-preview-calendar {
     aspect-ratio: 1.3;
+  }
+}
+
+/* Final global spacing rhythm for every content section. */
+.website-section {
+  padding: 100px 80px;
+}
+
+.website-section-shell.website-section,
+.website-features-section > .website-section-shell {
+  box-sizing: border-box;
+  width: min(100%, 1280px);
+  padding-inline: 80px;
+}
+
+.website-features-section {
+  padding-block: 100px;
+}
+
+@media (max-width: 800px) {
+  .website-section {
+    padding: 100px 32px;
+  }
+
+  .website-section-shell.website-section,
+  .website-features-section > .website-section-shell {
+    width: 100%;
+    padding-inline: 32px;
+  }
+
+  .website-features-section {
+    padding-block: 100px;
+  }
+}
+
+@media (max-width: 640px) {
+  .website-section {
+    padding: 100px 20px;
+  }
+
+  .website-section-shell.website-section,
+  .website-features-section > .website-section-shell {
+    padding-inline: 20px;
   }
 }
