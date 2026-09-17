@@ -2,10 +2,12 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarDays, Images, Plus, Sparkles, User } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { getAuthStatus } from "@/lib/auth";
+import { ADD_MEAL_EVENT, requestAddMeal } from "@/lib/add-meal";
 import { NomoryLogo, NomoryMark } from "./nomory-logo";
+import { AddMealDrawer } from "./add-meal-drawer";
 
 const destinations = [
   { to: "/", label: "Today", icon: Sparkles },
@@ -26,11 +28,17 @@ export function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const isActive = (to: string) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
-  const hideMobileNav = pathname === "/add";
+  const [addMealOpen, setAddMealOpen] = useState(false);
 
   useEffect(() => {
     if (auth && !auth.user && pathname !== "/") navigate({ to: "/login" });
   }, [auth, navigate, pathname]);
+
+  useEffect(() => {
+    const openAddMeal = () => setAddMealOpen(true);
+    window.addEventListener(ADD_MEAL_EVENT, openAddMeal);
+    return () => window.removeEventListener(ADD_MEAL_EVENT, openAddMeal);
+  }, []);
 
   // Require login before showing any app content (also avoids a flash of
   // another user's cached meals on shared devices).
@@ -40,9 +48,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div>
           <NomoryMark className="mx-auto size-20 animate-pulse text-[64px]" />
           <NomoryLogo className="mt-4 text-[30px]" />
-          <p className="mt-2 text-sm text-muted-foreground">
-            Your meals, remembered.
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">Your meals, remembered.</p>
         </div>
       </div>
     );
@@ -74,13 +80,14 @@ export function AppShell({ children }: { children: ReactNode }) {
               {label}
             </Link>
           ))}
-          <Link
-            to="/add"
+          <button
+            type="button"
+            onClick={requestAddMeal}
             className="primary-button press mt-5 flex h-12 items-center justify-center gap-2 rounded-2xl text-[15px] font-bold text-accent-foreground"
           >
             <Plus className="size-[19px]" strokeWidth={2.2} />
             Add Meal
-          </Link>
+          </button>
         </aside>
 
         <main className="w-full min-w-0 max-w-full flex-1 overflow-x-hidden pb-28">{children}</main>
@@ -89,10 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Mobile bottom nav */}
       <nav
         aria-label="Primary navigation"
-        className={cn(
-          "fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(14px,env(safe-area-inset-bottom))]",
-          hideMobileNav && "hidden",
-        )}
+        className="fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(14px,env(safe-area-inset-bottom))]"
       >
         <div className="mx-auto flex max-w-[430px] items-center gap-2.5">
           <div className="grid min-h-[64px] min-w-0 flex-1 grid-cols-4 rounded-[28px] border border-white/80 bg-card/80 p-2 shadow-[var(--shadow-card)] backdrop-blur-2xl">
@@ -104,15 +108,20 @@ export function AppShell({ children }: { children: ReactNode }) {
               />
             ))}
           </div>
-          <Link
-            to="/add"
+          <button
+            type="button"
+            onClick={requestAddMeal}
             aria-label="Add a meal"
             className="press grid size-14 shrink-0 touch-manipulation place-items-center rounded-full border border-white/80 bg-card/85 text-foreground shadow-[var(--shadow-card)] backdrop-blur-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <Plus className="size-7" strokeWidth={1.9} />
-          </Link>
+          </button>
         </div>
       </nav>
+
+      {pathname !== "/add" ? (
+        <AddMealDrawer open={addMealOpen} onClose={() => setAddMealOpen(false)} />
+      ) : null}
     </div>
   );
 }

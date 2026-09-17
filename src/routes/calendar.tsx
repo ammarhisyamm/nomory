@@ -5,6 +5,7 @@ import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { FoodSticker } from "@/components/food-sticker";
 import { cn } from "@/lib/utils";
+import { requestAddMeal } from "@/lib/add-meal";
 import {
   MEAL_TYPES,
   formatDateLabel,
@@ -150,13 +151,14 @@ function CalendarPage() {
             })}
           </div>
 
-          <Link
-            to="/add"
+          <button
+            type="button"
+            onClick={requestAddMeal}
             className="primary-button press mt-5 flex min-h-14 items-center justify-center gap-2 rounded-2xl px-5 text-[15px] font-bold text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <Plus className="size-5" strokeWidth={2.2} />
             Add a meal
-          </Link>
+          </button>
         </div>
 
         <section className="mt-8">
@@ -168,6 +170,7 @@ function CalendarPage() {
               title="Nothing saved on this day"
               description="Add a meal for this date, or pick another day with a photo in the calendar."
               cta="Add a meal"
+              onCta={requestAddMeal}
             />
           ) : (
             <div className="space-y-3">

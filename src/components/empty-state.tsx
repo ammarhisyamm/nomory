@@ -8,6 +8,7 @@ export function EmptyState({
   description,
   cta,
   to = "/add",
+  onCta,
   kind = "today",
   secondaryCta,
   onSecondary,
@@ -17,6 +18,7 @@ export function EmptyState({
   description: string;
   cta?: string;
   to?: "/" | "/add" | "/memories" | "/search";
+  onCta?: () => void;
   kind?: EmptyStateKind;
   secondaryCta?: string;
   onSecondary?: () => void;
@@ -47,12 +49,22 @@ export function EmptyState({
       {cta || secondaryCta ? (
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
           {cta ? (
-            <Link
-              to={to}
-              className="primary-button press flex h-12 items-center rounded-full px-6 text-[15px] font-bold text-accent-foreground"
-            >
-              {cta}
-            </Link>
+            onCta ? (
+              <button
+                type="button"
+                onClick={onCta}
+                className="primary-button press flex h-12 items-center rounded-full px-6 text-[15px] font-bold text-accent-foreground"
+              >
+                {cta}
+              </button>
+            ) : (
+              <Link
+                to={to}
+                className="primary-button press flex h-12 items-center rounded-full px-6 text-[15px] font-bold text-accent-foreground"
+              >
+                {cta}
+              </Link>
+            )
           ) : null}
           {secondaryCta ? (
             <button

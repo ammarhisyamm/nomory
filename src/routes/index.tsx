@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Bookmark, Flame, Images, Plus } from "lucide-react";
@@ -10,6 +10,7 @@ import { MealCard } from "@/components/meal-card";
 import { PageLoadingState } from "@/components/loading-state";
 import { getAuthStatus } from "@/lib/auth";
 import { toDateKey, useMeals } from "@/lib/meals";
+import { requestAddMeal } from "@/lib/add-meal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -89,13 +90,14 @@ function TodayPage() {
             ))}
 
             {ready && todayMeals.length > 0 ? (
-              <Link
-                to="/add"
+              <button
+                type="button"
+                onClick={requestAddMeal}
                 className="press flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-dashed border-accent/35 bg-accent-soft/55 px-5 text-[15px] font-bold text-accent"
               >
                 <Plus className="size-5" strokeWidth={2.2} />
                 Add another meal
-              </Link>
+              </button>
             ) : null}
 
             {ready && todayMeals.length === 0 ? (
@@ -104,6 +106,7 @@ function TodayPage() {
                 title="Ready for your first bite?"
                 description="Capture your next meal. We’ll remember the date and time for you."
                 cta="Add your first meal"
+                onCta={requestAddMeal}
               />
             ) : null}
           </div>
