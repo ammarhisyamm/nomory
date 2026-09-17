@@ -53,8 +53,10 @@ export const startGoogleSignIn = createServerFn({ method: "POST" })
     const cfg = googleConfig();
     if (!cfg) return { url: null };
     const state = await beginOAuthState();
+    const configuredOrigin = process.env["APP_ORIGIN"] || getCloudEnv().APP_ORIGIN;
+    const origin = (configuredOrigin || data.origin).replace(/\/+$/, "");
     return {
-      url: googleAuthUrl(cfg.clientId, `${data.origin}/auth/google/callback`, state),
+      url: googleAuthUrl(cfg.clientId, `${origin}/auth/google/callback`, state),
     };
   });
 
@@ -66,9 +68,7 @@ export const completeGoogleSignIn = createServerFn({ method: "POST" })
       state: z.string().min(1),
     }),
   )
-  .handler(
-    async ({ data }) => finishGoogleSignIn(data),
-  );
+  .handler(async ({ data }) => finishGoogleSignIn(data));
 
 export async function finishGoogleSignIn(data: {
   code: string;
@@ -103,10 +103,7 @@ export async function finishGoogleSignIn(data: {
     await setSessionCookie(user);
     return { ok: true, needsOnboarding: !user.username };
   } catch (error) {
-    console.error(
-      "google_sign_in_failed",
-      error instanceof Error ? error.message : String(error),
-    );
+    console.error("google_sign_in_failed", error instanceof Error ? error.message : String(error));
     return { ok: false, error: "Couldn't complete Google sign-in. Try again." };
   }
 }
