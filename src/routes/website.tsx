@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, BookOpen, Camera, NotebookPen, Plus } from "lucide-react";
 import { FoodSticker } from "@/components/food-sticker";
 import { NomoryLogo } from "@/components/nomory-logo";
@@ -92,8 +92,33 @@ const questions = [
 ] as const;
 
 function WebsiteLandingPage() {
+  const revealRoot = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const root = revealRoot.current;
+    if (!root) return;
+    const revealItems = root.querySelectorAll<HTMLElement>("[data-reveal]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-revealed");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.16, rootMargin: "0px 0px -8%" },
+    );
+    revealItems.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <main id="main-content" className="website-page min-h-[100dvh] overflow-hidden">
+    <main
+      ref={revealRoot}
+      id="main-content"
+      className="website-page min-h-[100dvh] overflow-hidden"
+    >
       <a className="website-skip-link" href="#features">
         Skip to content
       </a>
@@ -223,7 +248,7 @@ function FeatureCard({
   className,
 }: (typeof features)[number]) {
   return (
-    <article className={`website-feature-card ${className}`}>
+    <article className={`website-feature-card ${className}`} data-reveal>
       <div className="website-feature-card-header">
         <div className="website-icon-tile">
           <Icon className="size-5" strokeWidth={2.2} />
@@ -276,7 +301,7 @@ function HowStep({
   stepNumber,
 }: Omit<(typeof steps)[number], "icon"> & { stepNumber: string }) {
   return (
-    <article className="website-how-card">
+    <article className="website-how-card" data-reveal>
       <div className="website-how-card-top">
         <div className="website-step-number">{stepNumber}</div>
         <ArrowRight className="website-how-arrow size-5" />
