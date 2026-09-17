@@ -7,6 +7,7 @@
   padding-bottom: 108px;
   color: var(--website-ink);
 }
+
 .website-section-shell {
   width: min(100% - 48px, 1120px);
   margin-inline: auto;
@@ -1794,5 +1795,50 @@
 
   .website-hero-copy .website-primary-button {
     margin-top: 36px;
+  }
+}
+
+/* Final card alignment pass: the media box and description follow the
+   reference order and stay identical across all three cards. */
+.website-features-section .website-feature-card {
+  padding: 18px;
+}
+
+.website-features-section .website-feature-card-header {
+  min-height: 72px;
+}
+
+.website-features-section .website-feature-preview,
+.website-features-section .website-preview-photo,
+.website-features-section .website-preview-details,
+.website-features-section .website-preview-calendar {
+  position: relative;
+  height: auto;
+  aspect-ratio: 1.18;
+  margin-top: 28px;
+  overflow: hidden;
+}
+
+.website-features-section .website-feature-preview img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.website-features-section .website-feature-description {
+  margin: 20px 0 0;
+  color: var(--website-muted);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 800px) {
+  .website-features-section .website-feature-preview,
+  .website-features-section .website-preview-photo,
+  .website-features-section .website-preview-details,
+  .website-features-section .website-preview-calendar {
+    aspect-ratio: 1.3;
   }
 }

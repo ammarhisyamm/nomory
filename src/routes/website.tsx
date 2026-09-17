@@ -230,10 +230,10 @@ function FeatureCard({
         </div>
         <div className="website-feature-copy">
           <h3>{title}</h3>
-          <p>{description}</p>
         </div>
       </div>
       <FeaturePreview type={preview} />
+      <p className="website-feature-description">{description}</p>
     </article>
   );
 }
