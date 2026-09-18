@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Bookmark, Flame, Images, Plus } from "lucide-react";
@@ -40,7 +40,7 @@ function TodayPage() {
   const todayMeals = mealsByDate(todayKey);
   const [greeting, setGreeting] = useState("Good morning");
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || auth === undefined || !auth.user) return;
     // Migrate the old Morsel flag forward.
     if (localStorage.getItem("morsel.onboarded") && !localStorage.getItem("nomory.onboarded")) {
       localStorage.setItem("nomory.onboarded", "1");
@@ -48,7 +48,7 @@ function TodayPage() {
     if (!localStorage.getItem("nomory.onboarded")) {
       navigate({ to: "/onboarding" });
     }
-  }, [navigate]);
+  }, [auth, navigate]);
 
   useEffect(() => {
     const updateGreeting = () => setGreeting(getTimeGreeting(new Date()));
@@ -59,7 +59,10 @@ function TodayPage() {
 
   const displayName = formatDisplayName(user?.name || "there");
 
-  if (auth && !user) return <PublicNomoryHome />;
+  // Keep the public entry point stable while auth is resolving. This prevents
+  // the signed-in shell (and its onboarding redirect) from mounting for a
+  // moment on a logged-out direct visit to "/".
+  if (!auth || !user) return <PublicNomoryHome />;
 
   return (
     <AppShell>
