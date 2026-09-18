@@ -161,9 +161,17 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
-    if (import.meta.env.PROD && "serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => undefined);
-    }
+    if (!import.meta.env.PROD || !("serviceWorker" in navigator)) return;
+    let refreshing = false;
+    const refreshAfterUpdate = () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    };
+    navigator.serviceWorker.addEventListener("controllerchange", refreshAfterUpdate);
+    navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+    return () =>
+      navigator.serviceWorker.removeEventListener("controllerchange", refreshAfterUpdate);
   }, []);
 
   return (
