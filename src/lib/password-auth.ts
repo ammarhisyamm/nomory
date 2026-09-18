@@ -34,24 +34,33 @@ const NO_DB_ERROR =
 
 const WRONG_CREDENTIALS = "Username atau password salah.";
 
-/** Default first-run account. Change the password after first login! */
-const SEED_USERNAME = "ammarhisyam";
-const SEED_PASSWORD = "Admin123";
+/**
+ * Optional first-run account, configured via env (SEED_USERNAME +
+ * SEED_PASSWORD). Never hardcoded — a fresh deployment without these
+ * vars simply starts with no seeded account.
+ */
+function seedCredentials() {
+  const username = process.env["SEED_USERNAME"] || "";
+  const password = process.env["SEED_PASSWORD"] || "";
+  return username && password ? { username, password } : null;
+}
 
 /**
- * Creates the default admin account exactly once: only when the users
+ * Creates the configured seed account exactly once: only when the users
  * table is completely empty (fresh database). Safe to call from any
  * handler — concurrent calls collapse via the UNIQUE constraint.
  */
 async function ensureSeedAdmin(db: NonNullable<ReturnType<typeof getCloudEnv>["DB"]>) {
+  const seed = seedCredentials();
+  if (!seed) return;
   if ((await countUsers(db)) > 0) return;
   const now = Date.now();
   try {
     await createUser(db, {
       id: crypto.randomUUID(),
-      username: SEED_USERNAME,
-      name: "hisyam",
-      passwordHash: await hashPassword(SEED_PASSWORD, passwordPepper()),
+      username: seed.username,
+      name: seed.username,
+      passwordHash: await hashPassword(seed.password, passwordPepper()),
       now,
     });
   } catch {
