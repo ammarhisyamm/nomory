@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "@/lib/feedback";
@@ -13,8 +13,11 @@ export const Route = createFileRoute("/auth/google")({
 
 function GoogleSignInRoute() {
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const isCallback = pathname === "/auth/google/callback";
 
   useEffect(() => {
+    if (isCallback) return;
     let alive = true;
     startGoogleSignIn({ data: { origin: window.location.origin } })
       .then((result) => {
@@ -34,7 +37,9 @@ function GoogleSignInRoute() {
     return () => {
       alive = false;
     };
-  }, [navigate]);
+  }, [isCallback, navigate]);
+
+  if (isCallback) return <Outlet />;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
