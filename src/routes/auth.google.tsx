@@ -25,13 +25,13 @@ function GoogleSignInRoute() {
         if (result.url) {
           window.location.href = result.url;
         } else {
-          toast.error("Google sign-in isn't set up on this deployment yet.");
+          toast.error("Use another sign-in method for now.", { title: "Google sign-in unavailable" });
           navigate({ to: "/profile" });
         }
       })
       .catch(() => {
         if (!alive) return;
-        toast.error("Couldn't start Google sign-in. Try again.");
+        toast.error("Try signing in with Google again.", { title: "Google sign-in failed" });
         navigate({ to: "/profile" });
       });
     return () => {

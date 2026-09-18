@@ -3,13 +3,12 @@ export type FeedbackKind = "success" | "error" | "warning" | "info";
 type FeedbackDetail = {
   kind: FeedbackKind;
   message: string;
-  title?: string;
-  eyebrow?: string;
+  title: string;
 };
 
-type FeedbackOptions = Pick<FeedbackDetail, "title" | "eyebrow">;
+type FeedbackOptions = Pick<FeedbackDetail, "title">;
 
-function show(kind: FeedbackKind, message: string, options?: FeedbackOptions) {
+function show(kind: FeedbackKind, message: string, options: FeedbackOptions) {
   if (typeof window === "undefined") return;
   window.dispatchEvent(
     new CustomEvent<FeedbackDetail>("nomory:feedback", {
@@ -19,8 +18,8 @@ function show(kind: FeedbackKind, message: string, options?: FeedbackOptions) {
 }
 
 export const toast = {
-  success: (message: string, options?: FeedbackOptions) => show("success", message, options),
-  error: (message: string, options?: FeedbackOptions) => show("error", message, options),
-  warning: (message: string, options?: FeedbackOptions) => show("warning", message, options),
-  info: (message: string, options?: FeedbackOptions) => show("info", message, options),
+  success: (message: string, options: FeedbackOptions) => show("success", message, options),
+  error: (message: string, options: FeedbackOptions) => show("error", message, options),
+  warning: (message: string, options: FeedbackOptions) => show("warning", message, options),
+  info: (message: string, options: FeedbackOptions) => show("info", message, options),
 };

@@ -50,24 +50,29 @@ function SettingsPage() {
       await clearAll();
       toast.success("Your diary is clear.", { title: "Memories cleared" });
     } catch {
-      toast.error("Your diary wasn’t cleared. Check your connection and try again.");
+      toast.error("Check your connection and try clearing your diary again.", {
+        title: "Memories not cleared",
+      });
     }
   };
   const saveName = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!user?.username) return;
     if (displayName.trim().length < 2) {
-      toast.error("Name must be at least 2 characters.");
+      toast.error("Use at least 2 characters for your display name.", { title: "Name is too short" });
       return;
     }
     setSavingName(true);
     try {
       const result = await updateProfileName({ data: { name: displayName } });
-      if (!result.ok) return toast.error(result.error ?? "Couldn’t update your name.");
+      if (!result.ok)
+        return toast.error(result.error ?? "Try saving your display name again.", {
+          title: "Profile not updated",
+        });
       await queryClient.invalidateQueries({ queryKey: ["auth"] });
       toast.success("Your display name is updated.", { title: "Profile updated" });
     } catch {
-      toast.error("Couldn’t update your name. Try again.");
+      toast.error("Try saving your display name again.", { title: "Profile not updated" });
     } finally {
       setSavingName(false);
     }

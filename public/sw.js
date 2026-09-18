@@ -1,7 +1,7 @@
 // Nomory service worker — cached app shell for offline-friendly loading.
 // Bump this whenever the app shell or route behavior changes so browsers
 // evict stale HTML/assets instead of mixing an older build with the current one.
-const CACHE = "nomory-v8";
+const CACHE = "nomory-v9";
 const SHELL = [
   "/",
   "/manifest.webmanifest",
@@ -42,11 +42,10 @@ self.addEventListener("fetch", (event) => {
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(request, copy));
-          return response;
-        })
+        // Never cache navigations here. A route-level error page can still
+        // return a successful HTTP response, and caching it would make the
+        // temporary error sticky on the next visit.
+        .then((response) => response)
         .catch(() => caches.match(request).then((hit) => hit || caches.match("/"))),
     );
     return;

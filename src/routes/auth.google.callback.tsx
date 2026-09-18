@@ -25,7 +25,9 @@ function GoogleCallbackRoute() {
 
   useEffect(() => {
     if (error || !code || !state) {
-      toast.error(error || "Google sign-in was cancelled.");
+      toast.error("No changes were made. You can try signing in again.", {
+        title: "Google sign-in cancelled",
+      });
       navigate({ to: "/profile" });
       return;
     }
@@ -43,13 +45,15 @@ function GoogleCallbackRoute() {
           toast.success("Signed in with Google!", { title: "Welcome to Nomory" });
           navigate({ to: result.needsOnboarding ? "/onboarding" : "/" });
         } else {
-          toast.error(result.error ?? "Couldn't complete Google sign-in.");
+          toast.error(result.error ?? "Try signing in with Google again.", {
+            title: "Google sign-in failed",
+          });
           navigate({ to: "/profile" });
         }
       })
       .catch(() => {
         if (!alive) return;
-        toast.error("Couldn't complete Google sign-in. Try again.");
+        toast.error("Try signing in with Google again.", { title: "Google sign-in failed" });
         navigate({ to: "/profile" });
       });
     return () => {

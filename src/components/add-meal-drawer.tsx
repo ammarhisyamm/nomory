@@ -88,7 +88,7 @@ export function AddMealDrawer({ open, onClose }: { open: boolean; onClose: () =>
       setValues(freshValues());
       setStep("edit");
     } catch {
-      toast.error("Couldn't upload this photo. Try again.");
+      toast.error("Couldn’t upload this photo. Try again.", { title: "Photo upload failed" });
       setStep("choose");
     }
   };
@@ -129,7 +129,7 @@ export function AddMealDrawer({ open, onClose }: { open: boolean; onClose: () =>
       }
       close();
     } catch {
-      toast.error("We couldn’t save this memory. Try again.");
+      toast.error("We couldn’t save this memory. Try again.", { title: "Memory not saved" });
     } finally {
       setSaving(false);
     }

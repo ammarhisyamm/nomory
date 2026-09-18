@@ -5,28 +5,23 @@ import type { FeedbackKind } from "@/lib/feedback";
 type FeedbackState = {
   kind: FeedbackKind;
   message: string;
-  title?: string;
-  eyebrow?: string;
+  title: string;
 } | null;
 
-const feedbackCopy: Record<FeedbackKind, { eyebrow: string; title: string; image: string }> = {
+const feedbackCopy: Record<FeedbackKind, { title: string; image: string }> = {
   success: {
-    eyebrow: "All set",
     title: "Saved to your memories",
     image: "/illustrations/toast-success.png",
   },
   error: {
-    eyebrow: "Something went wrong",
     title: "We couldn’t complete that",
     image: "/illustrations/toast-error.png",
   },
   warning: {
-    eyebrow: "A quick heads-up",
     title: "Take another look",
     image: "/illustrations/toast-warning.png",
   },
   info: {
-    eyebrow: "Nomory note",
     title: "Here’s what happened",
     image: "/illustrations/toast-warning.png",
   },
@@ -86,12 +81,9 @@ export function FeedbackModal() {
         <div className="relative mx-auto grid size-24 place-items-center">
           <img src={copy.image} alt="" className="size-24 object-contain" />
         </div>
-        <p className="relative mt-3 text-[11px] font-bold tracking-[0.16em] text-muted-foreground uppercase">
-          {feedback.eyebrow ?? copy.eyebrow}
-        </p>
         <h2
           id="feedback-title"
-          className="relative mt-2 font-display text-[25px] font-extrabold tracking-tight"
+          className="relative mt-3 font-display text-[25px] font-extrabold tracking-tight"
         >
           {feedback.title ?? copy.title}
         </h2>

@@ -99,7 +99,7 @@ function MealDetailPage() {
       setEditing(false);
       toast.success("Your changes are saved.", { title: "Memory updated" });
     } catch {
-      toast.error("Couldn't save changes. Try again.");
+      toast.error("Couldn’t save your changes. Try again.", { title: "Memory not updated" });
     } finally {
       setSaving(false);
     }
@@ -120,7 +120,7 @@ function MealDetailPage() {
       });
       toast.success("Your new photo is ready to view.", { title: "Photo updated" });
     } catch {
-      toast.error("Couldn't upload this photo. Try again.");
+      toast.error("Couldn’t upload this photo. Try again.", { title: "Photo not updated" });
     } finally {
       setReplacing(false);
     }
@@ -133,7 +133,7 @@ function MealDetailPage() {
       toast.success("This meal is no longer in your diary.", { title: "Memory removed" });
       navigate({ to: "/" });
     } catch {
-      toast.error("Couldn’t delete this memory. Try again.");
+      toast.error("Couldn’t delete this memory. Try again.", { title: "Memory not removed" });
     }
   };
 
@@ -385,12 +385,9 @@ function DeleteMemoryModal({
         <div className="relative mx-auto grid size-24 place-items-center">
           <img src="/illustrations/toast-warning.png" alt="" className="size-24 object-contain" />
         </div>
-        <p className="relative mt-3 text-[11px] font-bold tracking-[0.16em] text-destructive uppercase">
-          Careful
-        </p>
         <h2
           id="delete-memory-title"
-          className="relative mt-2 font-display text-[25px] font-extrabold tracking-tight"
+          className="relative mt-3 font-display text-[25px] font-extrabold tracking-tight"
         >
           Delete this memory?
         </h2>

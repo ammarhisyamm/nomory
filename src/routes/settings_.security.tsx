@@ -18,33 +18,44 @@ function SecurityPage() {
   const [savingRecovery, setSavingRecovery] = useState(false);
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!current || !next) return toast.error("Enter your current and new password.");
-    if (next.length < 8) return toast.error("Use at least 8 characters for the new password.");
+    if (!current || !next)
+      return toast.error("Enter both passwords to continue.", { title: "Password update needed" });
+    if (next.length < 8)
+      return toast.error("Use at least 8 characters for the new password.", {
+        title: "Password is too short",
+      });
     setSaving(true);
     try {
       const result = await changePassword({ data: { current, next } });
-      if (!result.ok) return toast.error(result.error ?? "Couldn’t update your password.");
+      if (!result.ok)
+        return toast.error(result.error ?? "Try updating your password again.", {
+          title: "Password not updated",
+        });
       setCurrent("");
       setNext("");
       toast.success("Your password is now up to date.", { title: "Password updated" });
     } catch {
-      toast.error("Couldn’t update your password. Try again.");
+      toast.error("Try updating your password again.", { title: "Password not updated" });
     } finally {
       setSaving(false);
     }
   };
   const saveRecoveryEmail = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!recoveryEmail.includes("@")) return toast.error("Enter a valid recovery email.");
+    if (!recoveryEmail.includes("@"))
+      return toast.error("Enter an email address you can access.", { title: "Email address needed" });
     setSavingRecovery(true);
     try {
       const result = await setRecoveryEmail({ data: { email: recoveryEmail } });
-      if (!result.ok) return toast.error(result.error ?? "Couldn’t save your recovery email.");
+      if (!result.ok)
+        return toast.error(result.error ?? "Try saving your recovery email again.", {
+          title: "Recovery email not saved",
+        });
       toast.success("Your recovery email is ready for password resets.", {
         title: "Recovery email saved",
       });
     } catch {
-      toast.error("Couldn’t save your recovery email. Try again.");
+      toast.error("Try saving your recovery email again.", { title: "Recovery email not saved" });
     } finally {
       setSavingRecovery(false);
     }
