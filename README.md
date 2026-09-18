@@ -62,8 +62,6 @@ npx wrangler r2 bucket create nomory-images
 
 Tanpa langkah di atas aplikasi tetap berjalan penuh dengan penyimpanan lokal di perangkat. Cloud sync aktif otomatis setelah D1 ter-binding dan user login.
 
-Aplikasi mewajibkan login sebelum bisa dipakai. Saat database masih kosong, akun awal `admin` / `Admin123` dibuat otomatis — segera ganti passwordnya lewat halaman Profile setelah masuk pertama kali.
-
 ## Struktur proyek
 
 ```
