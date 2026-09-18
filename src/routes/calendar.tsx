@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { FoodSticker } from "@/components/food-sticker";
@@ -151,14 +151,6 @@ function CalendarPage() {
             })}
           </div>
 
-          <button
-            type="button"
-            onClick={requestAddMeal}
-            className="primary-button press mt-5 flex min-h-14 items-center justify-center gap-2 rounded-2xl px-5 text-[15px] font-bold text-accent-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <Plus className="size-5" strokeWidth={2.2} />
-            Add a meal
-          </button>
         </div>
 
         <section className="mt-8">
