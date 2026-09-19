@@ -1,6 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, BookOpen, Camera, NotebookPen, Plus } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  CalendarDays,
+  Camera,
+  Heart,
+  MapPin,
+  NotebookPen,
+  Plus,
+} from "lucide-react";
 import { FoodSticker } from "@/components/food-sticker";
 import { NomoryLogo } from "@/components/nomory-logo";
 import { MEAL_TYPES, type MealType } from "@/lib/meals";
@@ -91,6 +100,24 @@ const questions = [
   },
 ] as const;
 
+const memoryDetails = [
+  {
+    label: "Day by day",
+    description: "See the rhythm of what you loved.",
+    icon: CalendarDays,
+  },
+  {
+    label: "The little details",
+    description: "Keep the note that made it yours.",
+    icon: Heart,
+  },
+  {
+    label: "Places worth returning to",
+    description: "Remember where every favorite began.",
+    icon: MapPin,
+  },
+] as const;
+
 function WebsiteLandingPage() {
   const revealRoot = useRef<HTMLElement | null>(null);
 
@@ -137,11 +164,13 @@ function WebsiteLandingPage() {
       </nav>
 
       <section className="website-hero" aria-labelledby="website-hero-title">
-        <img
-          className="website-hero-image"
-          src="/website-hero-mockup.png"
-          alt="Nomory app mockup surrounded by cheerful food memory characters"
-        />
+        <div className="website-hero-art">
+          <img
+            className="website-hero-image"
+            src="/website-hero-mockup.png"
+            alt="Nomory app mockup surrounded by cheerful food memory characters"
+          />
+        </div>
         <div className="website-hero-copy">
           <h1 id="website-hero-title">Your meals, remembered.</h1>
           <p className="website-hero-body">
@@ -186,6 +215,40 @@ function WebsiteLandingPage() {
           {steps.map((step, index) => (
             <HowStep key={step.title} {...step} stepNumber={String(index + 1).padStart(2, "0")} />
           ))}
+        </div>
+      </section>
+
+      <section
+        id="week-remembered"
+        aria-labelledby="week-remembered-title"
+        className="website-section-shell website-section website-memory-section"
+      >
+        <div className="website-memory-copy" data-reveal>
+          <h2 id="week-remembered-title">A week becomes your story.</h2>
+          <p>
+            Every photo settles into a private diary, ready when you want to remember what made the
+            moment special.
+          </p>
+          <div className="website-memory-details" aria-label="What Nomory helps you remember">
+            {memoryDetails.map(({ label, description, icon: Icon }) => (
+              <div className="website-memory-detail" key={label}>
+                <span className="website-memory-icon" aria-hidden="true">
+                  <Icon className="size-5" strokeWidth={2.2} />
+                </span>
+                <span>
+                  <strong>{label}</strong>
+                  <small>{description}</small>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="website-memory-visual" data-reveal>
+          <span className="website-memory-glow" aria-hidden="true" />
+          <img
+            src="/illustrations/website-week-remembered.png"
+            alt="A pink Nomory character revisiting five meals saved across a weekly diary"
+          />
         </div>
       </section>
 
