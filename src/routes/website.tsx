@@ -244,7 +244,6 @@ function WebsiteLandingPage() {
           </div>
         </div>
         <div className="website-memory-visual" data-reveal>
-          <span className="website-memory-glow" aria-hidden="true" />
           <img
             src="/illustrations/website-week-remembered.png"
             alt="A pink Nomory character revisiting five meals saved across a weekly diary"

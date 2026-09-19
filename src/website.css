@@ -2038,25 +2038,7 @@
   display: grid;
   place-items: center;
   min-height: 470px;
-  overflow: hidden;
-  border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--website-line));
-  border-radius: 36px;
-  background:
-    radial-gradient(circle at 72% 24%, rgb(255 255 255 / 0.92), transparent 28%),
-    linear-gradient(145deg, #fff8f1 0%, #ffe7d5 100%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.9),
-    0 24px 54px color-mix(in oklch, var(--accent) 14%, transparent);
-}
-
-.website-memory-glow {
-  position: absolute;
-  width: 68%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: color-mix(in oklch, var(--accent) 18%, transparent);
-  filter: blur(55px);
-  opacity: 0.55;
+  overflow: visible;
 }
 
 .website-memory-visual img {
@@ -2192,7 +2174,6 @@
 
   .website-memory-visual {
     min-height: 310px;
-    border-radius: 28px;
   }
 
   .website-memory-visual img {
