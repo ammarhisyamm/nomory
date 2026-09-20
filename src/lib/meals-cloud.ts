@@ -6,6 +6,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getCloudEnv } from "./cloud-env";
 import { getSessionUser } from "./auth-server";
+import { enforceRateLimit } from "./rate-limit";
 import {
   clearMeals,
   deleteMeal,
@@ -32,10 +33,10 @@ async function removeObjectsByPrefix(
 }
 
 const mealSchema = z.object({
-  id: z.string().min(1).max(64),
-  originalImage: z.string().max(12_000_000).default(""),
-  processedImage: z.string().max(12_000_000).default(""),
-  thumbnailImage: z.string().max(2_000_000).default(""),
+  id: z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/),
+  originalImage: z.string().max(4_000_000).default(""),
+  processedImage: z.string().max(4_000_000).default(""),
+  thumbnailImage: z.string().max(1_500_000).default(""),
   useOriginal: z.boolean().default(false),
   mealName: z.string().max(120).default(""),
   mealType: z.enum(["breakfast", "lunch", "dinner", "snack", "drink"]).default("snack"),
@@ -80,6 +81,8 @@ export const saveMealCloud = createServerFn({ method: "POST" })
     const env = getCloudEnv();
     const user = await getSessionUser();
     if (!env.DB || !user) return { cloud: false, meal: null };
+    if (!(await enforceRateLimit(env.DB, "meal-write", user.id, 60, 10 * 60_000)).allowed)
+      return { cloud: false, meal: null };
     const clean = sanitizeMeal(data as Meal);
     if (!clean) return { cloud: false, meal: null };
     // Upload dataURL photos to R2 when configured; otherwise the values
@@ -125,11 +128,13 @@ export const saveMealCloud = createServerFn({ method: "POST" })
   });
 
 export const deleteMealCloud = createServerFn({ method: "POST" })
-  .validator(z.object({ id: z.string().min(1).max(64) }))
+  .validator(z.object({ id: z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/) }))
   .handler(async ({ data }): Promise<{ cloud: boolean }> => {
     const env = getCloudEnv();
     const user = await getSessionUser();
     if (!env.DB || !user) return { cloud: false };
+    if (!(await enforceRateLimit(env.DB, "meal-delete", user.id, 60, 10 * 60_000)).allowed)
+      return { cloud: false };
     await deleteMeal(env.DB, user.id, data.id);
     if (env.IMAGES) {
       await removeObjectsByPrefix(env.IMAGES, `meals/${user.id}/${data.id}-`);
@@ -142,6 +147,8 @@ export const clearMealsCloud = createServerFn({ method: "POST" }).handler(
     const env = getCloudEnv();
     const user = await getSessionUser();
     if (!env.DB || !user) return { cloud: false };
+    if (!(await enforceRateLimit(env.DB, "meal-clear", user.id, 10, 10 * 60_000)).allowed)
+      return { cloud: false };
     await clearMeals(env.DB, user.id);
     if (env.IMAGES) await removeObjectsByPrefix(env.IMAGES, `meals/${user.id}/`);
     return { cloud: true };

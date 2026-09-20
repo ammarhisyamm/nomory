@@ -36,6 +36,7 @@ export type UserRow = {
   locked_until: number;
   created_at: number;
   updated_at: number;
+  session_version: number;
 };
 
 export function normalizeUsername(raw: string): string {
@@ -52,7 +53,7 @@ export async function findUserByUsername(
 ): Promise<UserRow | null> {
   const row = await db
     .prepare(
-      `SELECT id, username, name, password_hash, recovery_email, failed_attempts, locked_until,
+      `SELECT id, username, name, password_hash, recovery_email, failed_attempts, locked_until, session_version,
               created_at, updated_at FROM users WHERE username = ?`,
     )
     .bind(username)
@@ -63,7 +64,7 @@ export async function findUserByUsername(
 export async function findUserById(db: D1Database, id: string): Promise<UserRow | null> {
   const row = await db
     .prepare(
-      `SELECT id, username, name, password_hash, recovery_email, failed_attempts, locked_until,
+      `SELECT id, username, name, password_hash, recovery_email, failed_attempts, locked_until, session_version,
               created_at, updated_at FROM users WHERE id = ?`,
     )
     .bind(id)
@@ -89,7 +90,7 @@ export async function findUserByRecoveryEmail(
 ): Promise<UserRow | null> {
   const row = await db
     .prepare(
-      `SELECT id, username, name, password_hash, recovery_email, failed_attempts, locked_until,
+      `SELECT id, username, name, password_hash, recovery_email, failed_attempts, locked_until, session_version,
               created_at, updated_at FROM users WHERE recovery_email = ?`,
     )
     .bind(email)
@@ -140,6 +141,23 @@ export async function updatePasswordHash(
   await db
     .prepare(`UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?`)
     .bind(passwordHash, now, id)
+    .run();
+}
+
+export async function bumpSessionVersion(db: D1Database, id: string): Promise<number> {
+  const row = await db
+    .prepare(
+      `UPDATE users SET session_version = session_version + 1, updated_at = ? WHERE id = ? RETURNING session_version`,
+    )
+    .bind(Date.now(), id)
+    .first<{ session_version: number }>();
+  return row?.session_version ?? 0;
+}
+
+export async function invalidatePasswordResetTokens(db: D1Database, userId: string, now: number) {
+  await db
+    .prepare(`UPDATE password_reset_tokens SET used_at = ? WHERE user_id = ? AND used_at IS NULL`)
+    .bind(now, userId)
     .run();
 }
 

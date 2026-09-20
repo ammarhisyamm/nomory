@@ -1,6 +1,7 @@
 // Server-only auth helpers: signed-cookie sessions + Google OAuth (PRD §7.1).
 // Only import this from inside createServerFn handlers.
 import { getCookie, setCookie, deleteCookie } from "@tanstack/react-start/server";
+import { getCloudEnv } from "./cloud-env";
 
 export type SessionUser = {
   id: string;
@@ -12,7 +13,7 @@ export type SessionUser = {
   provider?: "google" | "password";
 };
 
-const SESSION_COOKIE = "nomory.session";
+const SESSION_COOKIE = import.meta.env.PROD ? "__Host-nomory.session" : "nomory.session";
 const STATE_COOKIE = "nomory.oauth_state";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
@@ -23,9 +24,12 @@ export function googleConfig() {
 }
 
 function sessionSecret() {
-  return (
-    process.env["SESSION_SECRET"] || process.env["GOOGLE_CLIENT_SECRET"] || "nomory-dev-secret"
-  );
+  const value = process.env["SESSION_SECRET"];
+  if (value) return value;
+  if (import.meta.env.PROD) {
+    throw new Error("SESSION_SECRET must be configured in production");
+  }
+  return process.env["GOOGLE_CLIENT_SECRET"] || "nomory-dev-secret";
 }
 
 /** Server-side pepper mixed into password hashes (never sent to clients). */
@@ -75,14 +79,16 @@ function safeEqual(a: string, b: string) {
   return diff === 0;
 }
 
-export async function createSessionToken(user: SessionUser) {
+export async function createSessionToken(user: SessionUser, sessionVersion = 0) {
   const payload = encodeB64url(
-    JSON.stringify({ ...user, exp: Date.now() + SESSION_MAX_AGE * 1000 }),
+    JSON.stringify({ ...user, sv: sessionVersion, exp: Date.now() + SESSION_MAX_AGE * 1000 }),
   );
   return `${payload}.${await hmac(payload)}`;
 }
 
-export async function verifySessionToken(token: string | undefined): Promise<SessionUser | null> {
+type SessionClaims = { user: SessionUser; sessionVersion: number };
+
+async function decodeSessionToken(token: string | undefined): Promise<SessionClaims | null> {
   if (!token) return null;
   const dot = token.lastIndexOf(".");
   if (dot <= 0) return null;
@@ -90,40 +96,86 @@ export async function verifySessionToken(token: string | undefined): Promise<Ses
   const sig = token.slice(dot + 1);
   if (!safeEqual(sig, await hmac(payload))) return null;
   try {
-    const data = JSON.parse(decodeB64url(payload)) as SessionUser & { exp: number };
+    const data = JSON.parse(decodeB64url(payload)) as SessionUser & { exp: number; sv?: number };
     if (typeof data.exp !== "number" || Date.now() > data.exp) return null;
     if (!data.id) return null;
+    if (!Number.isInteger(data.sv) || data.sv! < 0) return null;
     return {
-      id: data.id,
-      name: data.name ?? "",
-      email: data.email ?? "",
-      picture: data.picture ?? "",
-      ...(typeof data.username === "string" && data.username ? { username: data.username } : {}),
-      ...(data.provider === "google" || data.provider === "password"
-        ? { provider: data.provider }
-        : {}),
+      user: {
+        id: data.id,
+        name: data.name ?? "",
+        email: data.email ?? "",
+        picture: data.picture ?? "",
+        ...(typeof data.username === "string" && data.username ? { username: data.username } : {}),
+        ...(data.provider === "google" || data.provider === "password"
+          ? { provider: data.provider }
+          : {}),
+      },
+      sessionVersion: data.sv!,
     };
   } catch {
     return null;
   }
 }
 
-function cookieOptions(maxAge: number) {
+export async function verifySessionToken(token: string | undefined): Promise<SessionUser | null> {
+  return (await decodeSessionToken(token))?.user ?? null;
+}
+
+function cookieOptions(maxAge: number, sameSite: "lax" | "strict" = "strict") {
   return {
     path: "/",
     httpOnly: true,
-    sameSite: "lax" as const,
+    sameSite,
     secure: import.meta.env.PROD,
     maxAge,
   };
 }
 
-export async function getSessionUser(): Promise<SessionUser | null> {
-  return verifySessionToken(getCookie(SESSION_COOKIE));
+async function currentSessionVersion(user: SessionUser) {
+  const db = getCloudEnv().DB;
+  if (!db || !user.provider) return 0;
+  const table = user.provider === "google" ? "google_accounts" : "users";
+  const key = user.provider === "google" ? "google_id" : "id";
+  const row = await db
+    .prepare(`SELECT session_version FROM ${table} WHERE ${key} = ? LIMIT 1`)
+    .bind(user.id)
+    .first<{ session_version: number }>();
+  return Number.isInteger(row?.session_version) ? row.session_version : null;
 }
 
-export async function setSessionCookie(user: SessionUser) {
-  setCookie(SESSION_COOKIE, await createSessionToken(user), cookieOptions(SESSION_MAX_AGE));
+async function sessionFromToken(token: string | undefined): Promise<SessionUser | null> {
+  const claims = await decodeSessionToken(token);
+  if (!claims) return null;
+  const version = await currentSessionVersion(claims.user);
+  if (version === null || version !== claims.sessionVersion) return null;
+  return claims.user;
+}
+
+function readCookie(request: Request, name: string) {
+  const cookies = request.headers.get("cookie") ?? "";
+  for (const part of cookies.split(";")) {
+    const [key, ...value] = part.trim().split("=");
+    if (key === name) return value.join("=");
+  }
+  return undefined;
+}
+
+export async function getSessionUser(): Promise<SessionUser | null> {
+  return sessionFromToken(getCookie(SESSION_COOKIE));
+}
+
+export async function getSessionUserFromRequest(request: Request): Promise<SessionUser | null> {
+  return sessionFromToken(readCookie(request, SESSION_COOKIE));
+}
+
+export async function setSessionCookie(user: SessionUser, version?: number) {
+  const sessionVersion = version ?? (await currentSessionVersion(user)) ?? 0;
+  setCookie(
+    SESSION_COOKIE,
+    await createSessionToken(user, sessionVersion),
+    cookieOptions(SESSION_MAX_AGE),
+  );
 }
 
 export function clearSessionCookie() {
@@ -137,12 +189,14 @@ export async function beginOAuthState() {
   if (existing) {
     try {
       const parsed = JSON.parse(existing);
-      states = Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === "string") : [existing];
+      states = Array.isArray(parsed)
+        ? parsed.filter((value): value is string => typeof value === "string")
+        : [existing];
     } catch {
       states = [existing];
     }
   }
-  setCookie(STATE_COOKIE, JSON.stringify([...states.slice(-4), state]), cookieOptions(600));
+  setCookie(STATE_COOKIE, JSON.stringify([...states.slice(-4), state]), cookieOptions(600, "lax"));
   return state;
 }
 
@@ -201,8 +255,10 @@ export async function exchangeCodeForUser(
     name?: string;
     email?: string;
     picture?: string;
+    email_verified?: boolean;
   };
-  if (!profile.sub || !profile.email) throw new Error("incomplete_profile");
+  if (!profile.sub || !profile.email || profile.email_verified === false)
+    throw new Error("incomplete_profile");
   return {
     id: profile.sub,
     name: profile.name || profile.email,

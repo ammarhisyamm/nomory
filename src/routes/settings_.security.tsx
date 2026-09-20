@@ -15,6 +15,7 @@ function SecurityPage() {
   const [next, setNext] = useState("");
   const [saving, setSaving] = useState(false);
   const [recoveryEmail, setRecoveryEmailValue] = useState("");
+  const [recoveryCurrent, setRecoveryCurrent] = useState("");
   const [savingRecovery, setSavingRecovery] = useState(false);
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -43,10 +44,14 @@ function SecurityPage() {
   const saveRecoveryEmail = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!recoveryEmail.includes("@"))
-      return toast.error("Enter an email address you can access.", { title: "Email address needed" });
+      return toast.error("Enter an email address you can access.", {
+        title: "Email address needed",
+      });
     setSavingRecovery(true);
     try {
-      const result = await setRecoveryEmail({ data: { email: recoveryEmail } });
+      const result = await setRecoveryEmail({
+        data: { email: recoveryEmail, currentPassword: recoveryCurrent },
+      });
       if (!result.ok)
         return toast.error(result.error ?? "Try saving your recovery email again.", {
           title: "Recovery email not saved",
@@ -54,6 +59,7 @@ function SecurityPage() {
       toast.success("Your recovery email is ready for password resets.", {
         title: "Recovery email saved",
       });
+      setRecoveryCurrent("");
     } catch {
       toast.error("Try saving your recovery email again.", { title: "Recovery email not saved" });
     } finally {
@@ -107,6 +113,17 @@ function SecurityPage() {
             onChange={(e) => setRecoveryEmailValue(e.target.value)}
             autoComplete="email"
             placeholder="you@example.com"
+            className="input-soft mt-2 h-13 w-full px-4 font-normal"
+          />
+        </label>
+        <label className="block text-[14px] font-semibold" htmlFor="recovery-current-password">
+          Current password
+          <input
+            id="recovery-current-password"
+            type="password"
+            value={recoveryCurrent}
+            onChange={(e) => setRecoveryCurrent(e.target.value)}
+            autoComplete="current-password"
             className="input-soft mt-2 h-13 w-full px-4 font-normal"
           />
         </label>

@@ -3,10 +3,30 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { getCloudEnv, setCloudEnv } from "./lib/cloud-env";
+import { getSessionUserFromRequest } from "./lib/auth-server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
+
+function withSecurityHeaders(response: Response, request: Request) {
+  const headers = new Headers(response.headers);
+  headers.set(
+    "content-security-policy",
+    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://accounts.google.com; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://api.fontshare.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://accounts.google.com https://oauth2.googleapis.com https://openidconnect.googleapis.com;",
+  );
+  headers.set("x-content-type-options", "nosniff");
+  headers.set("x-frame-options", "DENY");
+  headers.set("referrer-policy", "strict-origin-when-cross-origin");
+  headers.set("permissions-policy", "camera=(), microphone=(), geolocation=()");
+  if (new URL(request.url).protocol === "https:")
+    headers.set("strict-transport-security", "max-age=31536000; includeSubDomains");
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
@@ -51,16 +71,19 @@ export default {
       // Make D1/R2 bindings reachable from server functions.
       setCloudEnv(env);
       const mediaResponse = await serveMedia(request);
-      if (mediaResponse) return mediaResponse;
+      if (mediaResponse) return withSecurityHeaders(mediaResponse, request);
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return withSecurityHeaders(await normalizeCatastrophicSsrResponse(response), request);
     } catch (error) {
       console.error(error);
-      return new Response(renderErrorPage(), {
-        status: 500,
-        headers: { "content-type": "text/html; charset=utf-8" },
-      });
+      return withSecurityHeaders(
+        new Response(renderErrorPage(), {
+          status: 500,
+          headers: { "content-type": "text/html; charset=utf-8" },
+        }),
+        request,
+      );
     }
   },
 };
@@ -72,6 +95,8 @@ async function serveMedia(request: Request): Promise<Response | null> {
     return new Response("Method not allowed", { status: 405 });
   }
 
+  const user = await getSessionUserFromRequest(request);
+
   const key = decodeURIComponent(url.pathname.slice("/media/".length));
   if (
     !/^meals\/[a-f0-9-]+\/[a-f0-9-]+-(original|processed|thumbnail)(?:-[a-f0-9-]+)?\.(jpg|png|webp)$/.test(
@@ -80,6 +105,8 @@ async function serveMedia(request: Request): Promise<Response | null> {
   ) {
     return new Response("Not found", { status: 404 });
   }
+  const ownerId = key.split("/")[1];
+  if (!user || !ownerId || user.id !== ownerId) return new Response("Not found", { status: 404 });
   const bucket = getCloudEnv().IMAGES;
   let object = await bucket?.get(key);
   // Older records referenced the pre-versioned filename. If that exact
@@ -98,7 +125,7 @@ async function serveMedia(request: Request): Promise<Response | null> {
   return new Response(request.method === "HEAD" ? null : object.body, {
     headers: {
       "content-type": object.httpMetadata?.contentType ?? "image/jpeg",
-      "cache-control": "public, max-age=31536000, immutable",
+      "cache-control": "private, no-store",
       "x-content-type-options": "nosniff",
     },
   });

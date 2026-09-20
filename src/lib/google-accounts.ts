@@ -8,6 +8,7 @@ export type GoogleAccount = {
   username: string | null;
   created_at: number;
   updated_at: number;
+  session_version: number;
 };
 
 export async function upsertGoogleAccount(
@@ -32,7 +33,7 @@ export async function upsertGoogleAccount(
 export async function getGoogleAccount(db: D1Database, googleId: string) {
   return await db
     .prepare(
-      `SELECT google_id, email, name, picture, username, created_at, updated_at
+      `SELECT google_id, email, name, picture, username, session_version, created_at, updated_at
        FROM google_accounts WHERE google_id = ?`,
     )
     .bind(googleId)
@@ -42,7 +43,7 @@ export async function getGoogleAccount(db: D1Database, googleId: string) {
 export async function getGoogleAccountByUsername(db: D1Database, username: string) {
   return await db
     .prepare(
-      `SELECT google_id, email, name, picture, username, created_at, updated_at
+      `SELECT google_id, email, name, picture, username, session_version, created_at, updated_at
        FROM google_accounts WHERE username = ?`,
     )
     .bind(username)

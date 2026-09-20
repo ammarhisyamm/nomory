@@ -27,23 +27,40 @@ export type MealRow = {
 const MEAL_TYPES = new Set(["breakfast", "lunch", "dinner", "snack", "drink"]);
 
 export function isRemoteUrl(value: string) {
-  return value.startsWith("http://") || value.startsWith("https://");
+  try {
+    const url = new URL(value);
+    return url.origin === "https://nomory.site" && url.pathname.startsWith("/media/");
+  } catch {
+    return false;
+  }
 }
 
 function isDataUrl(value: string) {
-  return value.startsWith("data:image/");
+  return /^data:image\/(jpeg|jpg|png|webp);base64,/i.test(value);
 }
 
 function dataUrlToBytes(dataUrl: string): { bytes: Uint8Array; contentType: string } | null {
-  const match = /^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/.exec(dataUrl);
+  const match = /^data:(image\/(?:jpeg|jpg|png|webp));base64,([A-Za-z0-9+/=]+)$/.exec(dataUrl);
   if (!match) return null;
   const contentType = match[1]!;
   const b64 = match[2]!;
   // Cap uploads at ~8MB decoded to protect the worker.
   if (b64.length > 11_000_000) return null;
-  const bin = atob(b64);
+  let bin: string;
+  try {
+    bin = atob(b64);
+  } catch {
+    return null;
+  }
   const bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const valid = contentType.includes("png")
+    ? bytes.slice(0, 8).every((b, i) => b === [137, 80, 78, 71, 13, 10, 26, 10][i])
+    : contentType.includes("webp")
+      ? new TextDecoder().decode(bytes.slice(0, 4)) === "RIFF" &&
+        new TextDecoder().decode(bytes.slice(8, 12)) === "WEBP"
+      : bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  if (!valid) return null;
   return { bytes, contentType };
 }
 
@@ -74,7 +91,9 @@ export async function storeMealImage(
   kind: "original" | "processed" | "thumbnail",
   value: string,
 ): Promise<string> {
-  if (!value || isRemoteUrl(value)) return value;
+  if (!value) return "";
+  if (isRemoteUrl(value)) return value;
+  if (/^https?:\/\//i.test(value)) return "";
   if (!bucket || !publicBase || !isDataUrl(value)) {
     // Inline mode: originals are redundant weight (the processed sticker
     // is what renders by default) — skip storing huge ones in D1.
@@ -83,7 +102,7 @@ export async function storeMealImage(
     return value;
   }
   const decoded = dataUrlToBytes(value);
-  if (!decoded) return value;
+  if (!decoded) return "";
   // A photo can be replaced while its meal id stays the same. Give each
   // upload a versioned object name so an immutable edge cache can never
   // serve a stale (or partially replaced) file to another device.
@@ -101,13 +120,26 @@ export async function storeMealImage(
 }
 
 export function sanitizeMeal(input: Meal): Meal | null {
-  if (!input || typeof input.id !== "string" || !input.id) return null;
+  if (!input || typeof input.id !== "string" || !/^[a-zA-Z0-9_-]{1,64}$/.test(input.id))
+    return null;
   const mealType: MealType = MEAL_TYPES.has(input.mealType) ? input.mealType : "snack";
   return {
     id: input.id.slice(0, 64),
-    originalImage: typeof input.originalImage === "string" ? input.originalImage : "",
-    processedImage: typeof input.processedImage === "string" ? input.processedImage : "",
-    thumbnailImage: typeof input.thumbnailImage === "string" ? input.thumbnailImage : "",
+    originalImage:
+      typeof input.originalImage === "string" &&
+      (isRemoteUrl(input.originalImage) || isDataUrl(input.originalImage))
+        ? input.originalImage
+        : "",
+    processedImage:
+      typeof input.processedImage === "string" &&
+      (isRemoteUrl(input.processedImage) || isDataUrl(input.processedImage))
+        ? input.processedImage
+        : "",
+    thumbnailImage:
+      typeof input.thumbnailImage === "string" &&
+      (isRemoteUrl(input.thumbnailImage) || isDataUrl(input.thumbnailImage))
+        ? input.thumbnailImage
+        : "",
     useOriginal: Boolean(input.useOriginal),
     mealName: String(input.mealName ?? "").slice(0, 120),
     mealType,

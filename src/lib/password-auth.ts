@@ -11,7 +11,8 @@ import {
   setSessionCookie,
   type SessionUser,
 } from "./auth-server";
-import { hashPassword, verifyPassword } from "./password-crypto";
+import { hashPassword, needsRehash, verifyPassword } from "./password-crypto";
+import { enforceRateLimit } from "./rate-limit";
 import {
   LOCKOUT_MS,
   countUsers,
@@ -25,6 +26,7 @@ import {
   recordFailedLogin,
   resetLoginAttempts,
   updatePasswordHash,
+  bumpSessionVersion,
   updateUserName,
   usernameSchema,
 } from "./password-users";
@@ -95,6 +97,9 @@ export const signUpWithPassword = createServerFn({ method: "POST" })
     if (signupDisabled()) return { ok: false, error: "Pendaftaran akun baru sedang ditutup." };
     const db = getCloudEnv().DB;
     if (!db) return { ok: false, error: NO_DB_ERROR };
+    if (!(await enforceRateLimit(db, "signup", data.username, 5, 60 * 60_000)).allowed) {
+      return { ok: false, error: "Terlalu banyak percobaan. Coba lagi nanti." };
+    }
     await ensureSeedAdmin(db);
     const username = normalizeUsername(data.username);
     const existing = await findUserByUsername(db, username);
@@ -126,6 +131,9 @@ export const signInWithPassword = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<{ ok: boolean; error?: string }> => {
     const db = getCloudEnv().DB;
     if (!db) return { ok: false, error: NO_DB_ERROR };
+    if (!(await enforceRateLimit(db, "login", data.username, 15, 15 * 60_000)).allowed) {
+      return { ok: false, error: WRONG_CREDENTIALS };
+    }
     await ensureSeedAdmin(db);
     const username = normalizeUsername(data.username);
     const now = Date.now();
@@ -159,6 +167,14 @@ export const signInWithPassword = createServerFn({ method: "POST" })
     }
 
     await resetLoginAttempts(db, user.id);
+    if (needsRehash(user.password_hash)) {
+      await updatePasswordHash(
+        db,
+        user.id,
+        await hashPassword(data.password, passwordPepper()),
+        now,
+      );
+    }
     const session: SessionUser = {
       id: user.id,
       name: user.name || user.username,
@@ -228,5 +244,7 @@ export const changePassword = createServerFn({ method: "POST" })
     }
     await updatePasswordHash(db, user.id, await hashPassword(data.next, passwordPepper()), now);
     await resetLoginAttempts(db, user.id);
+    await bumpSessionVersion(db, user.id);
+    clearSessionCookie();
     return { ok: true };
   });

@@ -30,6 +30,13 @@ export type AuthStatus = {
   user: SessionUser | null;
 };
 
+function configuredOrigin() {
+  return (process.env["APP_ORIGIN"] || getCloudEnv().APP_ORIGIN || "https://nomory.site").replace(
+    /\/+$/,
+    "",
+  );
+}
+
 export const getAuthStatus = createServerFn().handler(async (): Promise<AuthStatus> => {
   const session = await getSessionUser();
   const db = getCloudEnv().DB;
@@ -53,8 +60,13 @@ export const startGoogleSignIn = createServerFn({ method: "POST" })
     const cfg = googleConfig();
     if (!cfg) return { url: null };
     const state = await beginOAuthState();
-    const configuredOrigin = process.env["APP_ORIGIN"] || getCloudEnv().APP_ORIGIN;
-    const origin = (configuredOrigin || data.origin).replace(/\/+$/, "");
+    const origin = configuredOrigin();
+    if (
+      data.origin.replace(/\/+$/, "") !== origin &&
+      !(import.meta.env.DEV && data.origin.startsWith("http://localhost"))
+    ) {
+      return { url: null };
+    }
     return {
       url: googleAuthUrl(cfg.clientId, `${origin}/auth/google/callback`, state),
     };
@@ -80,6 +92,9 @@ export async function finishGoogleSignIn(data: {
   if (!consumeOAuthState(data.state)) {
     console.error("google_oauth_state_invalid");
     return { ok: false, error: "This sign-in attempt expired. Try again." };
+  }
+  if (data.redirectUri !== `${configuredOrigin()}/auth/google/callback`) {
+    return { ok: false, error: "This sign-in redirect is not allowed." };
   }
   try {
     const signedInUser = await exchangeCodeForUser(

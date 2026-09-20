@@ -8,7 +8,7 @@
 
 const ALGO = "PBKDF2";
 const HASH = "SHA-256";
-const ITERATIONS = 100_000;
+export const CURRENT_ITERATIONS = 600_000;
 const SALT_LEN = 16;
 const HASH_LEN = 32;
 
@@ -51,8 +51,13 @@ async function derive(password: string, salt: Uint8Array, iterations: number): P
 
 export async function hashPassword(password: string, pepper: string): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(SALT_LEN));
-  const hash = await derive(`${pepper}${password}`, salt, ITERATIONS);
-  return `pbkdf2-sha256$${ITERATIONS}$${b64encode(salt)}$${b64encode(hash)}`;
+  const hash = await derive(`${pepper}${password}`, salt, CURRENT_ITERATIONS);
+  return `pbkdf2-sha256$${CURRENT_ITERATIONS}$${b64encode(salt)}$${b64encode(hash)}`;
+}
+
+export function needsRehash(stored: string) {
+  const parts = stored.split("$");
+  return parts[0] === "pbkdf2-sha256" && Number(parts[1]) < CURRENT_ITERATIONS;
 }
 
 export async function verifyPassword(

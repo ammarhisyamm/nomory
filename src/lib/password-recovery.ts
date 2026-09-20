@@ -2,12 +2,15 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getCloudEnv } from "./cloud-env";
 import { getSessionUser, passwordPepper } from "./auth-server";
-import { hashPassword } from "./password-crypto";
+import { hashPassword, verifyPassword } from "./password-crypto";
+import { enforceRateLimit } from "./rate-limit";
 import {
   consumePasswordResetToken,
   createPasswordResetToken,
   findUserById,
   findUserByRecoveryEmail,
+  bumpSessionVersion,
+  invalidatePasswordResetTokens,
   updatePasswordHash,
   updateRecoveryEmail,
   passwordSchema,
@@ -52,13 +55,19 @@ async function sendResetEmail(to: string, resetUrl: string) {
 }
 
 export const setRecoveryEmail = createServerFn({ method: "POST" })
-  .validator(z.object({ email: emailSchema }))
+  .validator(z.object({ email: emailSchema, currentPassword: z.string().min(1).max(128) }))
   .handler(async ({ data }) => {
     const db = getCloudEnv().DB;
     const session = await getSessionUser();
     if (!db || !session?.username) return { ok: false, error: "Login username diperlukan." };
     const user = await findUserById(db, session.id);
     if (!user) return { ok: false, error: "Akun tidak ditemukan." };
+    if (!(await verifyPassword(data.currentPassword, user.password_hash, passwordPepper()))) {
+      return { ok: false, error: "Password saat ini salah." };
+    }
+    if (!(await enforceRateLimit(db, "recovery-email", user.id, 5, 60 * 60_000)).allowed) {
+      return { ok: false, error: "Terlalu banyak percobaan. Coba lagi nanti." };
+    }
     await updateRecoveryEmail(db, user.id, data.email, Date.now());
     return { ok: true };
   });
@@ -69,12 +78,16 @@ export const requestPasswordReset = createServerFn({ method: "POST" })
     const db = getCloudEnv().DB;
     const configured = Boolean(process.env["RESEND_API_KEY"]);
     if (!db || !configured) return { ok: true, message: GENERIC_MESSAGE, configured };
+    if (!(await enforceRateLimit(db, "reset-request", data.email, 5, 60 * 60_000)).allowed) {
+      return { ok: true, message: GENERIC_MESSAGE, configured };
+    }
     const user = await findUserByRecoveryEmail(db, data.email);
     if (!user) return { ok: true, message: GENERIC_MESSAGE, configured };
     const tokenBytes = new Uint8Array(32);
     crypto.getRandomValues(tokenBytes);
     const token = bytesToHex(tokenBytes);
     const now = Date.now();
+    await invalidatePasswordResetTokens(db, user.id, now);
     await createPasswordResetToken(db, {
       tokenHash: await tokenHash(token),
       userId: user.id,
@@ -98,11 +111,13 @@ export const resetPassword = createServerFn({ method: "POST" })
     if (!db) return { ok: false, error: "Reset password belum tersedia." };
     const consumed = await consumePasswordResetToken(db, await tokenHash(data.token), Date.now());
     if (!consumed) return { ok: false, error: "Link reset tidak valid atau sudah kedaluwarsa." };
+    const now = Date.now();
     await updatePasswordHash(
       db,
       consumed.userId,
       await hashPassword(data.password, passwordPepper()),
-      Date.now(),
+      now,
     );
+    await bumpSessionVersion(db, consumed.userId);
     return { ok: true };
   });
