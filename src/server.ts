@@ -98,15 +98,21 @@ async function serveMedia(request: Request): Promise<Response | null> {
   const user = await getSessionUserFromRequest(request);
 
   const key = decodeURIComponent(url.pathname.slice("/media/".length));
-  if (
-    !/^meals\/[a-f0-9-]+\/[a-f0-9-]+-(original|processed|thumbnail)(?:-[a-f0-9-]+)?\.(jpg|png|webp)$/.test(
-      key,
-    )
-  ) {
+  const mediaMatch =
+    /^meals\/[^/]+\/(.+)-(original|processed|thumbnail)(?:-[a-f0-9-]+)?\.(jpg|png|webp)$/.exec(key);
+  if (!mediaMatch) {
     return new Response("Not found", { status: 404 });
   }
-  const ownerId = key.split("/")[1];
-  if (!user || !ownerId || user.id !== ownerId) return new Response("Not found", { status: 404 });
+  const mealId = mediaMatch[1];
+  const db = getCloudEnv().DB;
+  const ownedMeal =
+    user && db
+      ? await db
+          .prepare("SELECT 1 AS found FROM meals WHERE id = ? AND user_id = ? LIMIT 1")
+          .bind(mealId, user.id)
+          .first<{ found: number }>()
+      : null;
+  if (!ownedMeal) return new Response("Not found", { status: 404 });
   const bucket = getCloudEnv().IMAGES;
   let object = await bucket?.get(key);
   // Older records referenced the pre-versioned filename. If that exact
