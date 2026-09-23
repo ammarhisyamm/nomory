@@ -97,9 +97,18 @@ export const saveMealCloud = createServerFn({ method: "POST" })
     if (!clean) return { cloud: false, meal: null, error: "Some meal details need checking." };
 
     try {
-      // Upload dataURL photos to R2 when configured; otherwise the values
-      // pass through and are stored inline in D1.
-      const [originalImage, processedImage, thumbnailImage] = await Promise.all([
+      // The processed image is required for a useful meal card. Original and
+      // thumbnail uploads are best-effort so one optional R2 failure cannot
+      // discard the meal itself.
+      const processedImage = await storeMealImage(
+        env.IMAGES,
+        env.R2_PUBLIC_URL,
+        user.id,
+        clean.id,
+        "processed",
+        clean.processedImage,
+      );
+      const [originalResult, thumbnailResult] = await Promise.allSettled([
         storeMealImage(
           env.IMAGES,
           env.R2_PUBLIC_URL,
@@ -113,23 +122,19 @@ export const saveMealCloud = createServerFn({ method: "POST" })
           env.R2_PUBLIC_URL,
           user.id,
           clean.id,
-          "processed",
-          clean.processedImage,
-        ),
-        storeMealImage(
-          env.IMAGES,
-          env.R2_PUBLIC_URL,
-          user.id,
-          clean.id,
           "thumbnail",
           clean.thumbnailImage || clean.processedImage,
         ),
       ]);
+      const originalImage = originalResult.status === "fulfilled" ? originalResult.value : "";
+      const thumbnailImage =
+        thumbnailResult.status === "fulfilled" ? thumbnailResult.value : processedImage;
       const meal: Meal = {
         ...clean,
         originalImage,
         processedImage,
         thumbnailImage,
+        useOriginal: clean.useOriginal && Boolean(originalImage),
         // Keep the client's edit timestamp for conflict ordering. Giving an
         // older, slower upload a newer server timestamp can overwrite the
         // photo that was actually selected last on another device.
