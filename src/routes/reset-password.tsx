@@ -5,7 +5,7 @@ import { resetPassword } from "@/lib/password-recovery";
 
 export const Route = createFileRoute("/reset-password")({
   validateSearch: (search: Record<string, unknown>) => ({
-    token: typeof search.token === "string" ? search.token : "",
+    token: typeof search["token"] === "string" ? search["token"] : "",
   }),
   head: () => ({ meta: [{ title: "Choose a new password — Nomory" }] }),
   component: ResetPasswordPage,

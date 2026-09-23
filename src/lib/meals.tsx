@@ -225,9 +225,13 @@ export function MealsProvider({ children }: { children: ReactNode }) {
         // Never let a slower refresh overwrite a save/delete that started
         // after this snapshot request.
         if (syncVersion === mutationVersionRef.current) {
-          await dbClear(userId);
-          await Promise.all(snapshot.map((meal) => dbPut(meal, userId)));
           setMeals(snapshot);
+          try {
+            await dbClear(userId);
+            await Promise.all(snapshot.map((meal) => dbPut(meal, userId)));
+          } catch (error) {
+            console.warn("meal_cache_sync_failed", error);
+          }
         }
       } else {
         cloudRef.current = false;
@@ -279,8 +283,12 @@ export function MealsProvider({ children }: { children: ReactNode }) {
         }
         cloudRef.current = true;
         setCloudEnabled(true);
-        await dbPut(res.meal, ns);
         setMeals((prev) => sortMeals([...prev.filter((m) => m.id !== meal.id), res.meal!]));
+        try {
+          await dbPut(res.meal, ns);
+        } catch (error) {
+          console.warn("meal_cache_write_failed", error);
+        }
         return;
       }
       await dbPut(meal, ns);
@@ -296,8 +304,15 @@ export function MealsProvider({ children }: { children: ReactNode }) {
         const result = await deleteMealCloud({ data: { id } });
         if (!result.cloud) throw new Error("Cloud delete unavailable");
       }
-      await dbDelete(id, userId ?? undefined);
+      if (!userId) await dbDelete(id);
       setMeals((prev) => prev.filter((m) => m.id !== id));
+      if (userId) {
+        try {
+          await dbDelete(id, userId);
+        } catch (error) {
+          console.warn("meal_cache_delete_failed", error);
+        }
+      }
     },
     [userId],
   );
@@ -308,8 +323,16 @@ export function MealsProvider({ children }: { children: ReactNode }) {
       const result = await clearMealsCloud();
       if (!result.cloud) throw new Error("Cloud clear unavailable");
     }
-    await dbClear(userIdRef.current ?? undefined);
+    const accountId = userIdRef.current;
+    if (!accountId) await dbClear();
     setMeals([]);
+    if (accountId) {
+      try {
+        await dbClear(accountId);
+      } catch (error) {
+        console.warn("meal_cache_clear_failed", error);
+      }
+    }
   }, []);
 
   const streak = useMemo(() => calculateStreak(meals), [meals]);

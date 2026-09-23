@@ -25,7 +25,9 @@ function GoogleSignInRoute() {
         if (result.url) {
           window.location.href = result.url;
         } else {
-          toast.error("Use another sign-in method for now.", { title: "Google sign-in unavailable" });
+          toast.error("Use another sign-in method for now.", {
+            title: "Google sign-in unavailable",
+          });
           navigate({ to: "/profile" });
         }
       })

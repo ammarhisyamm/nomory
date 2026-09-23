@@ -59,7 +59,9 @@ function SettingsPage() {
     event.preventDefault();
     if (!user?.username) return;
     if (displayName.trim().length < 2) {
-      toast.error("Use at least 2 characters for your display name.", { title: "Name is too short" });
+      toast.error("Use at least 2 characters for your display name.", {
+        title: "Name is too short",
+      });
       return;
     }
     setSavingName(true);

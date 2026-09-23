@@ -1,6 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
-import { CalendarDays, ChevronRight, MapPin, Search, Star, UtensilsCrossed, Wallet } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronRight,
+  MapPin,
+  Search,
+  Star,
+  UtensilsCrossed,
+  Wallet,
+} from "lucide-react";
 import { AppShell, Page, PageHeader } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { FoodSticker } from "@/components/food-sticker";
@@ -286,8 +294,13 @@ function MemoryFlipDialog({
             />
           </div>
           <div className="memory-detail-face memory-detail-back">
-            <p className="text-[11px] font-bold tracking-[0.14em] text-accent uppercase">Food memory</p>
-            <h2 id="memory-detail-title" className="mt-1 font-display text-[24px] font-extrabold leading-tight">
+            <p className="text-[11px] font-bold tracking-[0.14em] text-accent uppercase">
+              Food memory
+            </p>
+            <h2
+              id="memory-detail-title"
+              className="mt-1 font-display text-[24px] font-extrabold leading-tight"
+            >
               {meal.mealName || "Saved meal"}
             </h2>
             <p className="mt-1 text-[13px] text-muted-foreground">{typeLabel}</p>
@@ -303,25 +316,39 @@ function MemoryFlipDialog({
               <DetailCell label="Price" value={meal.price ? formatPrice(meal.price) : "—"} />
               <div>
                 <p className="text-[11px] font-semibold text-muted-foreground">Rating</p>
-                <div className="mt-1 flex text-sunny" aria-label={meal.rating ? `${meal.rating} out of 5` : "Not rated"}>
+                <div
+                  className="mt-1 flex text-sunny"
+                  aria-label={meal.rating ? `${meal.rating} out of 5` : "Not rated"}
+                >
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="size-3.5" fill={star <= meal.rating ? "currentColor" : "none"} strokeWidth={1.8} />
+                    <Star
+                      key={star}
+                      className="size-3.5"
+                      fill={star <= meal.rating ? "currentColor" : "none"}
+                      strokeWidth={1.8}
+                    />
                   ))}
                 </div>
               </div>
               <div className="col-span-2 border-t border-border/70 pt-3">
                 <p className="text-[11px] font-semibold text-muted-foreground">Note</p>
-                <p className="mt-1 line-clamp-2 text-[13px] leading-5">{meal.note || "No note added"}</p>
+                <p className="mt-1 line-clamp-2 text-[13px] leading-5">
+                  {meal.note || "No note added"}
+                </p>
               </div>
               <div className="col-span-2 flex items-center gap-2 border-t border-border/70 pt-3">
-                <span className="location-icon-tile size-7 rounded-[9px]"><MapPin className="size-3.5" /></span>
+                <span className="location-icon-tile size-7 rounded-[9px]">
+                  <MapPin className="size-3.5" />
+                </span>
                 <div className="min-w-0">
                   <p className="text-[11px] font-semibold text-muted-foreground">Location</p>
                   <p className="truncate text-[13px]">{meal.location || "No location added"}</p>
                 </div>
               </div>
             </div>
-            <p className="mt-4 text-center text-[11px] font-semibold text-subtle">Tap the card to return</p>
+            <p className="mt-4 text-center text-[11px] font-semibold text-subtle">
+              Tap the card to return
+            </p>
           </div>
         </div>
       </section>

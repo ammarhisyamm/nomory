@@ -231,7 +231,7 @@ export async function upsertMeal(db: D1Database, userId: string, meal: Meal): Pr
       `INSERT INTO meals (id, user_id, meal_name, menu_items, meal_type, note, location, price, rating, meal_date,
                           meal_time, original_image, processed_image, thumbnail_image, use_original,
                           created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
          meal_name=excluded.meal_name, menu_items=excluded.menu_items, meal_type=excluded.meal_type, note=excluded.note,
          location=excluded.location, meal_date=excluded.meal_date, meal_time=excluded.meal_time,

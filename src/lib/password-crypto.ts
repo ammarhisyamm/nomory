@@ -8,7 +8,9 @@
 
 const ALGO = "PBKDF2";
 const HASH = "SHA-256";
-export const CURRENT_ITERATIONS = 600_000;
+// Cloudflare Workers WebCrypto rejects PBKDF2 iteration counts above 100,000.
+// Production password hashes already use 100,000, so keep this interoperable.
+export const CURRENT_ITERATIONS = 100_000;
 const SALT_LEN = 16;
 const HASH_LEN = 32;
 
@@ -68,7 +70,8 @@ export async function verifyPassword(
   const parts = stored.split("$");
   if (parts.length !== 4 || parts[0] !== "pbkdf2-sha256") return false;
   const iterations = Number(parts[1]);
-  if (!Number.isInteger(iterations) || iterations < 10_000 || iterations > 2_000_000) return false;
+  if (!Number.isInteger(iterations) || iterations < 10_000 || iterations > CURRENT_ITERATIONS)
+    return false;
   let salt: Uint8Array;
   let expected: Uint8Array;
   try {

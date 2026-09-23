@@ -108,6 +108,13 @@ export const saveMealCloud = createServerFn({ method: "POST" })
         "processed",
         clean.processedImage,
       );
+      if (!processedImage) {
+        return {
+          cloud: false,
+          meal: null,
+          error: "This photo couldn’t be saved. Choose a smaller image and try again.",
+        };
+      }
       const [originalResult, thumbnailResult] = await Promise.allSettled([
         storeMealImage(
           env.IMAGES,

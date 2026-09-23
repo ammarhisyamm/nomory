@@ -141,7 +141,7 @@ async function currentSessionVersion(user: SessionUser) {
     .prepare(`SELECT session_version FROM ${table} WHERE ${key} = ? LIMIT 1`)
     .bind(user.id)
     .first<{ session_version: number }>();
-  return Number.isInteger(row?.session_version) ? row.session_version : null;
+  return row && Number.isInteger(row.session_version) ? row.session_version : null;
 }
 
 async function sessionFromToken(token: string | undefined): Promise<SessionUser | null> {

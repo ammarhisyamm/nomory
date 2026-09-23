@@ -150,7 +150,6 @@ function CalendarPage() {
               );
             })}
           </div>
-
         </div>
 
         <section className="mt-8">

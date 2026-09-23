@@ -81,23 +81,27 @@ export function MealForm({
       <Field label="Menu items">
         <div className="space-y-2">
           {values.menuItems.map((item, index) => (
-            <div key={index} className="grid grid-cols-[minmax(0,1fr)_112px_40px] gap-2">
-              <input
-                className={fieldClass}
-                value={item.name}
-                placeholder={`Menu ${index + 1}`}
-                aria-label={`Menu item ${index + 1} name`}
-                onChange={(e) => updateMenuItem(index, "name", e.target.value)}
-              />
-              <input
-                className={fieldClass}
-                inputMode="numeric"
-                type="text"
-                value={formatPrice(item.price)}
-                placeholder="Price"
-                aria-label={`Menu item ${index + 1} price`}
-                onChange={(e) => updateMenuItem(index, "price", e.target.value.replace(/\D/g, ""))}
-              />
+            <div key={index} className="grid min-w-0 grid-cols-[minmax(0,1fr)_40px] gap-2">
+              <div className="grid min-w-0 gap-2 sm:grid-cols-2">
+                <input
+                  className={`${fieldClass} min-w-0`}
+                  value={item.name}
+                  placeholder={`Menu ${index + 1}`}
+                  aria-label={`Menu item ${index + 1} name`}
+                  onChange={(e) => updateMenuItem(index, "name", e.target.value)}
+                />
+                <input
+                  className={`${fieldClass} min-w-0`}
+                  inputMode="numeric"
+                  type="text"
+                  value={formatPrice(item.price)}
+                  placeholder="Price"
+                  aria-label={`Menu item ${index + 1} price`}
+                  onChange={(e) =>
+                    updateMenuItem(index, "price", e.target.value.replace(/\D/g, ""))
+                  }
+                />
+              </div>
               <button
                 type="button"
                 aria-label={`Remove menu item ${index + 1}`}
