@@ -15,6 +15,8 @@ import { clearMealsCloud, deleteMealCloud, listMealsCloud, saveMealCloud } from 
 
 export type MealType = "breakfast" | "lunch" | "dinner" | "snack" | "drink";
 
+export type MenuItem = { name: string; price: number };
+
 export type Meal = {
   id: string;
   originalImage: string;
@@ -23,6 +25,7 @@ export type Meal = {
   thumbnailImage: string;
   useOriginal: boolean;
   mealName: string;
+  menuItems: MenuItem[];
   mealType: MealType;
   note: string;
   location: string;

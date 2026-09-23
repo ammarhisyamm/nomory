@@ -29,6 +29,7 @@ function freshValues(): MealFormValues {
   const now = new Date();
   return {
     mealName: "",
+    menuItems: [{ name: "", price: "" }],
     mealType: suggestMealType(toTimeKey(now)),
     mealDate: toDateKey(now),
     mealTime: toTimeKey(now),
@@ -105,6 +106,9 @@ export function AddMealDrawer({ open, onClose }: { open: boolean; onClose: () =>
         thumbnailImage: photo.thumbnail,
         useOriginal,
         mealName: values.mealName.trim(),
+        menuItems: values.menuItems
+          .filter((item) => item.name.trim())
+          .map((item) => ({ name: item.name.trim(), price: Number(item.price) || 0 })),
         mealType: values.mealType,
         note: values.note.trim(),
         location: values.location.trim(),

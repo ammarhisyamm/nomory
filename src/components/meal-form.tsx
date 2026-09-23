@@ -3,8 +3,11 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { MEAL_TYPES, type Meal, type MealType } from "@/lib/meals";
 
+export type MenuItemFormValue = { name: string; price: string };
+
 export type MealFormValues = {
   mealName: string;
+  menuItems: MenuItemFormValue[];
   mealType: MealType;
   mealDate: string;
   mealTime: string;
@@ -15,8 +18,17 @@ export type MealFormValues = {
 };
 
 export function mealToForm(meal: Meal): MealFormValues {
+  const items = meal.menuItems?.length
+    ? meal.menuItems
+    : meal.mealName
+      ? [{ name: meal.mealName, price: meal.price }]
+      : [{ name: "", price: 0 }];
   return {
     mealName: meal.mealName,
+    menuItems: items.map((item) => ({
+      name: item.name,
+      price: item.price ? String(item.price) : "",
+    })),
     mealType: meal.mealType,
     mealDate: meal.mealDate,
     mealTime: meal.mealTime,
@@ -44,16 +56,79 @@ export function MealForm({
   const [showNote, setShowNote] = useState(Boolean(values.note));
   const set = <K extends keyof MealFormValues>(key: K, value: MealFormValues[K]) =>
     onChange({ ...values, [key]: value });
+  const updateMenuItem = (index: number, key: keyof MenuItemFormValue, value: string) => {
+    const menuItems = values.menuItems.map((item, itemIndex) =>
+      itemIndex === index ? { ...item, [key]: value } : item,
+    );
+    onChange({
+      ...values,
+      menuItems,
+      price: String(menuItems.reduce((total, item) => total + Number(item.price || 0), 0)),
+    });
+  };
 
   return (
     <div className="space-y-5">
-      <Field label="Meal name">
+      <Field label="Meal title">
         <input
           className={fieldClass}
           value={values.mealName}
           placeholder="Salmon bowl"
           onChange={(e) => set("mealName", e.target.value)}
         />
+      </Field>
+
+      <Field label="Menu items">
+        <div className="space-y-2">
+          {values.menuItems.map((item, index) => (
+            <div key={index} className="grid grid-cols-[minmax(0,1fr)_112px_40px] gap-2">
+              <input
+                className={fieldClass}
+                value={item.name}
+                placeholder={`Menu ${index + 1}`}
+                aria-label={`Menu item ${index + 1} name`}
+                onChange={(e) => updateMenuItem(index, "name", e.target.value)}
+              />
+              <input
+                className={fieldClass}
+                inputMode="numeric"
+                type="text"
+                value={formatPrice(item.price)}
+                placeholder="Price"
+                aria-label={`Menu item ${index + 1} price`}
+                onChange={(e) => updateMenuItem(index, "price", e.target.value.replace(/\D/g, ""))}
+              />
+              <button
+                type="button"
+                aria-label={`Remove menu item ${index + 1}`}
+                disabled={values.menuItems.length === 1}
+                onClick={() => {
+                  const menuItems = values.menuItems.filter((_, itemIndex) => itemIndex !== index);
+                  onChange({
+                    ...values,
+                    menuItems,
+                    price: String(
+                      menuItems.reduce((total, entry) => total + Number(entry.price || 0), 0),
+                    ),
+                  });
+                }}
+                className="rounded-[14px] bg-muted text-lg text-muted-foreground disabled:opacity-30"
+              >
+                −
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => set("menuItems", [...values.menuItems, { name: "", price: "" }])}
+            className="press text-[13px] font-bold text-accent"
+          >
+            + Add another menu item
+          </button>
+          <p className="text-[12px] text-muted-foreground">
+            Total: {formatPrice(values.price) || "0"}
+          </p>
+        </div>
       </Field>
 
       <Field label="Meal type">
@@ -98,16 +173,6 @@ export function MealForm({
       </div>
 
       <div className="grid min-w-0 gap-3">
-        <Field label="Price">
-          <input
-            className={fieldClass}
-            inputMode="numeric"
-            type="text"
-            value={formatPrice(values.price)}
-            placeholder="0"
-            onChange={(e) => set("price", e.target.value.replace(/\D/g, ""))}
-          />
-        </Field>
         <Field label="Rating">
           <div
             className="flex h-12 items-center gap-1 rounded-[14px] border border-input bg-card px-3 shadow-[var(--shadow-card)]"

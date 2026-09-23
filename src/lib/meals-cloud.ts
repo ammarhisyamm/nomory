@@ -39,6 +39,15 @@ const mealSchema = z.object({
   thumbnailImage: z.string().max(1_500_000).default(""),
   useOriginal: z.boolean().default(false),
   mealName: z.string().max(120).default(""),
+  menuItems: z
+    .array(
+      z.object({
+        name: z.string().trim().min(1).max(120),
+        price: z.number().int().min(0).max(100_000_000),
+      }),
+    )
+    .max(30)
+    .default([]),
   mealType: z.enum(["breakfast", "lunch", "dinner", "snack", "drink"]).default("snack"),
   note: z.string().max(2000).default(""),
   location: z.string().max(160).default(""),

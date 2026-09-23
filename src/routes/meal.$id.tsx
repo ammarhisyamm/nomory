@@ -86,6 +86,9 @@ function MealDetailPage() {
       const updated: Meal = {
         ...meal,
         mealName: values.mealName.trim(),
+        menuItems: values.menuItems
+          .filter((item) => item.name.trim())
+          .map((item) => ({ name: item.name.trim(), price: Number(item.price) || 0 })),
         mealType: values.mealType,
         mealDate: values.mealDate,
         mealTime: values.mealTime,

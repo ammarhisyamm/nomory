@@ -3,12 +3,13 @@
 // This module has no server-only top-level imports so it stays safe to
 // import from client components — only call these from handlers.
 import type { D1Database, R2Bucket } from "./cloud-env";
-import type { Meal, MealType } from "./meals";
+import type { Meal, MealType, MenuItem } from "./meals";
 
 export type MealRow = {
   id: string;
   user_id: string;
   meal_name: string;
+  menu_items: string;
   meal_type: string;
   note: string;
   location: string;
@@ -123,6 +124,16 @@ export function sanitizeMeal(input: Meal): Meal | null {
   if (!input || typeof input.id !== "string" || !/^[a-zA-Z0-9_-]{1,64}$/.test(input.id))
     return null;
   const mealType: MealType = MEAL_TYPES.has(input.mealType) ? input.mealType : "snack";
+  const menuItems: MenuItem[] = Array.isArray(input.menuItems)
+    ? input.menuItems
+        .filter((item) => item && typeof item.name === "string")
+        .slice(0, 30)
+        .map((item) => ({
+          name: item.name.trim().slice(0, 120),
+          price: Number.isFinite(item.price) ? Math.max(0, Math.round(item.price)) : 0,
+        }))
+        .filter((item) => item.name)
+    : [];
   return {
     id: input.id.slice(0, 64),
     originalImage:
@@ -142,6 +153,7 @@ export function sanitizeMeal(input: Meal): Meal | null {
         : "",
     useOriginal: Boolean(input.useOriginal),
     mealName: String(input.mealName ?? "").slice(0, 120),
+    menuItems,
     mealType,
     note: String(input.note ?? "").slice(0, 2000),
     location: String(input.location ?? "").slice(0, 160),
@@ -155,6 +167,20 @@ export function sanitizeMeal(input: Meal): Meal | null {
 }
 
 export function rowToMeal(row: MealRow): Meal {
+  let menuItems: MenuItem[] = [];
+  try {
+    const parsed = JSON.parse(row.menu_items || "[]");
+    if (Array.isArray(parsed)) {
+      menuItems = parsed
+        .filter((item) => item && typeof item.name === "string")
+        .map((item) => ({ name: item.name.slice(0, 120), price: Number(item.price) || 0 }))
+        .slice(0, 30);
+    }
+  } catch {
+    menuItems = [];
+  }
+  if (!menuItems.length && row.meal_name)
+    menuItems = [{ name: row.meal_name, price: row.price || 0 }];
   return {
     id: row.id,
     originalImage: row.original_image || row.processed_image || "",
@@ -162,6 +188,7 @@ export function rowToMeal(row: MealRow): Meal {
     thumbnailImage: row.thumbnail_image || row.processed_image || row.original_image || "",
     useOriginal: row.use_original === 1,
     mealName: row.meal_name || "",
+    menuItems,
     mealType: (MEAL_TYPES.has(row.meal_type) ? row.meal_type : "snack") as MealType,
     note: row.note || "",
     location: row.location || "",
@@ -178,7 +205,7 @@ export async function listMeals(db: D1Database, userId: string): Promise<Meal[]>
   const res = await db
     .prepare(
       `SELECT id, user_id, meal_name, meal_type, note, location, price, rating, meal_date, meal_time,
-              original_image, processed_image, thumbnail_image, use_original, created_at, updated_at
+              original_image, processed_image, thumbnail_image, use_original, menu_items, created_at, updated_at
        FROM meals WHERE user_id = ? ORDER BY meal_date DESC, meal_time DESC LIMIT 2000`,
     )
     .bind(userId)
@@ -190,7 +217,7 @@ export async function getMeal(db: D1Database, userId: string, id: string): Promi
   const row = await db
     .prepare(
       `SELECT id, user_id, meal_name, meal_type, note, location, price, rating, meal_date, meal_time,
-              original_image, processed_image, thumbnail_image, use_original, created_at, updated_at
+              original_image, processed_image, thumbnail_image, use_original, menu_items, created_at, updated_at
        FROM meals WHERE id = ? AND user_id = ? LIMIT 1`,
     )
     .bind(id, userId)
@@ -201,12 +228,12 @@ export async function getMeal(db: D1Database, userId: string, id: string): Promi
 export async function upsertMeal(db: D1Database, userId: string, meal: Meal): Promise<void> {
   await db
     .prepare(
-      `INSERT INTO meals (id, user_id, meal_name, meal_type, note, location, price, rating, meal_date,
+      `INSERT INTO meals (id, user_id, meal_name, menu_items, meal_type, note, location, price, rating, meal_date,
                           meal_time, original_image, processed_image, thumbnail_image, use_original,
                           created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
-         meal_name=excluded.meal_name, meal_type=excluded.meal_type, note=excluded.note,
+         meal_name=excluded.meal_name, menu_items=excluded.menu_items, meal_type=excluded.meal_type, note=excluded.note,
          location=excluded.location, meal_date=excluded.meal_date, meal_time=excluded.meal_time,
          price=excluded.price, rating=excluded.rating,
          original_image=excluded.original_image, processed_image=excluded.processed_image,
@@ -218,6 +245,7 @@ export async function upsertMeal(db: D1Database, userId: string, meal: Meal): Pr
       meal.id,
       userId,
       meal.mealName,
+      JSON.stringify(meal.menuItems ?? []),
       meal.mealType,
       meal.note,
       meal.location,

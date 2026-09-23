@@ -1,0 +1,1 @@
+ALTER TABLE meals ADD COLUMN menu_items TEXT NOT NULL DEFAULT '[]';
