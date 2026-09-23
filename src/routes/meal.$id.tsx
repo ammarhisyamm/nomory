@@ -158,7 +158,7 @@ function MealDetailPage() {
               </button>
             }
           />
-          <div className="space-y-5">
+          <div className="w-full min-w-0 space-y-5">
             <MealForm values={values} onChange={setValues} />
             <button
               type="button"

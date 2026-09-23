@@ -39,7 +39,7 @@ export function mealToForm(meal: Meal): MealFormValues {
   };
 }
 
-const fieldClass = "input-soft h-12 px-4 text-[15px]";
+const fieldClass = "input-soft block h-12 w-full min-w-0 max-w-full px-4 text-[15px]";
 
 function formatPrice(value: string) {
   if (!value) return "";
@@ -68,7 +68,7 @@ export function MealForm({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="w-full min-w-0 space-y-5">
       <Field label="Meal title">
         <input
           className={fieldClass}
@@ -82,7 +82,7 @@ export function MealForm({
         <div className="space-y-2">
           {values.menuItems.map((item, index) => (
             <div key={index} className="grid min-w-0 grid-cols-[minmax(0,1fr)_40px] gap-2">
-              <div className="grid min-w-0 gap-2 sm:grid-cols-2">
+              <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-2">
                 <input
                   className={`${fieldClass} min-w-0`}
                   value={item.name}
@@ -157,7 +157,7 @@ export function MealForm({
         </div>
       </Field>
 
-      <div className="grid min-w-0 gap-3">
+      <div className="grid w-full min-w-0 grid-cols-1 gap-5">
         <Field label="Date">
           <input
             type="date"
@@ -176,7 +176,7 @@ export function MealForm({
         </Field>
       </div>
 
-      <div className="grid min-w-0 gap-3">
+      <div className="grid w-full min-w-0 grid-cols-1 gap-3">
         <Field label="Rating">
           <div
             className="flex h-12 items-center gap-1 rounded-[14px] border border-input bg-card px-3 shadow-[var(--shadow-card)]"
@@ -214,7 +214,7 @@ export function MealForm({
           <textarea
             rows={3}
             tabIndex={showNote ? 0 : -1}
-            className="input-soft mt-3 min-h-24 resize-y px-4 py-3 text-[15px] leading-[1.45]"
+            className="input-soft mt-3 block min-h-24 w-full min-w-0 max-w-full resize-y px-4 py-3 text-[15px] leading-[1.45]"
             placeholder="What do you want to remember?"
             value={values.note}
             onChange={(e) => set("note", e.target.value)}
@@ -223,7 +223,7 @@ export function MealForm({
       </div>
 
       <Field label="Location">
-        <div className="relative">
+        <div className="relative w-full min-w-0">
           <span className="form-location-icon pointer-events-none absolute top-1/2 left-3 size-8 -translate-y-1/2 rounded-[10px]">
             <MapPin className="size-[16px]" strokeWidth={2.1} />
           </span>
@@ -242,7 +242,7 @@ export function MealForm({
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div>
+    <div className="w-full min-w-0">
       <p className="mb-2 text-[13px] font-bold text-foreground">{label}</p>
       {children}
     </div>
