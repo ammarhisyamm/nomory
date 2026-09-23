@@ -132,8 +132,13 @@ export function AddMealDrawer({ open, onClose }: { open: boolean; onClose: () =>
         );
       }
       close();
-    } catch {
-      toast.error("We couldn’t save this memory. Try again.", { title: "Memory not saved" });
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "We couldn’t save this meal right now. Check your connection and try again.",
+        { title: "Meal not saved" },
+      );
     } finally {
       setSaving(false);
     }

@@ -86,54 +86,65 @@ export const listMealsCloud = createServerFn().handler(
 
 export const saveMealCloud = createServerFn({ method: "POST" })
   .validator(mealSchema)
-  .handler(async ({ data }): Promise<{ cloud: boolean; meal: Meal | null }> => {
+  .handler(async ({ data }): Promise<{ cloud: boolean; meal: Meal | null; error?: string }> => {
     const env = getCloudEnv();
     const user = await getSessionUser();
-    if (!env.DB || !user) return { cloud: false, meal: null };
+    if (!env.DB) return { cloud: false, meal: null, error: "Cloud sync is unavailable." };
+    if (!user) return { cloud: false, meal: null, error: "Your session expired. Sign in again." };
     if (!(await enforceRateLimit(env.DB, "meal-write", user.id, 60, 10 * 60_000)).allowed)
-      return { cloud: false, meal: null };
+      return { cloud: false, meal: null, error: "Too many saves. Try again in a few minutes." };
     const clean = sanitizeMeal(data as Meal);
-    if (!clean) return { cloud: false, meal: null };
-    // Upload dataURL photos to R2 when configured; otherwise the values
-    // pass through and are stored inline in D1.
-    const [originalImage, processedImage, thumbnailImage] = await Promise.all([
-      storeMealImage(
-        env.IMAGES,
-        env.R2_PUBLIC_URL,
-        user.id,
-        clean.id,
-        "original",
-        clean.originalImage,
-      ),
-      storeMealImage(
-        env.IMAGES,
-        env.R2_PUBLIC_URL,
-        user.id,
-        clean.id,
-        "processed",
-        clean.processedImage,
-      ),
-      storeMealImage(
-        env.IMAGES,
-        env.R2_PUBLIC_URL,
-        user.id,
-        clean.id,
-        "thumbnail",
-        clean.thumbnailImage || clean.processedImage,
-      ),
-    ]);
-    const meal: Meal = {
-      ...clean,
-      originalImage,
-      processedImage,
-      thumbnailImage,
-      // Keep the client's edit timestamp for conflict ordering. Giving an
-      // older, slower upload a newer server timestamp can overwrite the
-      // photo that was actually selected last on another device.
-      updatedAt: clean.updatedAt,
-    };
-    await upsertMeal(env.DB, user.id, meal);
-    return { cloud: true, meal: await getMeal(env.DB, user.id, meal.id) };
+    if (!clean) return { cloud: false, meal: null, error: "Some meal details need checking." };
+
+    try {
+      // Upload dataURL photos to R2 when configured; otherwise the values
+      // pass through and are stored inline in D1.
+      const [originalImage, processedImage, thumbnailImage] = await Promise.all([
+        storeMealImage(
+          env.IMAGES,
+          env.R2_PUBLIC_URL,
+          user.id,
+          clean.id,
+          "original",
+          clean.originalImage,
+        ),
+        storeMealImage(
+          env.IMAGES,
+          env.R2_PUBLIC_URL,
+          user.id,
+          clean.id,
+          "processed",
+          clean.processedImage,
+        ),
+        storeMealImage(
+          env.IMAGES,
+          env.R2_PUBLIC_URL,
+          user.id,
+          clean.id,
+          "thumbnail",
+          clean.thumbnailImage || clean.processedImage,
+        ),
+      ]);
+      const meal: Meal = {
+        ...clean,
+        originalImage,
+        processedImage,
+        thumbnailImage,
+        // Keep the client's edit timestamp for conflict ordering. Giving an
+        // older, slower upload a newer server timestamp can overwrite the
+        // photo that was actually selected last on another device.
+        updatedAt: clean.updatedAt,
+      };
+      await upsertMeal(env.DB, user.id, meal);
+      return { cloud: true, meal: await getMeal(env.DB, user.id, meal.id) };
+    } catch (error) {
+      console.error("meal_save_failed", error instanceof Error ? error.message : String(error));
+      return {
+        cloud: false,
+        meal: null,
+        error: "We couldn’t save this meal right now. Check your connection and try again.",
+      };
+    }
   });
 
 export const deleteMealCloud = createServerFn({ method: "POST" })

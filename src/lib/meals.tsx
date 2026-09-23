@@ -275,7 +275,7 @@ export function MealsProvider({ children }: { children: ReactNode }) {
         if (!res.cloud || !res.meal) {
           cloudRef.current = false;
           setCloudEnabled(false);
-          throw new Error("Cloud sync unavailable");
+          throw new Error(res.error ?? "Cloud sync unavailable");
         }
         cloudRef.current = true;
         setCloudEnabled(true);
