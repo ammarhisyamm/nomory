@@ -36,21 +36,21 @@ export const Route = createFileRoute("/website")({
 const features = [
   {
     title: "Capture a meal",
-    description: "Take a photo in the moment or choose one from your gallery.",
+    description: "Take a photo now or choose one from your gallery.",
     icon: Camera,
     preview: "photo",
     className: "website-feature-capture",
   },
   {
     title: "Keep the details",
-    description: "Save a note, rating, price, location, or leave it beautifully simple.",
+    description: "Add a note, rating, menu, price, or location when it matters.",
     icon: NotebookPen,
     preview: "details",
     className: "website-feature-details",
   },
   {
     title: "Find it again",
-    description: "Calendar and Memories keep every meal easy to revisit.",
+    description: "Find every meal by day, place, or the details you remember.",
     icon: BookOpen,
     preview: "calendar",
     className: "website-feature-calendar",
@@ -66,13 +66,13 @@ const steps = [
   },
   {
     title: "Save",
-    description: "Add the details you want to remember.",
+    description: "Add only the details you want to keep.",
     icon: NotebookPen,
     preview: "save",
   },
   {
     title: "Remember",
-    description: "Your meal settles into your diary by day.",
+    description: "Your meal joins your diary, ready to revisit.",
     icon: BookOpen,
     preview: "remember",
   },
@@ -82,38 +82,38 @@ const questions = [
   {
     question: "Do I need to fill in every detail?",
     answer:
-      "No. A photo is enough. Add a rating, note, price, or location only when it helps you remember the moment.",
+      "No. A photo is enough. Add a rating, note, menu, price, or location only when it helps you remember.",
   },
   {
     question: "Where do my saved meals go?",
     answer:
-      "Every meal is organized in your Memories and Calendar, so you can return to a day, place, or favorite dish later.",
+      "Your meals appear in Memories and Calendar, organized by date so you can find them again.",
   },
   {
     question: "Can I use Nomory on my phone and computer?",
-    answer: "Yes. Sign in to the same account and your diary follows you wherever you open Nomory.",
+    answer: "Yes. Sign in to the same account and your diary stays with you across devices.",
   },
   {
     question: "Is my food diary private?",
     answer:
-      "Yes. Your meals and details are tied to your account. Read the Privacy & Policy for the full explanation.",
+      "Yes. Your meals and details are tied to your account. Read the Privacy Policy to learn more.",
   },
 ] as const;
 
 const memoryDetails = [
   {
     label: "Day by day",
-    description: "See the rhythm of what you loved.",
+    description: "See the meals that shaped your week.",
     icon: CalendarDays,
   },
   {
     label: "The little details",
-    description: "Keep the note that made it yours.",
+    description: "Keep the note that brings it back.",
     icon: Heart,
   },
   {
     label: "Places worth returning to",
-    description: "Remember where every favorite began.",
+    description: "Remember where your favorite meals began.",
     icon: MapPin,
   },
 ] as const;
@@ -147,7 +147,7 @@ function WebsiteLandingPage() {
       className="website-page min-h-[100dvh] overflow-hidden"
     >
       <a className="website-skip-link" href="#features">
-        Skip to content
+        Skip to features
       </a>
       <nav className="website-nav" aria-label="Main navigation">
         <Link to="/website" className="website-logo" aria-label="Nomory home">
@@ -159,7 +159,7 @@ function WebsiteLandingPage() {
           <a href="#questions">FAQ</a>
         </div>
         <Link to="/login" className="website-nav-cta">
-          Get started <ArrowRight className="size-4" />
+          Start your diary <ArrowRight className="size-4" />
         </Link>
       </nav>
 
@@ -174,10 +174,10 @@ function WebsiteLandingPage() {
         <div className="website-hero-copy">
           <h1 id="website-hero-title">Your meals, remembered.</h1>
           <p className="website-hero-body">
-            Capture what you eat, save the little details, and look back anytime.
+            Save the meals you love, with the little details that make them yours.
           </p>
           <Link to="/login" className="website-primary-button">
-            Start your food diary <ArrowRight className="size-5" />
+            Save your first meal <ArrowRight className="size-5" />
           </Link>
         </div>
       </section>
@@ -209,7 +209,7 @@ function WebsiteLandingPage() {
       >
         <div className="website-section-heading website-how-heading">
           <h2 id="how-title">Three small moments, kept.</h2>
-          <p>From the first photo to a memory you can return to, everything stays easy.</p>
+          <p>Save a meal in seconds, then find it whenever you want to remember.</p>
         </div>
         <div className="website-how-grid">
           {steps.map((step, index) => (
@@ -226,8 +226,7 @@ function WebsiteLandingPage() {
         <div className="website-memory-copy" data-reveal>
           <h2 id="week-remembered-title">A week becomes your story.</h2>
           <p>
-            Every photo settles into a private diary, ready when you want to remember what made the
-            moment special.
+            Every photo becomes part of a private diary, ready when you want to remember the moment.
           </p>
           <div className="website-memory-details" aria-label="What Nomory helps you remember">
             {memoryDetails.map(({ label, description, icon: Icon }) => (
@@ -258,7 +257,7 @@ function WebsiteLandingPage() {
       >
         <div className="website-questions-intro">
           <h2 id="questions-title">A diary should feel easy to keep.</h2>
-          <p>Everything you need to know before you start saving your next meal.</p>
+          <p>Simple answers before you save your first meal.</p>
         </div>
         <div className="website-faq-list">
           {questions.map((item) => (
@@ -281,7 +280,7 @@ function WebsiteLandingPage() {
             <h2>
               Start remembering <span>your meals.</span>
             </h2>
-            <p>One photo is all it takes.</p>
+            <p>Start with a photo. Add more when you want to.</p>
           </div>
           <Link to="/login" className="website-primary-button website-final-button">
             Save your first meal <ArrowRight className="size-5" />
@@ -293,8 +292,8 @@ function WebsiteLandingPage() {
             <span>Your meals, remembered.</span>
           </div>
           <div className="website-footer-links">
-            <Link to="/privacy-policy">Privacy &amp; Policy</Link>
-            <Link to="/login">Get started</Link>
+            <Link to="/privacy-policy">Privacy policy</Link>
+            <Link to="/login">Start your diary</Link>
           </div>
         </footer>
       </section>

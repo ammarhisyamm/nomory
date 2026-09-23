@@ -9,12 +9,12 @@ import { NomoryLogo, NomoryMark } from "@/components/nomory-logo";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "Welcome to Nomory — Your meals, remembered" },
+      { title: "Get started with Nomory — Your meals, remembered" },
       {
         name: "description",
         content: "Nomory helps you remember what you eat, one photo at a time.",
       },
-      { property: "og:title", content: "Welcome to Nomory" },
+      { property: "og:title", content: "Get started with Nomory" },
       {
         property: "og:description",
         content: "Capture meals. Remember what you ate. Look back anytime.",
@@ -30,27 +30,27 @@ const steps = [
     pillClass: "bg-blush-soft text-[#c2437b]",
     image: "/illustrations/onboarding/capture-mascot-optimized.png",
     imageAlt: "Nomory tomato mascot holding a meal memory",
-    title: "A photo is all it takes.",
-    body: "Snap a meal in the moment. No calorie counting, no long forms—just your food diary, starting with a bite.",
-    detail: "Photo first · zero pressure",
+    title: "Start with a photo.",
+    body: "Capture a meal in the moment. No calorie counting or long forms—just a simple food diary.",
+    detail: "Save the moment · keep it simple",
   },
   {
     pill: "Remember",
     pillClass: "bg-sunny-soft text-[#8a6100]",
     image: "/illustrations/onboarding/remember-mascots-optimized.png",
     imageAlt: "Nomory toast and clover mascots arranging memory cards",
-    title: "Remember without trying.",
-    body: "Each meal finds its place by date and time, so the little things are there whenever you want them.",
-    detail: "Saved by day · easy to find",
+    title: "Your meals find their place.",
+    body: "Nomory organizes each meal by date and time, so the details are easy to find later.",
+    detail: "Organized by day · ready to revisit",
   },
   {
     pill: "Look Back",
     pillClass: "bg-sky-soft text-sky",
     image: "/illustrations/onboarding/lookback-mascot-optimized.png",
     imageAlt: "Nomory flower mascot looking at a collage of meal memories",
-    title: "Little bites. Brighter days.",
-    body: "Look back by day, month, or craving—and notice the food moments that made your days feel good.",
-    detail: "Your visual diary · yours to keep",
+    title: "Come back to what mattered.",
+    body: "Browse your meals by day or month and revisit the food moments that made your days feel good.",
+    detail: "Your food diary · ready when you are",
   },
 ];
 
@@ -106,12 +106,12 @@ function Onboarding() {
         {needsUsername ? (
           <form onSubmit={saveUsername} className="flex flex-1 flex-col justify-center">
             <NomoryLogo className="text-[35px]" />
-            <p className="section-label mt-12">One last thing</p>
+            <p className="section-label mt-12">Make it yours</p>
             <h1 className="font-display mt-2 text-[34px] leading-[1.04] font-extrabold tracking-tight">
-              Choose your username.
+              Choose a username.
             </h1>
             <p className="mt-4 text-[16px] leading-[1.5] text-muted-foreground">
-              This is how your Nomory diary will appear on every device.
+              This is how your diary will appear across your devices.
             </p>
             <label className="mt-8 block text-[14px] font-semibold">
               Username
@@ -127,77 +127,80 @@ function Onboarding() {
                 className="input-soft mt-2 h-13 px-4 font-normal"
               />
             </label>
-            {usernameError ? <p className="mt-3 text-[13px] font-medium text-destructive">{usernameError}</p> : null}
+            {usernameError ? (
+              <p className="mt-3 text-[13px] font-medium text-destructive">{usernameError}</p>
+            ) : null}
             <button
               type="submit"
               disabled={!username.trim() || savingUsername}
               className="primary-button press mt-6 h-14 w-full rounded-full text-[16px] font-semibold text-accent-foreground disabled:opacity-50"
             >
-              {savingUsername ? "Saving…" : "Continue"}
+              {savingUsername ? "Saving…" : "Save username"}
             </button>
           </form>
         ) : (
           <>
-        <div className="flex items-center justify-between gap-4">
-          <NomoryLogo className="text-[35px]" />
-        </div>
+            <div className="flex items-center justify-between gap-4">
+              <NomoryLogo className="text-[35px]" />
+            </div>
 
-        <div key={step.pill} className="onboarding-step flex flex-1 flex-col">
-          <div className="relative mt-8 grid min-h-[250px] place-items-center px-4">
-            <img
-              src={step.image}
-              alt={step.imageAlt}
-              className="onboarding-illustration max-h-[235px] w-auto max-w-[94%] object-contain"
-            />
-          </div>
-          <span className="mt-6 inline-flex w-fit text-[13px] font-bold">
-            <span className={cn("rounded-full px-3 py-1.5", step.pillClass)}>{step.pill}</span>
-          </span>
-          <p className="onboarding-copy mt-5 text-[13px] font-bold tracking-[0.08em] text-muted-foreground uppercase">
-            {step.detail}
-          </p>
-          <h1 className="onboarding-copy font-display mt-2 text-balance text-[34px] leading-[1.04] font-extrabold tracking-tight">
-            {step.title}
-          </h1>
-          <p className="onboarding-copy mt-4 max-w-[34rem] text-[16px] leading-[1.5] text-muted-foreground">
-            {step.body}
-          </p>
-        </div>
+            <div key={step.pill} className="onboarding-step flex flex-1 flex-col">
+              <div className="relative mt-8 grid min-h-[250px] place-items-center px-4">
+                <img
+                  src={step.image}
+                  alt={step.imageAlt}
+                  className="onboarding-illustration max-h-[235px] w-auto max-w-[94%] object-contain"
+                />
+              </div>
+              <span className="mt-6 inline-flex w-fit text-[13px] font-bold">
+                <span className={cn("rounded-full px-3 py-1.5", step.pillClass)}>{step.pill}</span>
+              </span>
+              <p className="onboarding-copy mt-5 text-[13px] font-bold tracking-[0.08em] text-muted-foreground uppercase">
+                {step.detail}
+              </p>
+              <h1 className="onboarding-copy font-display mt-2 text-balance text-[34px] leading-[1.04] font-extrabold tracking-tight">
+                {step.title}
+              </h1>
+              <p className="onboarding-copy mt-4 max-w-[34rem] text-[16px] leading-[1.5] text-muted-foreground">
+                {step.body}
+              </p>
+            </div>
 
-        <div
-          className="mt-6 flex items-center gap-2"
-          aria-label={`Onboarding step ${index + 1} of ${steps.length}`}
-        >
-          {steps.map((item, itemIndex) => (
-            <span
-              key={item.title}
-              aria-hidden="true"
-              className={cn(
-                "rounded-full transition-all",
-                itemIndex === index ? "size-2.5 bg-accent" : "size-2 bg-border",
-              )}
-            />
-          ))}
-        </div>
-
-        <div className="mt-auto space-y-2 pt-7">
-          <button
-            type="button"
-            onClick={() => (last ? finish() : setIndex(index + 1))}
-            className="primary-button press h-14 w-full rounded-full text-[16px] font-semibold text-accent-foreground"
-          >
-            {last ? "Start my food diary" : "Continue"}
-          </button>
-          {!last ? (
-            <button
-              type="button"
-              onClick={finish}
-              className="press h-12 w-full rounded-full text-[15px] font-medium text-muted-foreground"
+            <div
+              className="mt-6 flex items-center gap-2"
+              role="group"
+              aria-label={`Onboarding step ${index + 1} of ${steps.length}`}
             >
-              Skip
-            </button>
-          ) : null}
-        </div>
+              {steps.map((item, itemIndex) => (
+                <span
+                  key={item.title}
+                  aria-hidden="true"
+                  className={cn(
+                    "rounded-full transition-all",
+                    itemIndex === index ? "size-2.5 bg-accent" : "size-2 bg-border",
+                  )}
+                />
+              ))}
+            </div>
+
+            <div className="mt-auto space-y-2 pt-7">
+              <button
+                type="button"
+                onClick={() => (last ? finish() : setIndex(index + 1))}
+                className="primary-button press h-14 w-full rounded-full text-[16px] font-semibold text-accent-foreground"
+              >
+                {last ? "Save my first meal" : "Continue"}
+              </button>
+              {!last ? (
+                <button
+                  type="button"
+                  onClick={finish}
+                  className="press h-12 w-full rounded-full text-[15px] font-medium text-muted-foreground"
+                >
+                  Skip intro
+                </button>
+              ) : null}
+            </div>
           </>
         )}
       </div>
