@@ -179,7 +179,10 @@ export async function setSessionCookie(user: SessionUser, version?: number) {
 }
 
 export function clearSessionCookie() {
-  deleteCookie(SESSION_COOKIE, { path: "/" });
+  // Keep the same attributes used when setting the session cookie. In
+  // production this is a __Host- cookie, which browsers reject unless the
+  // Set-Cookie header includes Secure and Path=/ even when expiring it.
+  deleteCookie(SESSION_COOKIE, cookieOptions(0));
 }
 
 export async function beginOAuthState() {

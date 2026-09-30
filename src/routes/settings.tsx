@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import {
@@ -31,18 +31,33 @@ export const Route = createFileRoute("/settings")({
 
 function SettingsPage() {
   const { meals, clearAll, cloudEnabled } = useMeals();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: auth } = useQuery({ queryKey: ["auth"], queryFn: getAuthStatus });
   const user = auth?.user ?? null;
   const [displayName, setDisplayName] = useState("");
   const [savingName, setSavingName] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   useEffect(() => {
     if (user?.name) setDisplayName(user.name);
   }, [user?.id, user?.name]);
   const signOutUser = async () => {
-    await signOut();
-    await queryClient.invalidateQueries({ queryKey: ["auth"] });
-    toast.success("You’re signed out.", { title: "See you next time" });
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await signOut();
+      const signedOutStatus = await getAuthStatus();
+      if (signedOutStatus.user) throw new Error("The server still has an active session.");
+      queryClient.setQueryData(["auth"], signedOutStatus);
+      toast.success("You’re signed out.", { title: "See you next time" });
+      await navigate({ to: "/login", replace: true });
+    } catch {
+      toast.error("Check your connection and try signing out again.", {
+        title: "Couldn’t sign out",
+      });
+    } finally {
+      setSigningOut(false);
+    }
   };
   const reset = async () => {
     if (!confirm("Delete every saved meal and photo everywhere? This can’t be undone.")) return;
@@ -183,12 +198,15 @@ function SettingsPage() {
           <button
             type="button"
             onClick={signOutUser}
+            disabled={signingOut}
             className="press flex w-full items-center gap-4 p-5 text-left"
           >
             <span className="grid size-11 shrink-0 place-items-center rounded-full bg-muted">
               <LogOut className="size-[18px]" strokeWidth={1.9} />
             </span>
-            <span className="text-[15px] font-semibold">Log out</span>
+            <span className="text-[15px] font-semibold">
+              {signingOut ? "Signing out…" : "Log out"}
+            </span>
           </button>
         </SettingsGroup>
         {auth === undefined ? (
